@@ -1,0 +1,8 @@
+{% extends 'main/base.html' %}
+
+{% block main_content %}
+    <div class="mx-auto" style="text-align: center; font-size: larger;">
+        <p>musicorg is a platform for sharing spotify music recommendations anonymously with friends.</p>
+        <p>To get started, <a href="{{url_for('main.create_round')}}">create a new music recommendation round</a> and then share the created round link. </p>
+    </div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'main/base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block main_content %}
+<div id="new_round_form">
+    <form class="form form-horizontal" method="post" role="form">
+        {{ new_round_form.hidden_tag() }}
+
+        {{ wtf.form_field(new_round_form.description)}}
+        {% for error in new_round_form.description.errors %}
+            <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endfor %}
+
+        {{ wtf.form_field(new_round_form.music_type)}}
+        {% for error in new_round_form.music_type.errors %}
+            <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endfor %}
+
+        {{ wtf.form_field(new_round_form.snoozin_rec_type)}}
+        {% for error in new_round_form.snoozin_rec_type.errors %}
+            <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endfor %}
+
+        {{ wtf.form_field(new_round_form.submit) }}
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="bg-image" style="
+        {% if music_bg_imgs %}
+            background: 
+            {% for music_img in music_bg_imgs %}
+                url('{{music_img}}')
+                {{20 * (loop.index0 % 5)}}vw
+                {{20 * (loop.index0 // 5)}}vw
+                {{'no-repeat' if not loop.last else ';'}}
+                {{', ' if not loop.last else ';'}}
+            {% endfor %}
+            background-size:
+            {% for music_img in music_bg_imgs %}
+                20vw{{', ' if not loop.last else ';'}}
+            {% endfor %}
+        {% endif %}
+    ">
+        <div class="mask" style="min-height: 100vh; background-color: rgba(0, 0, 0, 0.7);">
+            <div style="padding-top: 10vh;"></div>
+            <div class="mx-auto text-light" style="max-width: 600px; padding: 15px;">
+                {% block main_content %} {% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

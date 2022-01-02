@@ -1,0 +1,38 @@
+{% extends 'main/base.html' %}
+
+{% block main_content %}
+    <div class="div_main_about_section">
+        <h3>Round structure</h3>
+        <p>Each recommendation round has three phases:</p>
+        <p style="margin-left: 20px;">
+            <i>Submit Phase</i>: Participants submit spotify music links of their recommendations. <br>
+            <i>Listen (and guess) Phase</i>: Participants listen to the music and guess who recommended what. <br>
+            <i>Revealed Phase</i>: It is revealed which participants recommended what.</p>
+        <p>"Snoozin" automatically sends in a recommendation for every round with something he's been listening to lately.</p>
+    </div>
+    <div class="div_main_about_section">
+        <h3>Technical info</h3>
+        <p>
+            If you're interested in how the site is built or want to contribute, check it out on github <a href="https://github.com/nknaian/musicorg">https://github.com/nknaian/musicorg</a>
+        </p>
+    </div>
+    <div class="div_main_about_section">
+        <h3> Contact Us </h3>
+        <p>
+            Email <i>snoozinforabruisin@gmail.com</i>. He's unfortunately not very responsive - usually sleeping.
+        </p>
+    </div>
+    <div class="div_main_about_section">
+        <h3> FAQs </h3>
+        <p class="p_main_about_q">
+            Who is "snoozin"?</p>
+        <p class="p_main_about_a">
+            "Snoozin" is the sobriquet for the collection of Spotify API powered algorithms used to add an additional music recommendation to each round.
+        </p>
+        <p class="p_main_about_q">
+            Do I need a Spotify account to participate?</p>
+        <p class="p_main_about_a">
+            No, although it definitely enhances the experience to have an account. Spotify allows people without accounts to search and share music, which is all that is necessary to participate.
+        </p>
+    </div>
+{% endblock %}
