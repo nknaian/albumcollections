@@ -103,7 +103,7 @@ def get_user_display_name():
     return _get_sp_instance().me()['display_name']
 
 
-def get_user_playlists():
+def get_user_playlists() -> List[SpotifyPlaylist]:
     sp = _get_sp_instance()
 
     playlist_infos = sp.current_user_playlists()
@@ -111,7 +111,7 @@ def get_user_playlists():
     playlists = []
     while playlist_infos:
         for playlist in playlist_infos['items']:
-            playlists.append(playlist)
+            playlists.append(SpotifyPlaylist(playlist))
         if playlist_infos['next']:
             playlist_infos = sp.next(playlist_infos)
         else:

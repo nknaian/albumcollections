@@ -63,7 +63,7 @@ class SpotifyTrack(SpotifyMusic):
         super().__init__(spotify_track)
 
         # Set the album item for this track
-        self.album_item = SpotifyItem(spotify_track["album"])
+        self.album_item = SpotifyAlbum(spotify_track["album"])
 
         # Get image url with given IMG_DIMEN
         self._set_image_url(spotify_track["album"]["images"])

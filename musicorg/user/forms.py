@@ -18,7 +18,7 @@ class AddAlbumToCategoryForm(FlaskForm):
     album_id = IntegerField('Album id', validators=[DataRequired()])
     category_id = SelectField(
         'Which category?,
-        choices=SnoozinRecType.choices(),  # not sure how I'd do this corece thing w/ database
+        choices=SnoozinRecType.choices(),  # not sure how I'd do this corece thing w/ database 
         coerce=SnoozinRecType.coerce
     )
     submit = SubmitField('Create Album')

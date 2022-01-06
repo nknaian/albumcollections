@@ -14,6 +14,8 @@ The following keys names are used in the 'session' object to enable this:
 
 from flask import Blueprint
 
+from musicorg import spotify_iface
+
 from .helpers import is_user_logged_in, get_user_display_name
 
 
@@ -25,6 +27,7 @@ def inject_user_vars():
     return dict(
         is_user_logged_in=is_user_logged_in,
         get_user_display_name=get_user_display_name,
+        get_playlist_albums=spotify_iface.get_playlist_albums
     )
 
 

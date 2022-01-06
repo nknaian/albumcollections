@@ -1,7 +1,6 @@
 import random
 
 from musicorg.spotify.item.spotify_music import SpotifyTrack
-from musicorg.database.models import Round
 from musicorg.enums import MusicType, RoundStatus
 
 from musicorg import spotify_iface, scheduler, cache

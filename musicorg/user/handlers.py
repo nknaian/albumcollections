@@ -6,16 +6,13 @@ from flask import redirect, render_template, url_for, flash
 from flask.globals import request, session
 
 from musicorg.spotify import spotify_user
-from musicorg.database.models import Round
-from musicorg.database.helpers import lookup_user_in_db
-from musicorg.enums import MusicType
 from musicorg.spotify.spotify_user import SpotifyUserAuthFailure
 from musicorg.errors.exceptions import musicorgError
 
-from musicorg import spotify_iface
+from musicorg import spotify_iface, cache
 
 from . import bp
-from .helpers import login_or_register_user
+
 
 
 """USER INTERFACE ROUTES"""
@@ -33,8 +30,8 @@ def login():
     else:
         next = request.referrer
 
-    login_or_register_user()
-
+    spotify_user.get_user_id()
+    
     flash("You are now logged in through your Spotify account!", "success")
 
     return redirect(next)
@@ -56,52 +53,19 @@ def logout():
     return redirect(next)
 
 
-@bp.route('/create_category', methods=['GET', 'POST'])
-def create_category():
-    new_category_form = NewCategoryForm()
+@bp.route('/user/playlists', methods=['GET'])
+def playlists():
+    user_playlists = cache.get('user_playlists')
+    if user_playlists is None:
+        user_playlists = spotify_user.get_user_playlists()
+        cache.set("user_playlists", user_playlists)
 
-    if new_category_form.validate_on_submit():
-        # Add the category to the database
-        create_category = add_category_to_db(new_category_form.description.data,
-                                       new_category_form.music_type.data,
-                                       new_category_form.snoozin_rec_type.data)
-
-        # Go to the page for the new category
-        return redirect(url_for('category.index', long_id=create_category.long_id))
-
-    elif new_category_form.errors:
-        flash("There were errors in your new category submission", "warning")
-
-    return render_template('main/create_category.html', new_category_form=new_category_form)
+    return render_template('user/playlists.html', user_playlists=user_playlists)
 
 
-@bp.route('/user/rounds')
-def rounds():
-    def created_datetime(round_music_subs):
-        return round_music_subs[0].created
-
-    # Get music type from args
-    music_type = request.args.get("music_type")
-    if music_type not in ['track', 'album']:
-        raise musicorgError(f'{music_type} is not a valid music type.')
-
-    user = lookup_user_in_db(spotify_user.get_user_id())
-
-    # Construct list of tuples with the rounds the user has submitted to,
-    # with the music that they submitted to that round
-    round_music_subs = set()
-    for submission in user.submissions:
-        round = Round.query.filter_by(id=submission.round_id).first()
-
-        if round.music_type == MusicType[music_type]:
-            round_music_subs.add((
-                round,
-                spotify_iface.get_music_from_link(round.music_type, submission.spotify_link)
-            ))
-
-    return render_template('user/rounds.html',
-                           music_type=music_type,
-                           round_music_subs=reversed(sorted(list(round_music_subs), key=created_datetime)))
+@bp.route('/user/playlist/<string:playlist_id>', methods=['GET'])
+def playlist(playlist_id):
+    return render_template('user/playlist.html', playlist_id=playlist_id)
 
 
 """EXTERNAL AUTHENTICATION CALLBACK ROUTES"""

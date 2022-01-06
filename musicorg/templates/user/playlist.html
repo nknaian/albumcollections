@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="bg-light">
+    {% for album in get_playlist_albums(playlist_id) %}
+        <a class="bg-dark text-light div_round_item btn" role="button" href="{{album.link}}">
+            <div class="row">
+                <div class="col col-auto">
+                    <img src="{{album.img_url}}"
+                        alt="{{album.name}}"
+                        class=img_albums>
+                </div>
+                <div class="col div_round_item_name">
+                    <b>{{album.name}}</b> by {{album.get_artists_comma_separated()}}
+                </div>
+            </div>
+
+            <div class="align-bottom text-right font-italic">{{loop.index0}}</div>
+        </a>
+    {% endfor %}
+</div>
+{% endblock %}
+
