@@ -16,6 +16,12 @@ class SpotifyItem():
         # url for image of item
         self.img_url = None
 
+    def __eq__(self, other):
+        return self.id == other.id
+
+    def __hash__(self):
+        return hash(self.id)
+
     def _set_image_url(self, images):
         for img in images:
             if img["height"] == self.IMG_DIMEN and img["width"] == self.IMG_DIMEN:

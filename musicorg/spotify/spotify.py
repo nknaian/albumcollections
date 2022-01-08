@@ -97,7 +97,7 @@ class Spotify:
         return [SpotifyTrack(track_item["track"]) for track_item in self.sp.playlist_tracks(id)["items"]]  # Limit is currently default 100
 
     def get_playlist_albums(self, id) -> List[SpotifyAlbum]:
-        return [track.album_item for track in self.get_playlist_tracks(id)]
+        return list(set([track.album_item for track in self.get_playlist_tracks(id)]))
 
     def spotify_link_invalid(self, music_type: MusicType, spotify_link: str):
         """Check whether the given spotify link is a valid 'music type' link"""
