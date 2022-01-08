@@ -2,24 +2,18 @@
 
 {% block content %}
 {% for playlist in user_playlists %}
-    <div class="div_user_rounds_section">
-        <a class="container-fluid bg-dark text-light btn" id="user_round_block" role="button" href="{{url_for('user.playlist', playlist_id=playlist.id)}}">
-            <div class="row">
-                <div class="col-6">
-                    <div class="div_round_info">{{ playlist.name|truncate(60,true) }}</div>
-                </div>
-                <div class="col-6">
-                    <div class="row justify-content-center" style="padding-top: 20px;">
-                        <div class="col-auto">
-                            <img src="{{playlist.img_url}}"
-                                alt="{{playlist.name}}"
-                                style="width: 81px">  <!-- Hardcode to 81px because album img size is too large on small screens to fit in its column-->
-                        </div>
-                    </div>
-                </div>
+    <a class="bg-dark text-light div_round_item btn" role="button" href="{{url_for('user.playlist', playlist_id=playlist.id)}}">
+        <div class="row">
+            <div class="col col-auto">
+                <img src="{{playlist.img_url}}"
+                    alt="{{playlist.name}}"
+                    class=img_albums>
             </div>
-        </a>
-    </div>
+            <div class="col div_round_item_name">
+                {{playlist.name}}
+            </div>
+        </div>
+    </a>
 {% endfor %}
 {% endblock %}
 
