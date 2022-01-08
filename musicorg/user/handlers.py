@@ -18,11 +18,6 @@ from . import bp
 """USER INTERFACE ROUTES"""
 
 
-@bp.route('/user/profile', methods=['GET', 'POST'])
-def profile():
-    return render_template('user/profile.html')
-
-
 @bp.route('/user/login', methods=['GET', 'POST'])
 def login():
     if request.args.get("next"):
@@ -53,19 +48,20 @@ def logout():
     return redirect(next)
 
 
-@bp.route('/user/playlists', methods=['GET'])
-def playlists():
-    user_playlists = cache.get('user_playlists')
-    if user_playlists is None:
-        user_playlists = spotify_user.get_user_playlists()
-        cache.set("user_playlists", user_playlists)
+@bp.route('/user/collections', methods=['GET'])
+def collections():
+    # NOTE: perhaps use caching to avoid requesting from spotify api
+    # on every page refresh. But
+    # - would be nice if the data were actually cached locally in the user's
+    #   browser...that way it's super quick
+    #
+    # user_playlists = cache.get('user_playlists')
+    # if user_playlists is None:
+    #     user_playlists = spotify_user.get_user_playlists()
+    #     cache.set("user_playlists", user_playlists, timeout=0)
 
-    return render_template('user/playlists.html', user_playlists=user_playlists)
-
-
-@bp.route('/user/playlist/<string:playlist_id>', methods=['GET'])
-def playlist(playlist_id):
-    return render_template('user/playlist.html', playlist_id=playlist_id)
+    user_playlists = spotify_user.get_user_playlists()
+    return render_template('user/collections.html', user_playlists=user_playlists)
 
 
 """EXTERNAL AUTHENTICATION CALLBACK ROUTES"""

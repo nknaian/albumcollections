@@ -56,6 +56,9 @@ def create_app(config_class=Config):
     from musicorg.user import bp as user_bp
     app.register_blueprint(user_bp)
 
+    from musicorg.collection import bp as collection_bp
+    app.register_blueprint(collection_bp)
+
     from musicorg.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
 
