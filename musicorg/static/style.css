@@ -20,54 +20,19 @@ h5 {
     white-space: normal;
 }
 
-.div_main_about_section {
-    padding: 15px;
-}
-
-.div_round_section {
-    padding: 15px;
-    margin: 10px;
-}
-
-.div_round_item {
+.div_spotify_item {
     padding: 10px;
     margin: 10px;
     display: inline-block;
 }
 
-.div_round_item_name {
+.div_spotify_item_name {
     min-width: 200px;
 }
 
-.div_round_info {
-    margin-top: 10px;
-    margin-bottom: 10px;
-    text-align: center;
-    font-size: small;
-}
-
-.div_round_revealed_music_user_name {
-    text-align: center;
-    font-weight: bold;
-    font-style: italic;
-    margin-bottom: 10px;
-}
-
-.div_user_rounds_section {
-    padding: 15px;
-}
-
-.div_recommender_name {
-    margin: 5px;
-    padding: 5px;
-    border: 1px solid gray;
-    border-radius: 5px;
-    display: inline-block;
-}
-
-.img_albums{
-    width: {{music.IMG_DIMEN}}px;
-    height: {{music.IMG_DIMEN}}px;
+.img_album{
+    width: {{album.IMG_DIMEN}}px;
+    height: {{album.IMG_DIMEN}}px;
     border: 0;
 }
 
@@ -75,33 +40,6 @@ h5 {
     width: {{playlist.IMG_DIMEN}}px;
     height: {{playlist.IMG_DIMEN}}px;
     border: 0;
-}
-
-.p_main_about_q {
-    font-weight: bold;
-}
-
-.p_main_about_a {
-    margin-left: 20px;
-    font-style: italic;
-}
-
-.p_round_revealed_guess_user_name {
-    text-align: center;
-    font-weight: bold;
-    font-style: italic;
-}
-
-.p_round_revealed_correct_guess {
-    text-align: left;
-    margin-bottom: 2px;
-    color: green;
-}
-
-.p_round_revealed_incorrect_guess {
-    text-align: left;
-    margin-bottom: 2px;
-    text-decoration: line-through;
 }
 
 

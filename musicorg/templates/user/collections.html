@@ -2,14 +2,14 @@
 
 {% block content %}
 {% for playlist in user_playlists %}
-    <a class="bg-dark text-light div_round_item btn" role="button" href="{{url_for('collection.index', playlist_id=playlist.id)}}">
+    <a class="bg-dark text-light div_spotify_item btn" role="button" href="{{url_for('collection.index', playlist_id=playlist.id)}}">
         <div class="row">
             <div class="col col-auto">
                 <img src="{{playlist.img_url}}"
                     alt="{{playlist.name}}"
-                    class=img_albums>
+                    class=img_playlist>
             </div>
-            <div class="col div_round_item_name">
+            <div class="col div_spotify_item_name">
                 {{playlist.name}}
             </div>
         </div>

@@ -4,14 +4,14 @@
 
 <div class="bg-light">
     {% for album in get_playlist_albums(playlist_id) %}
-        <a class="bg-dark text-light div_round_item btn" role="button" href="{{album.link}}">
+        <a class="bg-dark text-light div_spotify_item btn" role="button" href="{{album.link}}">
             <div class="row">
                 <div class="col col-auto">
                     <img src="{{album.img_url}}"
                         alt="{{album.name}}"
-                        class=img_albums>
+                        class=img_album>
                 </div>
-                <div class="col div_round_item_name">
+                <div class="col div_spotify_item_name">
                     <b>{{album.name}}</b> by {{album.get_artists_comma_separated()}}
                 </div>
             </div>
