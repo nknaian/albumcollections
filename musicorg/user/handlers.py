@@ -20,16 +20,14 @@ from . import bp
 
 @bp.route('/user/login', methods=['GET', 'POST'])
 def login():
-    if request.args.get("next"):
-        next = request.args.get("next")
-    else:
-        next = request.referrer
-
+    # Attempt to get user id. This will trigger spotify authentication
+    # the first time around, and second time have no side effect
     spotify_user.get_user_id()
     
     flash("You are now logged in through your Spotify account!", "success")
 
-    return redirect(next)
+    # Send the now logged in user to their collections (playlists)
+    return redirect(url_for('user.collections'))
 
 
 @bp.route('/user/logout', methods=['POST'])
@@ -38,14 +36,8 @@ def logout():
 
     flash("You are now logged out.", "warning")
 
-    # If the referrer is a user page, then redirect to main
-    if urlparse(request.referrer).path.split("/")[1] == "user":
-        next = url_for('main.index')
-    # Otherwise, go back to the page the user was on
-    else:
-        next = request.referrer
-
-    return redirect(next)
+    # Send user back to main page after logging out
+    return redirect(url_for('main.index'))
 
 
 @bp.route('/user/collections', methods=['GET'])
@@ -80,29 +72,10 @@ def sp_auth_complete():
         # Save their authorization code
         spotify_user.auth_new_user(request.args.get("code"))
 
-        # Call the recovered function
-        retry_func_info = session.get("user_retry_func_info", None)
-        if retry_func_info:
-            _call_retry_func(retry_func_info)
-
-    # Set next url to original referrer url.
-    if "user_referrer_url" in session and \
-            session["user_referrer_url"] is not None:
-        destination_url = session["user_referrer_url"]
-    # If it wasn't set, just redirect to main index
-    else:
-        destination_url = url_for('main.index')
-
-    # Clear all external auth session data
-    if "user_referrer_url" in session:
-        session.pop("user_referrer_url")
-    if "user_retry_func_info" in session:
-        session.pop("user_retry_func_info")
-
     if permission_granted:
-        return redirect(url_for('user.login', next=destination_url))
+        return redirect(url_for('user.login'))
     else:
-        return redirect(destination_url)
+        return url_for('main.index')
 
 
 """EXCEPTION HANDLER ROUTES"""
@@ -110,19 +83,4 @@ def sp_auth_complete():
 
 @bp.app_errorhandler(SpotifyUserAuthFailure)
 def handle_external_auth_exception(e):
-    # Save the referrer url before redirecting to the auth url,
-    # so that the original user location can be recovered and
-    # redirected back to after authentication is complete
-    session["user_referrer_url"] = request.referrer
     return redirect(e.auth_url)
-
-
-"""PRIVATE FUNCTIONS"""
-
-
-def _call_retry_func(func_info: Dict):
-    """Get the function that needs to be retried and then call it
-    """
-    func_module = import_module(func_info["module"])
-    func = getattr(func_module, func_info["qualname"])
-    func(*func_info["args"], **func_info["kwargs"])
