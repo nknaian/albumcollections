@@ -2,21 +2,70 @@
 
 {% block content %}
 
-<div class="bg-light">
-    {% for album in get_playlist_albums(playlist_id) %}
-        <a class="bg-dark text-light div_spotify_item btn" role="button" href="{{album.link}}">
+    <body onload="init('{{playlist_albums|length}}', '{{playlist_id}}')">
+
+        <div style="padding: 15px;">
             <div class="row">
-                <div class="col col-auto">
-                    <img src="{{album.img_url}}"
-                        alt="{{album.name}}"
-                        class=img_album>
+                <div class="col">
+                    <h4> {{playlist_name}} </h4>
                 </div>
-                <div class="col div_spotify_item_name">
-                    <b>{{album.name}}</b> by {{album.get_artists_comma_separated()}}
+                <div id="enable_remove_albums_btn" class="col text-right">
+                    <button type="button"
+                            class="btn btn-danger btn_main"
+                            onclick="enable_remove_albums();">
+                        Remove Albums
+                    </button>
+                </div>
+                <div id="disable_remove_albums_btn" class="col text-right" style="display: none">
+                    <button type="button"
+                            class="btn btn-secondary btn_main"
+                            onclick="disable_remove_albums();">
+                        Stop Removing Albums
+                    </button>
                 </div>
             </div>
-        </a>
-    {% endfor %}
-</div>
+        </div>
+        <div class="bg-light">
+            {% for album in playlist_albums %}
+                <!-- Link albums mode -->
+                <div id="album_link_{{loop.index0}}">
+                    <a class="bg-dark text-light div_spotify_item btn" role="button" href="{{album.link}}">
+                        <div class="row">
+                            <div class="col col-auto">
+                                <img src="{{album.img_url}}"
+                                    alt="{{album.name}}"
+                                    class=img_album>
+                            </div>
+                            <div class="col div_spotify_item_name">
+                                <b>{{album.name}}</b> by {{album.get_artists_comma_separated()}}
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Remove albums mode -->
+                <div id="album_remove_{{loop.index0}}" style="display: none" class="album_rem_wrap">
+                    <span class="remove" onclick="remove_album('{{loop.index0}}')">&times;</span>>
+                    <button class="bg-dark text-light div_spotify_item">
+                        <!-- TODO: Is there a way to save a block of html as a variable? This is
+                        exactly the same as the link albums block -->
+                        <div class="row">
+                            <div class="col col-auto">
+                                <img src="{{album.img_url}}"
+                                    alt="{{album.name}}"
+                                    class=img_album>
+                            </div>
+                            <div class="col div_spotify_item_name">
+                                <b>{{album.name}}</b> by {{album.get_artists_comma_separated()}}
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    </body>
+
+    <!-- Javascript used in this page-->
+    <script type="text/javascript" src="{{url_for('static', filename='js/collection/index.js')}}"></script>
 {% endblock %}
 

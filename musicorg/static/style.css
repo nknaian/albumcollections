@@ -42,6 +42,32 @@ h5 {
     border: 0;
 }
 
+.album_rem_wrap {
+    position: relative;
+    display: inline-block;
+    border: 1px red solid;
+    font-size: 0;
+  }
+.album_rem_wrap .remove {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    z-index: 100;
+    background-color: #FFF;
+    padding: 5px 2px 2px;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    opacity: .2;
+    text-align: center;
+    font-size: 22px;
+    line-height: 10px;
+    border-radius: 50%;
+  }
+.album_rem_wrap:hover .remove {
+    opacity: 1;
+  }
+
 
 /* ID Styles (organized by page) */
 
@@ -68,14 +94,3 @@ h5 {
     height: 40px;
     width: 40px;
 }
-
-/* PAGE index.html */
-
-/* PAGE round/base.html */
-#roundLinkTextbox {
-    width: 100%;
-}
-
-/* PAGE round/listen_phase.html */
-
-/* PAGE round/submit_phase.html */

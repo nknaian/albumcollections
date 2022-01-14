@@ -146,6 +146,18 @@ def create_playlist(name: str, tracks: List[SpotifyTrack]) -> SpotifyPlaylist:
     return new_playlist
 
 
+def remove_album_from_playlist(playlist_id, album_id):
+    # Get the spotify user account instance
+    sp = _get_sp_instance()
+
+    # Get list of track ids for tracks in the album
+    album_track_ids = [spotify_track["id"] for spotify_track in sp.album_tracks(album_id)["items"]]
+
+    # Remove all instances of these tracks from the playlist
+    print(album_track_ids)
+    sp.playlist_remove_all_occurrences_of_items(playlist_id, album_track_ids)
+
+
 '''PRIVATE FUNCTIONS'''
 
 
