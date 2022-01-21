@@ -2,18 +2,6 @@
 Styling that appears throughout the website are located in the "Broad Styles" section, listed alpabetically.
 Styling that is specific to one instance are located in the "ID Styles" section organized by page, then listed alphabetically. */
 
-/* Broad Styles */
-h1 {
-    margin-bottom: 30px;
-}
-
-h2 {
-    margin-bottom: 20px;
-}
-
-h5 {
-    margin-bottom: 10px;
-}
 
 /* Class Styles */
 .btn_main {
@@ -21,13 +9,17 @@ h5 {
 }
 
 .div_spotify_item {
-    padding: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 30px;
     margin: 10px;
     display: inline-block;
 }
 
 .div_spotify_item_name {
     min-width: 200px;
+    padding-top: 40px;
 }
 
 .img_album{
@@ -42,32 +34,23 @@ h5 {
     border: 0;
 }
 
-.album_rem_wrap {
+.album_close_wrapper {
     position: relative;
     display: inline-block;
-    border: 1px red solid;
-    font-size: 0;
-  }
-.album_rem_wrap .remove {
+}
+.album_close_wrapper .close:before {
+    content: '✕';
+}
+.album_close_wrapper .close {
     position: absolute;
-    top: 2px;
-    right: 2px;
-    z-index: 100;
-    background-color: #FFF;
-    padding: 5px 2px 2px;
-    color: #000;
-    font-weight: bold;
+    top: 5px;
+    right: 10px;
     cursor: pointer;
-    opacity: .2;
-    text-align: center;
-    font-size: 22px;
-    line-height: 10px;
-    border-radius: 50%;
-  }
-.album_rem_wrap:hover .remove {
-    opacity: 1;
-  }
+}
 
+.album_close_wrapper .close:hover {
+    color: rgb(124, 7, 7);
+}
 
 /* ID Styles (organized by page) */
 
