@@ -8,7 +8,12 @@ class SpotifyItem():
         self.name = spotify_item["name"]
 
         # Get the open.spotify link to the music
-        self.link = spotify_item["external_urls"]["spotify"]
+        # It may not exist...(there are some entires in
+        # spotify grayed out, marked as 'unavailable')
+        try:
+            self.link = spotify_item["external_urls"]["spotify"]
+        except KeyError:
+            self.link = None
 
         # Get the spotify id of the music
         self.id = spotify_item["id"]
