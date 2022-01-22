@@ -22,18 +22,6 @@ Styling that is specific to one instance are located in the "ID Styles" section 
     padding-top: 40px;
 }
 
-.img_album{
-    width: {{album.IMG_DIMEN}}px;
-    height: {{album.IMG_DIMEN}}px;
-    border: 0;
-}
-
-.img_playlist {
-    width: {{playlist.IMG_DIMEN}}px;
-    height: {{playlist.IMG_DIMEN}}px;
-    border: 0;
-}
-
 .album_close_wrapper {
     position: relative;
     display: inline-block;

@@ -6,9 +6,14 @@
         <div class="row">
             <div class="col col-auto">
                 <a class="btn" role="button" href="{{url_for('collection.index', playlist_id=playlist.id)}}">
-                    <img src="{{playlist.img_url}}"
+                    <img
+                        '{% if playlist.img_url %}'
+                            src="{{playlist.img_url}}"
+                        '{% else %}'
+                            src="/static/unknown_sp_item.jpg"
+                        '{% endif %}'
                         alt="{{playlist.name}}"
-                        class=img_playlist>
+                    >
                 </a>
             </div>
             <div class="col div_spotify_item_name">

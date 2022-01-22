@@ -13,10 +13,19 @@
                 <div id="album_{{loop.index0}}" class="album_close_wrapper bg-dark text-light div_spotify_item">                    
                     <div class="row">
                         <div class="col col-auto">
-                            <a class="btn" role="button" href="{{album.link}}">
-                                <img src="{{album.img_url}}"
+                            <a class="btn" role="button"
+                                '{% if album.link %}'
+                                    href="{{album.link}}"
+                                '{% endif %}'
+                            >
+                                <img
+                                    '{% if album.img_url %}'
+                                        src="{{album.img_url}}"
+                                    '{% else %}'
+                                        src="/static/unknown_sp_item.jpg"
+                                    '{% endif %}'
                                     alt="{{album.name}}"
-                                    class=img_album>
+                                >
                             </a>
                         </div>
                         <div class="col div_spotify_item_name">
