@@ -94,7 +94,21 @@ class Spotify:
         return SpotifyPlaylist(spotify_playlist)
 
     def get_playlist_tracks(self, id) -> List[SpotifyTrack]:
-        return [SpotifyTrack(track_item["track"]) for track_item in self.sp.playlist_tracks(id)["items"]]  # Limit is currently default 100
+        tracks = []
+
+        offset = 0
+        while True:
+            next_tracks = \
+                [SpotifyTrack(track_item["track"])
+                for track_item in self.sp.playlist_tracks(id, limit=100, offset=offset)["items"]]
+
+            if len(next_tracks):
+                tracks.extend(next_tracks)
+                offset += 100
+            else:
+                break
+
+        return tracks
 
     def get_playlist_albums(self, id) -> List[SpotifyAlbum]:
         return list(set([track.album_item for track in self.get_playlist_tracks(id)]))
