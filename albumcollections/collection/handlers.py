@@ -1,6 +1,7 @@
 from flask import render_template, request
 
-from albumcollections.spotify.spotify import SpotifyException
+from spotipy.exceptions import SpotifyException
+
 from albumcollections.spotify import spotify_user
 
 from albumcollections import spotify_iface, cache
