@@ -4,6 +4,12 @@ Styling that is specific to one instance are located in the "ID Styles" section 
 
 
 /* Class Styles */
+.navbar {
+    position:sticky;
+    top: 0;
+    z-index: 100;
+}
+
 .btn_main {
     white-space: normal;
 }
