@@ -1,15 +1,12 @@
 /* Module Variables */
 
-let num_albums = 0;
 let playlist_id;
 
-function init(n_albums, play_id) {
-    num_albums = n_albums
+/* Functions */
 
+function init(play_id) {
     playlist_id = play_id
 }
-
-/* Functions */
 
 function remove_album(album_index, album_name) {
     if (confirm(`Are you sure you want to remove ${album_name} from the collection?`)) {
@@ -33,6 +30,9 @@ function remove_album(album_index, album_name) {
         }).then(function (response_json) {
             if (response_json["success"]) {
                 $(`#album_${album_index}`).hide()
+            }
+            else {
+                alert("Sorry, failed to remove album.")
             }
         });
     }

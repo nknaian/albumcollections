@@ -2,7 +2,7 @@
 
 {% block content %}
 
-    <body onload="init('{{playlist_albums|length}}', '{{playlist_id}}')">
+    <body onload="init('{{playlist_id}}')">
         <div style="padding: 15px;">
             <h2> {{playlist_name}} </h2>
         </div>
@@ -11,18 +11,18 @@
             {% for album in playlist_albums %}
                 <!-- Link albums mode -->
                 <div id="album_{{loop.index0}}" class="album_close_wrapper bg-dark text-light div_spotify_item">                    
-                        <div class="row">
-                            <div class="col col-auto">
-                                <a class="btn" role="button" href="{{album.link}}">
-                                    <img src="{{album.img_url}}"
-                                        alt="{{album.name}}"
-                                        class=img_album>
-                                </a>
-                            </div>
-                            <div class="col div_spotify_item_name">
-                                <b>{{album.name}}</b> by {{album.get_artists_comma_separated()}}
-                            </div>
+                    <div class="row">
+                        <div class="col col-auto">
+                            <a class="btn" role="button" href="{{album.link}}">
+                                <img src="{{album.img_url}}"
+                                    alt="{{album.name}}"
+                                    class=img_album>
+                            </a>
                         </div>
+                        <div class="col div_spotify_item_name">
+                            <b>{{album.name}}</b> by {{album.get_artists_comma_separated()}}
+                        </div>
+                    </div>
                     <span class="close" onclick="remove_album('{{loop.index0}}', '{{album.name}}')"></span>
                 </div>
             {% endfor %}
