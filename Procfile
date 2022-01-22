@@ -1,0 +1,1 @@
+web: gunicorn "albumcollections:create_app()"

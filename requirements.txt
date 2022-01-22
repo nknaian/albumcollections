@@ -8,4 +8,5 @@ Flask-Session
 Flask-Testing
 Flask-Caching
 Flask-APScheduler
+gunicorn
 spotipy == 2.16.1
