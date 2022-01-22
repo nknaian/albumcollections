@@ -1,5 +1,5 @@
 # musicorg
-Organize your spotify album collection
+Organize your spotify album collections
 
 
 # Running locally
