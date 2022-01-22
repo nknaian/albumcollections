@@ -7,7 +7,7 @@ library.
 
 from flask import Blueprint
 
-from musicorg import spotify_iface
+from albumcollections import spotify_iface
 
 from .helpers import is_user_logged_in, get_user_display_name
 
@@ -23,4 +23,4 @@ def inject_user_vars():
     )
 
 
-from musicorg.user import handlers
+from albumcollections.user import handlers

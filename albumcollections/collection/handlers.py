@@ -1,10 +1,10 @@
 from flask import render_template, redirect, url_for, request
 
-from musicorg.spotify.spotify import SpotifyException
-from musicorg.spotify.item.spotify_music import SpotifyAlbum
-from musicorg.spotify import spotify_user
+from albumcollections.spotify.spotify import SpotifyException
+from albumcollections.spotify.item.spotify_music import SpotifyAlbum
+from albumcollections.spotify import spotify_user
 
-from musicorg import spotify_iface, cache
+from albumcollections import spotify_iface, cache
 
 from . import bp
 

@@ -1,7 +1,7 @@
 import enum
 
 
-class musicorgEnum(enum.Enum):
+class albumcollectionsEnum(enum.Enum):
     @classmethod
     def choices(cls):
         return [(choice, choice.name) for choice in cls]
@@ -14,17 +14,17 @@ class musicorgEnum(enum.Enum):
         return str(self.value)
 
 
-class MusicType(musicorgEnum):
+class MusicType(albumcollectionsEnum):
     track = 0
     album = 1
 
 
-class RoundStatus(musicorgEnum):
+class RoundStatus(albumcollectionsEnum):
     submit = 0
     listen = 1
     revealed = 2
 
 
-class SnoozinRecType(musicorgEnum):
+class SnoozinRecType(albumcollectionsEnum):
     random = 0
     similar = 1

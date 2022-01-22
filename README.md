@@ -1,4 +1,4 @@
-# musicorg
+# albumcollections
 Organize your spotify album collections
 
 
@@ -27,7 +27,7 @@ as I'm aware, it should be possible to do everything on Mac or Windows as well.
     export SPOTIPY_CLIENT_ID="insert-spotify-client-id-here"
     export SPOTIPY_CLIENT_SECRET="insert-spotify-client-secret-here"
     export FLASK_SECRET_KEY="insert-your-secret-key"
-    export FLASK_APP=musicorg
+    export FLASK_APP=albumcollections
     export FLASK_ENV=development
     ```
     - **note**: The sqlite database will be created at the path you specify upon the first run of the site.
@@ -46,7 +46,7 @@ as I'm aware, it should be possible to do everything on Mac or Windows as well.
     - Add the following line to your *.env* file: `export SPOTIPY_REDIRECT_URI="http://localhost:5000/sp_auth_complete"`
     - In your spotify developer app (https://developer.spotify.com/dashboard) add this *Redirect URI*: `http://localhost:5000/sp_auth_complete`
 - Activate your virtual environment `source path-to-venv/bin/activate`
-- From the top level musicorg directory, run: `flask run`
+- From the top level albumcollections directory, run: `flask run`
 - Open `localhost:5000` in your browser
 
 ### Run website in browser on different device on same LAN (ex: to test on mobile)
@@ -59,5 +59,5 @@ as I'm aware, it should be possible to do everything on Mac or Windows as well.
 netsh interface portproxy add v4tov4 listenport=5000 listenaddress=0.0.0.0 connectport=5000 connectaddress=<insert_your_wsl2_ip>
 ```
 - Activate your virtual environment `source path-to-venv/bin/activate`
-- From the top level musicorg directory, run: `flask run --host=0.0.0.0`
+- From the top level albumcollections directory, run: `flask run --host=0.0.0.0`
 - Open `<insert-your-host-ip>:5000` in browser of your other device on the same LAN as your host

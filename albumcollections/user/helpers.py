@@ -1,9 +1,9 @@
 from typing import Union, List
 
-from musicorg.spotify import spotify_user
-from musicorg.spotify.item.spotify_music import SpotifyAlbum
+from albumcollections.spotify import spotify_user
+from albumcollections.spotify.item.spotify_music import SpotifyAlbum
 
-from musicorg import spotify_iface
+from albumcollections import spotify_iface
 
 """PUBLIC FUNCTIONS"""
 

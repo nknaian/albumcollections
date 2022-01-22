@@ -4,7 +4,7 @@ account, using the spotipy authorization code flow.
 If a function is called that requires user authentication, then
 the 'SpotifyUserAuthFailure' exception shall be raised, containing
 the authorization url that should be visited to log the user in
-to spotify and authorize the musicorg app. It is the caller's
+to spotify and authorize the albumcollections app. It is the caller's
 responsibility to catch this exception and redirect to the authorization
 url and then direct back towards what the user was trying to do.
 """
@@ -50,7 +50,7 @@ class SpotifyUserAuthFailure(Exception):
 
 def get_auth_url(show_dialog=False):
     """Get url for user to visit to sign in to spotify
-    and give permission to musicorg. Permission is only
+    and give permission to albumcollections. Permission is only
     asked for on first authentication from a user by default. To
     show the dialog box (which also shows the "not you" button),
     then set `show_dialog` to True.

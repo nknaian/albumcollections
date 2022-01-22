@@ -7,4 +7,4 @@ from flask import Blueprint
 bp = Blueprint('collection', __name__)
 
 
-from musicorg.collection import handlers
+from albumcollections.collection import handlers

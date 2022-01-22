@@ -16,7 +16,7 @@ from spotipy.exceptions import SpotifyException
 
 from .item.spotify_music import SpotifyMusic, SpotifyAlbum, SpotifyTrack
 from .item.spotify_playlist import SpotifyPlaylist
-from musicorg.enums import MusicType
+from albumcollections.enums import MusicType
 
 
 """Maximum number of samples that can be used

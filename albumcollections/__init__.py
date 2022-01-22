@@ -7,8 +7,8 @@ from flask_session import Session
 from flask_caching import Cache
 from flask_apscheduler import APScheduler
 
-from musicorg.spotify.spotify import Spotify
-from musicorg.config import Config
+from albumcollections.spotify.spotify import Spotify
+from albumcollections.config import Config
 
 
 # Create cache
@@ -39,24 +39,24 @@ def create_app(config_class=Config):
     # Initialize scheduler and start background tasks
     scheduler.init_app(app)
 
-    from musicorg.main import background_tasks
+    from albumcollections.main import background_tasks
     scheduler.start()
 
     # Register blueprints
-    from musicorg.main import bp as main_bp
+    from albumcollections.main import bp as main_bp
     app.register_blueprint(main_bp)
 
-    from musicorg.user import bp as user_bp
+    from albumcollections.user import bp as user_bp
     app.register_blueprint(user_bp)
 
-    from musicorg.collection import bp as collection_bp
+    from albumcollections.collection import bp as collection_bp
     app.register_blueprint(collection_bp)
 
-    from musicorg.errors import bp as errors_bp
+    from albumcollections.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
 
     if app.config["TESTING"]:
-        from musicorg.test import bp as test_bp
+        from albumcollections.test import bp as test_bp
         app.register_blueprint(test_bp)
 
     # Create bootstrap flask app

@@ -5,11 +5,11 @@ from urllib.parse import urlparse
 from flask import redirect, render_template, url_for, flash
 from flask.globals import request, session
 
-from musicorg.spotify import spotify_user
-from musicorg.spotify.spotify_user import SpotifyUserAuthFailure
-from musicorg.errors.exceptions import musicorgError
+from albumcollections.spotify import spotify_user
+from albumcollections.spotify.spotify_user import SpotifyUserAuthFailure
+from albumcollections.errors.exceptions import albumcollectionsError
 
-from musicorg import spotify_iface, cache
+from albumcollections import spotify_iface, cache
 
 from . import bp
 

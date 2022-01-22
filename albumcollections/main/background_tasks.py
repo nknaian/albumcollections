@@ -1,9 +1,9 @@
 import random
 
-from musicorg.spotify.item.spotify_music import SpotifyAlbum
-from musicorg.enums import MusicType, RoundStatus
+from albumcollections.spotify.item.spotify_music import SpotifyAlbum
+from albumcollections.enums import MusicType, RoundStatus
 
-from musicorg import spotify_iface, scheduler, cache
+from albumcollections import spotify_iface, scheduler, cache
 
 
 '''CONSTANTS'''

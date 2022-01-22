@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-from musicorg import cache
+from albumcollections import cache
 
 bp = Blueprint('main', __name__)
 
@@ -12,4 +12,4 @@ def inject_main_vars():
     )
 
 
-from musicorg.main import handlers
+from albumcollections.main import handlers
