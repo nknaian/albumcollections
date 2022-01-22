@@ -104,7 +104,7 @@ class Spotify:
 
             if len(next_tracks):
                 tracks.extend(next_tracks)
-                offset += 100
+                offset += len(next_tracks)
             else:
                 break
 
