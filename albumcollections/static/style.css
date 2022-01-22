@@ -1,10 +1,10 @@
-/* This stylesheet contains custom styling for Musicrecs. It overrides any defaults from Bootstrap.
+/* This stylesheet contains custom styling for albumcollections. It overrides any defaults from Bootstrap.
 Styling that appears throughout the website are located in the "Broad Styles" section, listed alpabetically.
 Styling that is specific to one instance are located in the "ID Styles" section organized by page, then listed alphabetically. */
 
 
 /* Class Styles */
-.navbar {
+.main_navbar {
     position:sticky;
     top: 0;
     z-index: 100;
@@ -65,9 +65,4 @@ Styling that is specific to one instance are located in the "ID Styles" section 
     width: 35px;
     height: 35px;
     background: url(/static/loadingimage.gif) no-repeat;
-}
-
-.navbar_logo {
-    height: 40px;
-    width: 40px;
 }

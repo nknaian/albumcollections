@@ -1,12 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
+    <h4 style="text-align: center; padding: 30px;"> {{playlist_name}}</h4>
     <body onload="init('{{playlist_id}}')">
-        <div style="padding: 15px;">
-            <h2> {{playlist_name}} </h2>
-        </div>
-
         {% for album in playlist_albums %}
             <div id="album_{{loop.index0}}" class="album_close_wrapper bg-dark text-light div_spotify_item">
                 <div class="row">

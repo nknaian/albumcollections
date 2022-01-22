@@ -2,11 +2,9 @@ flake8
 python-dotenv
 Flask
 Flask-sqlalchemy
-Flask-WTF
 Flask-Bootstrap4
 Flask-Session
 Flask-Testing
 Flask-Caching
-Flask-APScheduler
 gunicorn
 spotipy == 2.16.1

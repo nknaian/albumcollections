@@ -100,7 +100,7 @@ class Spotify:
         while True:
             next_tracks = \
                 [SpotifyTrack(track_item["track"])
-                for track_item in self.sp.playlist_tracks(id, limit=100, offset=offset)["items"]]
+                 for track_item in self.sp.playlist_tracks(id, limit=100, offset=offset)["items"]]
 
             if len(next_tracks):
                 tracks.extend(next_tracks)

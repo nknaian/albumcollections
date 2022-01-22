@@ -11,52 +11,32 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
         <!-- albumcollections CSS -->
-        <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}?v=0.0.2">
+        <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}?v=0.0.3">
 
         <title>{% block title %} {% endblock %}</title>
     </head>
     <body>
-        <nav class="navbar navbar-light bg-light navbar-expand-sm">
-            {% if is_user_logged_in() %}
-                <a class="navbar-brand" href="{{ url_for('main.index')}}"><img src="/static/Snoozyphones_Page.png" class="navbar_logo"></a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-            {% else %}
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <a class="navbar-brand" href="{{ url_for('main.index')}}"><img src="/static/Snoozyphones_Page.png" class="navbar_logo"></a>
-            {% endif %}
-            <div class="collapse navbar-collapse" id="navbarNav">
-                {% if is_user_logged_in() %}
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-wrap" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: black;">
-                                {{get_user_display_name()}}
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="{{ url_for('user.collections') }}">Your album collections</a>
-                                <div class="dropdown-divider"></div>
-                                <form method="post" action="{{ url_for('user.logout')}}";>
-                                    <input class="dropdown-item" type="submit" name="logout_from_spotify" value="Log out" style="color: blue;">
-                                </form>
-                            </div>
-                        </li>
-                    </ul>
-                {% endif %}
-            </div>
-            {% if not is_user_logged_in() %}
+        <nav class="navbar main_navbar navbar-light bg-light">
+            <a class="navbar-brand" href="{{ url_for('main.index')}}">Album Collections</a>
             <div class="navbar-nav">
-                <a class="nav-item active me-2">
-                    <form
-                        method="post"
-                        action="{{ url_for('user.login')}}";>
-                        <input class="btn btn-primary btn_main" type="submit" name="login_with_spotify" value="Log in">
-                    </form>
-                </a>
+                <li class="nav-item active">
+                    {% if is_user_logged_in() %}
+                        <form
+                            method="post"
+                            name="logout_from_spotify"
+                            action="{{ url_for('user.logout')}}";>
+                            <a class="nav-link" href="#" onclick="document.logout_from_spotify.submit();">Log out</a>
+                        </form>
+                    {% else %}
+                        <form
+                            method="post"
+                            name="login_from_spotify"
+                            action="{{ url_for('user.login')}}";>
+                            <a class="nav-link" href="#" onclick="document.login_from_spotify.submit();">Log in</a>
+                        </form>
+                    {% endif %}
+                </li>
             </div>
-            {% endif %}
         </nav>
         <div class="container-fluid" style="margin: 0 !important; padding: 0 !important">
             <!-- Loading content goes here -->
@@ -89,5 +69,6 @@
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="{{url_for('static', filename='js/base.js')}}"></script>
     </body>
 </html>

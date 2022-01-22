@@ -5,7 +5,6 @@ from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_session import Session
 from flask_caching import Cache
-from flask_apscheduler import APScheduler
 
 from albumcollections.spotify.spotify import Spotify
 from albumcollections.config import Config
@@ -13,9 +12,6 @@ from albumcollections.config import Config
 
 # Create cache
 cache = Cache()
-
-# Create scheduler
-scheduler = APScheduler()
 
 # Create 'client credentials' spotify interface
 spotify_iface = Spotify()
@@ -35,12 +31,6 @@ def create_app(config_class=Config):
 
     # Initialize cache
     cache.init_app(app)
-
-    # Initialize scheduler and start background tasks
-    scheduler.init_app(app)
-
-    from albumcollections.main import background_tasks
-    scheduler.start()
 
     # Register blueprints
     from albumcollections.main import bp as main_bp

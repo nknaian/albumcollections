@@ -1,8 +1,38 @@
-{% extends 'main/base.html' %}
+{% extends 'base.html' %}
 
-{% block main_content %}
-    <div class="mx-auto" style="text-align: center; font-size: larger;">
-        <p>albumcollections is an album organizing wrapper around spotify, using playlists as storage.</p>
-        <p>Each playlist in your spotify account will be represented here as a 'collection' of albums</p>
-    </div>
+{% block content %}
+    {% if not is_user_logged_in() %}
+        <div class="mx-auto" style="padding-top: 15vh; text-align: center; font-size: larger;">
+            <p>albumcollections is an album organizing wrapper around spotify, using playlists as storage.</p>
+            <p>Each playlist in your spotify account will be represented here as a 'collection' of albums.</p>
+            <form
+                method="post"
+                name="login_with_spotify"
+                action="{{ url_for('user.login')}}";>
+                Start by <a href="#" onclick="document.login_with_spotify.submit();">logging in with spotify</a>.
+            </form>
+        </div>
+    {% else %}
+        {% for playlist in user_playlists %}
+            <div class="bg-dark text-light div_spotify_item">
+                <div class="row">
+                    <div class="col col-auto">
+                        <a class="btn" role="button" href="{{url_for('collection.index', playlist_id=playlist.id)}}" onclick="loadscreen();">
+                            <img
+                                '{% if playlist.img_url %}'
+                                    src="{{playlist.img_url}}"
+                                '{% else %}'
+                                    src="/static/unknown_sp_item.jpg"
+                                '{% endif %}'
+                                alt="{{playlist.name}}"
+                            >
+                        </a>
+                    </div>
+                    <div class="col div_spotify_item_name">
+                        {{playlist.name}}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
 {% endblock %}

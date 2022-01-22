@@ -1,7 +1,6 @@
-from flask import render_template, redirect, url_for, request
+from flask import render_template, request
 
 from albumcollections.spotify.spotify import SpotifyException
-from albumcollections.spotify.item.spotify_music import SpotifyAlbum
 from albumcollections.spotify import spotify_user
 
 from albumcollections import spotify_iface, cache
@@ -21,7 +20,10 @@ def index(playlist_id):
     # Get the name of the playlist
     playlist_name = spotify_iface.get_playlist_from_link(playlist_id).name
 
-    return render_template('collection/index.html', playlist_id=playlist_id, playlist_name=playlist_name, playlist_albums=playlist_albums)
+    return render_template('collection/index.html',
+                           playlist_id=playlist_id,
+                           playlist_name=playlist_name,
+                           playlist_albums=playlist_albums)
 
 
 @bp.route('/collection/remove_album', methods=['POST'])
