@@ -9,14 +9,12 @@ responsibility to catch this exception and redirect to the authorization
 url and then direct back towards what the user was trying to do.
 """
 
-import os
 from typing import List
-import uuid
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
-from flask import session
+from albumcollections import spoipy_cache_handler
 
 from .item.spotify_music import SpotifyTrack
 from .item.spotify_playlist import SpotifyPlaylist
@@ -26,7 +24,6 @@ from .item.spotify_playlist import SpotifyPlaylist
 
 
 SCOPE = 'playlist-modify-public'
-CACHE_FOLDER = '.spotify_user_caches/'
 
 
 '''EXCEPTIONS'''
@@ -64,13 +61,12 @@ def auth_new_user(code):
 
 
 def logout():
-    """Remove the cache code for this user. This doesn't 'unauthenticate'
+    """Remove the cache token for this user. This doesn't 'unauthenticate'
     the user, but it will force an `SpotifyUserAuthFailure` the next time
     that `_get_sp_instance` is called.
     """
     # Remove cache code for this user
-    if os.path.exists(_session_cache_path()):
-        os.remove(_session_cache_path())
+    spoipy_cache_handler.remove_cached_token()
 
 
 '''PUBLIC FUNCTIONS'''
@@ -160,18 +156,6 @@ def remove_album_from_playlist(playlist_id, album_id):
 '''PRIVATE FUNCTIONS'''
 
 
-def _session_cache_path():
-    print("\n\n\nsession path?\n\n\n")
-    if not os.path.exists(CACHE_FOLDER):
-        print("path doesn't exist")
-        os.makedirs(CACHE_FOLDER)
-
-    if not session.get('uuid'):
-        session['uuid'] = str(uuid.uuid4())
-
-    return CACHE_FOLDER + session.get('uuid')
-
-
 def _get_sp_instance():
     """Create an spotify auth_manager and check whether the current user has
     a token (has been authorized already). If the user has a token, then they
@@ -180,7 +164,7 @@ def _get_sp_instance():
     """
     auth_manager = _get_auth_manager()
 
-    if auth_manager.get_cached_token():
+    if auth_manager.validate_token(spoipy_cache_handler.get_cached_token()):
         return spotipy.Spotify(auth_manager=auth_manager)
     else:
         raise SpotifyUserAuthFailure(get_auth_url(show_dialog=True))
@@ -188,5 +172,5 @@ def _get_sp_instance():
 
 def _get_auth_manager(show_dialog=False):
     return SpotifyOAuth(scope=SCOPE,
-                        cache_path=_session_cache_path(),
+                        cache_handler=spoipy_cache_handler,
                         show_dialog=show_dialog)

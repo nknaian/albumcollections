@@ -7,4 +7,4 @@ Flask-Session
 Flask-Testing
 Flask-Caching
 gunicorn
-spotipy == 2.16.1
+spotipy
