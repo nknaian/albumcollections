@@ -1,5 +1,6 @@
 import random
 import time
+import os
 
 from flask import Flask, session
 from flask_bootstrap import Bootstrap
@@ -8,7 +9,7 @@ from flask_caching import Cache
 
 from albumcollections.spotify.spotify import Spotify
 from albumcollections.spotify import spotipy_cache_handler
-from albumcollections.config import Config
+from albumcollections.config import DevConfig, ProdConfig
 
 
 # Create cache
@@ -24,10 +25,15 @@ spoipy_cache_handler = spotipy_cache_handler.FlaskSessionCacheHandler(session)
 random.seed(time.time())
 
 
-def create_app(config_class=Config):
+def create_app():
     # Create flask application from config
     app = Flask(__name__)
-    app.config.from_object(config_class)
+
+    # Choose from development or production configuration
+    if os.environ.get('FLASK_ENV') and os.environ.get('FLASK_ENV') == "development":
+        app.config.from_object(DevConfig)
+    else:
+        app.config.from_object(ProdConfig)
 
     # Initialize spotify as long as we're not testing
     if not app.config["TESTING"]:

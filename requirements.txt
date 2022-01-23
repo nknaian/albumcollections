@@ -6,5 +6,6 @@ Flask-Bootstrap4
 Flask-Session
 Flask-Testing
 Flask-Caching
+pylibmc==1.5.2
 gunicorn
 spotipy
