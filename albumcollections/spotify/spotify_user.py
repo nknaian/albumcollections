@@ -161,7 +161,9 @@ def remove_album_from_playlist(playlist_id, album_id):
 
 
 def _session_cache_path():
+    print("\n\n\nsession path?\n\n\n")
     if not os.path.exists(CACHE_FOLDER):
+        print("path doesn't exist")
         os.makedirs(CACHE_FOLDER)
 
     if not session.get('uuid'):
