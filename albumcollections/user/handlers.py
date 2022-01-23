@@ -51,7 +51,7 @@ def sp_auth_complete():
     if permission_granted:
         return redirect(url_for('user.login'))
     else:
-        return url_for('main.index')
+        return redirect(url_for('main.index'))
 
 
 """EXCEPTION HANDLER ROUTES"""
