@@ -4,7 +4,7 @@ from flask.helpers import url_for
 
 import flask_testing
 
-from albumcollections.config import Config
+from albumcollections.config import DevConfig
 from albumcollections.spotify.item.spotify_artist import SpotifyArtist
 from albumcollections.spotify.item.spotify_music import SpotifyAlbum
 from albumcollections.spotify.item.spotify_playlist import SpotifyPlaylist
@@ -12,7 +12,7 @@ import albumcollections.spotify.spotify_user as sp_user
 
 from albumcollections import spotify_iface
 
-from albumcollections import create_app, cache
+from albumcollections import create_app
 
 
 class PickableMock(Mock):
@@ -24,7 +24,7 @@ class PickableMock(Mock):
         return (Mock, ())
 
 
-class TestingConfig(Config):
+class TestingConfig(DevConfig):
     TESTING = True
     PRESERVE_CONTEXT_ON_EXCEPTION = False
 

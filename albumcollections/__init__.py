@@ -25,11 +25,13 @@ spoipy_cache_handler = spotipy_cache_handler.FlaskSessionCacheHandler(session)
 random.seed(time.time())
 
 
-def create_app():
+def create_app(test_config=None):
     # Create flask application from config
     app = Flask(__name__)
 
-    # Choose from development or production configuration
+    # Choose from testing, development or production configuration
+    if test_config:
+        app.config.from_object(test_config)
     if os.environ.get('FLASK_ENV') and os.environ.get('FLASK_ENV') == "development":
         app.config.from_object(DevConfig)
     else:
