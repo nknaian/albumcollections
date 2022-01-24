@@ -32,6 +32,7 @@ class Spotify:
         return SpotifyPlaylist(spotify_playlist)
 
     def get_playlist_tracks(self, id) -> List[SpotifyTrack]:
+        """Get all tracks in the given playlist, retaining track order"""
         tracks = []
 
         offset = 0
@@ -49,4 +50,12 @@ class Spotify:
         return tracks
 
     def get_playlist_albums(self, id) -> List[SpotifyAlbum]:
-        return list(set([track.album_item for track in self.get_playlist_tracks(id)]))
+        """Get all albums in the given playlist, retaining album order
+        and removing duplicates
+        """
+        albums = []
+        for track in self.get_playlist_tracks(id):
+            if track.album not in albums:
+                albums.append(track.album)
+
+        return albums
