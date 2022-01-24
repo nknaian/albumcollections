@@ -8,7 +8,7 @@ function init(play_id) {
     playlist_id = play_id
 }
 
-function remove_album(album_index, album_name) {
+function remove_album(album_name, album_id) {
     if (confirm(`Are you sure you want to remove ${album_name} from the collection?`)) {
         fetch(`/collection/remove_album`, {
 
@@ -23,13 +23,13 @@ function remove_album(album_index, album_name) {
             // A JSON payload
             body: JSON.stringify({
                 "playlist_id": playlist_id,
-                "album_index": album_index
+                "album_id": album_id
             })
         }).then(function (response) {
             return response.json();
         }).then(function (response_json) {
             if (response_json["success"]) {
-                $(`#album_${album_index}`).hide()
+                $(`#${album_id}`).hide()
             }
             else {
                 alert("Sorry, failed to remove album.")

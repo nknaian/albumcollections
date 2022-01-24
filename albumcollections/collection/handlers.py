@@ -4,7 +4,7 @@ from spotipy.exceptions import SpotifyException
 
 from albumcollections.spotify import spotify_user
 
-from albumcollections import spotify_iface, cache
+from albumcollections import spotify_iface
 
 from . import bp
 
@@ -13,10 +13,6 @@ from . import bp
 def index(playlist_id):
     # Get list of albums in playlist
     playlist_albums = spotify_iface.get_playlist_albums(playlist_id)
-
-    # Cache the list of albums
-    # NOTE: What should timeout be?
-    cache.set(f"playlist_albums_{playlist_id}", playlist_albums, timeout=0)
 
     # Get the name of the playlist
     playlist_name = spotify_iface.get_playlist_from_link(playlist_id).name
@@ -35,22 +31,15 @@ def remove_album():
     if request.method == 'POST':
         # Get values from post request
         playlist_id = request.get_json()["playlist_id"]
-        album_index = int(request.get_json()["album_index"])
+        album_id = request.get_json()["album_id"]
 
         # Initialize response dict
         response_dict = {"success": True}
 
-        # Get cached playlist albums
-        playlist_albums = cache.get(f"playlist_albums_{playlist_id}")
-
-        # If we've got albums, then go ahead and remove the requested one
-        if playlist_albums:
-            # Get SpotifyAlbum that was requested to be removed
-            album = playlist_albums[album_index]
-
-            try:
-                spotify_user.remove_album_from_playlist(playlist_id, album.id)
-            except SpotifyException:
-                response_dict["success"] = False
+        # Try removing the requested album
+        try:
+            spotify_user.remove_album_from_playlist(playlist_id, album_id)
+        except SpotifyException:
+            response_dict["success"] = False
 
         return response_dict, 200

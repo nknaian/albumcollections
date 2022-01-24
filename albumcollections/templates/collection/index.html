@@ -4,7 +4,7 @@
     <h4 style="text-align: center; padding: 30px;"> {{playlist_name}}</h4>
     <body onload="init('{{playlist_id}}')">
         {% for album in playlist_albums %}
-            <div id="album_{{loop.index0}}" class="album_close_wrapper bg-dark text-light div_spotify_item">
+            <div id="{{album.id}}" class="album_close_wrapper bg-dark text-light div_spotify_item">
                 <div class="row">
                     <div class="col col-auto">
                         <a class="btn" role="button"
@@ -26,7 +26,7 @@
                         <b>{{album.name}}</b> by {{album.get_artists_comma_separated()}}
                     </div>
                 </div>
-                <span class="close" onclick="remove_album('{{loop.index0}}', '{{album.name}}')"></span>
+                <span class="close" onclick="remove_album('{{album.name}}', '{{album.id}}')"></span>
             </div>
         {% endfor %}
     </body>
