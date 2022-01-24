@@ -150,7 +150,7 @@ def remove_album_from_playlist(playlist_id, album_id):
     album_track_ids = [spotify_track["id"] for spotify_track in sp.album_tracks(album_id)["items"]]
 
     # Remove all instances of these tracks from the playlist
-    sp.playlist_remove_all_occurrences_of_items("lksdjfsdlf", album_track_ids)
+    sp.playlist_remove_all_occurrences_of_items(playlist_id, album_track_ids)
 
 
 '''PRIVATE FUNCTIONS'''
