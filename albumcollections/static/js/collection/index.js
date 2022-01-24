@@ -32,7 +32,7 @@ function remove_album(album_name, album_id) {
                 $(`#${album_id}`).hide()
             }
             else {
-                alert("Sorry, failed to remove album.")
+                alert(`Sorry, failed to remove album.\n\n${response_json["exception"]}`)
             }
         });
     }

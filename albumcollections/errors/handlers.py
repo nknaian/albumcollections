@@ -19,7 +19,7 @@ def handle_user_errors(e):
     if isinstance(e, albumcollectionsAlert):
         flash(str(e), "warning")
     elif isinstance(e, albumcollectionsError):
-        flash(f"Internal Error: {str(e)}", "danger")
+        flash(str(e), "danger")
 
     if e._redirect_location:
         return redirect(e._redirect_location)

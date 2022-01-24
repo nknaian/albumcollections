@@ -1,6 +1,10 @@
 from flask import redirect, url_for, flash
 from flask.globals import request
 
+from spotipy.exceptions import SpotifyException
+
+from albumcollections.errors.exceptions import albumcollectionsError
+
 from albumcollections.spotify import spotify_user
 from albumcollections.spotify.spotify_user import SpotifyUserAuthFailure
 
@@ -14,10 +18,14 @@ from . import bp
 def login():
     # Attempt to get user id. This will trigger spotify authentication
     # the first time around, and second time have no side effect
-    spotify_user.get_user_id()
+    try:
+        spotify_user.get_user_id()
 
-    flash(f"Hello {spotify_user.get_user_display_name()}! You are now logged in through your Spotify account.",
-          "success")
+        flash(f"Hello {spotify_user.get_user_display_name()}! You are now logged in through your Spotify account.",
+              "success")
+    except SpotifyException as e:
+        spotify_user.logout()
+        raise albumcollectionsError(f"Failed to authenticate with spotify\n{e}", url_for('main.index'))
 
     return redirect(url_for('main.index'))
 
@@ -46,7 +54,11 @@ def sp_auth_complete():
         permission_granted = True
 
         # Save their authorization code
-        spotify_user.auth_new_user(request.args.get("code"))
+        try:
+            spotify_user.auth_new_user(request.args.get("code"))
+        except SpotifyException as e:
+            spotify_user.logout()
+            raise albumcollectionsError(f"Failed to login\n{e}", url_for('main.index'))
 
     if permission_granted:
         return redirect(url_for('user.login'))
