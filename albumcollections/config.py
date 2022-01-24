@@ -34,16 +34,16 @@ class ProdConfig(object):
         CACHE_MEMCACHED_SERVERS = os.environ.get('MEMCACHIER_SERVERS').split(',')
         CACHE_MEMCACHED_USERNAME = os.environ.get('MEMCACHIER_USERNAME')
         CACHE_MEMCACHED_PASSWORD = os.environ.get('MEMCACHIER_PASSWORD')
-        CACHE_OPTIONS = { 'behaviors': {
+        CACHE_OPTIONS = {'behaviors': {
             # Faster IO
             'tcp_nodelay': True,
             # Keep connection alive
             'tcp_keepalive': True,
             # Timeout for set/get requests
-            'connect_timeout': 2000, # ms
-            'send_timeout': 750 * 1000, # us
-            'receive_timeout': 750 * 1000, # us
-            '_poll_timeout': 2000, # ms
+            'connect_timeout': 2000,  # ms
+            'send_timeout': 750 * 1000,  # us
+            'receive_timeout': 750 * 1000,  # us
+            '_poll_timeout': 2000,  # ms
             # Better failover
             'ketama': True,
             'remove_failed': 1,

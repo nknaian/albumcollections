@@ -41,10 +41,6 @@ class AlbumCollectionsTestCase(flask_testing.TestCase, unittest.TestCase):
         # Mock the user being logged out
         self.unauth_dummy_user()
 
-        amock = PickableMock()
-
-        cache.set("value", amock)
-
         # Mock spotify interface
         spotify_iface.get_playlist_albums = Mock(side_effect=self._mock_get_playlist_albums)
         spotify_iface.get_playlist_from_link = Mock(side_effect=self._mock_get_playlist_from_link)

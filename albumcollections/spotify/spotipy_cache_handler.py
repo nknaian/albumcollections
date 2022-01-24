@@ -3,7 +3,7 @@ from spotipy.cache_handler import CacheHandler
 
 class FlaskSessionCacheHandler(CacheHandler):
     """Flask-Session handler for spotipy"""
-    
+
     def __init__(self, flask_session) -> None:
         self.flask_session = flask_session
 
@@ -15,4 +15,3 @@ class FlaskSessionCacheHandler(CacheHandler):
 
     def remove_cached_token(self):
         self.flask_session.pop('token')
-
