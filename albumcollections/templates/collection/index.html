@@ -29,7 +29,9 @@
                         <b>{{album.name}}</b> by {{album.get_artists_comma_separated()}}
                     </div>
                 </div>
-                <span class="close remove_album"></span>
+                {% if is_user_logged_in() %}
+                    <span class="close remove_album"></span>
+                {% endif %}
             </div>
         {% endfor %}
     </body>
