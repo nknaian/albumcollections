@@ -14,6 +14,7 @@ class DevConfig(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     SESSION_TYPE = 'sqlalchemy'
+
     SECRET_KEY = os.environ.get('FLASK_SECRET_KEY') or 'you-will-never-guess'
 
 
@@ -23,12 +24,11 @@ class ProdConfig(object):
     use in production
     """
 
-    # NOTE: I'm not sure how, but this seems to be working in production on heroku
-    # I thought that because the filesystem isn't writable it wouldn't work...
-    # When logging in w/ bash to the system I can't find the ".flask_session" folder
-    # anywhere, but somehow the session dictionary seems to be functioning
-    SESSION_TYPE = 'filesystem'
-    SESSION_FILE_DIR = './.flask_session/'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    SESSION_TYPE = 'sqlalchemy'
+
     SECRET_KEY = os.environ.get('FLASK_SECRET_KEY') or 'you-will-never-guess'
 
     if os.environ.get('MEMCACHIER_SERVERS'):

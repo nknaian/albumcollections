@@ -41,8 +41,6 @@ def create_app(test_config=None):
     else:
         app.config.from_object(ProdConfig)
 
-    app.config['SESSION_SQLALCHEMY'] = db
-
     # Initialize spotify as long as we're not testing
     if not app.config["TESTING"]:
         spotify_iface.init_sp()
@@ -74,6 +72,7 @@ def create_app(test_config=None):
     Bootstrap(app)
 
     # Create flask session
+    app.config['SESSION_SQLALCHEMY'] = db
     Session(app)
 
     # Create tables
