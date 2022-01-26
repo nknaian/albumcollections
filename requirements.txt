@@ -7,5 +7,6 @@ Flask-Session
 Flask-Testing
 Flask-Caching
 pylibmc==1.5.2
+psycopg2-binary
 gunicorn
 spotipy

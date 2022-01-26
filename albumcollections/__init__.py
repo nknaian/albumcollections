@@ -3,6 +3,7 @@ import time
 import os
 
 from flask import Flask, session
+from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from flask_session import Session
 from flask_caching import Cache
@@ -11,6 +12,9 @@ from albumcollections.spotify.spotify import Spotify
 from albumcollections.spotify import spotipy_cache_handler
 from albumcollections.config import DevConfig, ProdConfig
 
+
+# Create db
+db = SQLAlchemy()
 
 # Create cache
 cache = Cache()
@@ -37,9 +41,14 @@ def create_app(test_config=None):
     else:
         app.config.from_object(ProdConfig)
 
+    app.config['SESSION_SQLALCHEMY'] = db
+
     # Initialize spotify as long as we're not testing
     if not app.config["TESTING"]:
         spotify_iface.init_sp()
+
+    # init database
+    db.init_app(app)
 
     # Initialize cache
     cache.init_app(app)
@@ -66,5 +75,9 @@ def create_app(test_config=None):
 
     # Create flask session
     Session(app)
+
+    # Create tables
+    with app.app_context():
+        db.create_all()
 
     return app

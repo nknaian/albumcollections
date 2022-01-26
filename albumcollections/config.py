@@ -10,8 +10,10 @@ class DevConfig(object):
     CACHE_DIR = './.flask_caching/'
     CACHE_DEFAULT_TIMEOUT = 300
 
-    SESSION_TYPE = 'filesystem'
-    SESSION_FILE_DIR = './.flask_session/'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    SESSION_TYPE = 'sqlalchemy'
     SECRET_KEY = os.environ.get('FLASK_SECRET_KEY') or 'you-will-never-guess'
 
 
