@@ -24,7 +24,9 @@ class ProdConfig(object):
     use in production
     """
 
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    # The Database url that heroku provides starts with 'postgres', but sqlalchemy only
+    # accepts databases that start with 'postgresql'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL').replace("postgres", "postgresql")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     SESSION_TYPE = 'sqlalchemy'
