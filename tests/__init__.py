@@ -4,7 +4,7 @@ from flask.helpers import url_for
 
 import flask_testing
 
-from albumcollections.config import DevConfig
+from albumcollections.config import Config
 from albumcollections.spotify.item.spotify_artist import SpotifyArtist
 from albumcollections.spotify.item.spotify_music import SpotifyAlbum
 from albumcollections.spotify.item.spotify_playlist import SpotifyPlaylist
@@ -24,9 +24,13 @@ class PickableMock(Mock):
         return (Mock, ())
 
 
-class TestingConfig(DevConfig):
+class TestingConfig(Config):
     TESTING = True
     PRESERVE_CONTEXT_ON_EXCEPTION = False
+
+    # Overwrite session type to not have to deal with database in tests
+    SESSION_TYPE = 'filesystem'
+    SESSION_FILE_DIR = './.flask_session/'
 
 
 class AlbumCollectionsTestCase(flask_testing.TestCase, unittest.TestCase):

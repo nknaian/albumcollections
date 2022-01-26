@@ -1,7 +1,16 @@
 import os
 
 
-class DevConfig(object):
+class Config(object):
+    """Config base class"""
+    SECRET_KEY = os.environ.get('FLASK_SECRET_KEY') or 'you-will-never-guess'
+
+    SESSION_TYPE = 'sqlalchemy'
+
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+
+class DevConfig(Config):
     """This class is used to configure the flask app using
     default settings and environment variable settings for
     use in development
@@ -11,27 +20,17 @@ class DevConfig(object):
     CACHE_DEFAULT_TIMEOUT = 300
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-    SESSION_TYPE = 'sqlalchemy'
-
-    SECRET_KEY = os.environ.get('FLASK_SECRET_KEY') or 'you-will-never-guess'
 
 
-class ProdConfig(object):
+class ProdConfig(Config):
     """This class is used to configure the flask app using
     default settings and environment variable settings for
     use in production
     """
-
-    # The Database url that heroku provides starts with 'postgres', but sqlalchemy only
-    # accepts databases that start with 'postgresql'
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL').replace("postgres", "postgresql")
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-    SESSION_TYPE = 'sqlalchemy'
-
-    SECRET_KEY = os.environ.get('FLASK_SECRET_KEY') or 'you-will-never-guess'
+    if os.environ.get('DATABASE_URL'):
+        # The Database url that heroku provides starts with 'postgres', but sqlalchemy only
+        # accepts databases that start with 'postgresql'
+        SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL').replace("postgres", "postgresql")
 
     if os.environ.get('MEMCACHIER_SERVERS'):
         CACHE_TYPE = 'saslmemcached'

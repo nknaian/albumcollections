@@ -36,7 +36,7 @@ def create_app(test_config=None):
     # Choose from testing, development or production configuration
     if test_config:
         app.config.from_object(test_config)
-    if os.environ.get('FLASK_ENV') and os.environ.get('FLASK_ENV') == "development":
+    elif os.environ.get('FLASK_ENV') and os.environ.get('FLASK_ENV') == "development":
         app.config.from_object(DevConfig)
     else:
         app.config.from_object(ProdConfig)
