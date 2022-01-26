@@ -14,30 +14,18 @@ document.querySelectorAll('.remove_album').forEach(item => {
         album_name = this.closest('.div_spotify_item').getAttribute("data-album_name")
 
         if (confirm(`Are you sure you want to remove ${album_name} from the collection?`)) {
-            fetch(`/collection/remove_album`, {
-
-                // Declare what type of data we're sending
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-
-                // Specify the method
-                method: 'POST',
-
-                // A JSON payload
-                body: JSON.stringify({
-                    "playlist_id": playlist_id,
-                    "album_id": album_id
-                })
-            }).then(function (response) {
-                return response.json();
-            }).then(function (response_json) {
-                if (response_json["success"]) {
+            $.post('/collection/remove_album', {
+                playlist_id: playlist_id,
+                album_id: album_id
+            }).done(function (response) {
+                if (response["success"]) {
                     $(`#${album_id}`).hide()
                 }
                 else {
-                    alert(`Sorry, failed to remove album.\n\n${response_json["exception"]}`)
+                    alert(`Sorry, failed to remove album.\n\n${response["exception"]}`)
                 }
+            }).fail(function() {
+                alert("Sorry, a server failure occured.")
             });
         }
     });

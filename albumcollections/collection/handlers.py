@@ -1,4 +1,4 @@
-from flask import render_template, request, url_for
+from flask import render_template, request, url_for, jsonify
 
 from spotipy.exceptions import SpotifyException
 
@@ -35,8 +35,8 @@ def remove_album():
     # POST request
     if request.method == 'POST':
         # Get values from post request
-        playlist_id = request.get_json()["playlist_id"]
-        album_id = request.get_json()["album_id"]
+        playlist_id = request.form["playlist_id"]
+        album_id = request.form["album_id"]
 
         # Initialize response dict
         response_dict = {"success": True, "exception": None}
@@ -47,5 +47,6 @@ def remove_album():
         except SpotifyException as e:
             response_dict["success"] = False
             response_dict["exception"] = str(e)
+            print(response_dict['exception'])
 
-        return response_dict, 200
+        return jsonify(response_dict)
