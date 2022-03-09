@@ -1,5 +1,14 @@
+import enum
+
 from .spotify_item import SpotifyItem
 from .spotify_artist import SpotifyArtist
+
+
+class AlbumType(enum.Enum):
+    album = 0
+    single = 1
+    compilation = 2
+    none = 3
 
 
 class SpotifyMusic(SpotifyItem):
@@ -40,7 +49,7 @@ class SpotifyMusic(SpotifyItem):
 class SpotifyAlbum(SpotifyMusic):
     """Class to hold selected information about a spotify album."""
 
-    IMG_DIMEN = 300
+    IMG_DIMEN = 640
 
     def __init__(self, spotify_album):
         # Initialize base class
@@ -51,6 +60,21 @@ class SpotifyAlbum(SpotifyMusic):
 
         # Set the release year
         self._set_release_date(spotify_album["release_date"])
+
+        # Get the album type
+        if self.id is not None:
+            self.album_type = AlbumType[spotify_album["album_type"]]
+        else:
+            self.album_type = AlbumType.none
+
+        # Get total number of tracks
+        if self.id is not None:
+            self.total_tracks = spotify_album["total_tracks"]
+        else:
+            self.total_tracks = 0
+
+        # Init track list to empty
+        self.track_ids = []
 
 
 class SpotifyTrack(SpotifyMusic):
@@ -70,3 +94,9 @@ class SpotifyTrack(SpotifyMusic):
 
         # Set the release date (of the album)
         self._set_release_date(spotify_track["album"]["release_date"])
+
+        # Get disc number
+        self.disc_number = spotify_track["disc_number"]
+
+        # Get track number (in disc)
+        self.track_number = spotify_track["track_number"]

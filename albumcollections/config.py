@@ -34,6 +34,7 @@ class ProdConfig(Config):
 
     if os.environ.get('MEMCACHIER_SERVERS'):
         CACHE_TYPE = 'saslmemcached'
+        CACHE_DEFAULT_TIMEOUT = 3600  # One hour default timeout for cache items
         CACHE_MEMCACHED_SERVERS = os.environ.get('MEMCACHIER_SERVERS').split(',')
         CACHE_MEMCACHED_USERNAME = os.environ.get('MEMCACHIER_USERNAME')
         CACHE_MEMCACHED_PASSWORD = os.environ.get('MEMCACHIER_PASSWORD')

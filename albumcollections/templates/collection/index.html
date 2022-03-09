@@ -1,39 +1,109 @@
 {% extends 'base.html' %}
 
+{% block secondary_nav %}
+    <nav class="navbar collection_title_bar navbar-dark bg-dark text-light">
+        <div class="me-auto mx-2"><h4> {{playlist_name}}</h4></div>
+
+        <input type="checkbox" class="btn-check" id="reorder-active" autocomplete="off">
+        <label class="btn btn-primary mx-2" for="reorder-active">
+            <img src="/static/arrows-move.svg"/>
+        </label>
+
+        <button id="shuffle_play_collection" class="btn btn-primary mx-2">
+            <img src="/static/shuffle.svg"/><img src="/static/play.svg"/>
+        </button>
+    </nav>
+{% endblock %}
+
 {% block content %}
-    <h4 style="text-align: center; padding: 30px;"> {{playlist_name}}</h4>
     <body onload="init('{{playlist_id}}')">
-        {% for album in playlist_albums %}
-            <div id="{{album.id}}"
-                 class="album_close_wrapper bg-dark text-light div_spotify_item"
-                 data-album_id="{{album.id}}"
-                 data-album_name="{{album.name}}">
-                <div id="" class="row">
-                    <div class="col col-auto">
-                        <a class="btn" role="button"
-                            '{% if album.link %}'
-                                href="{{album.link}}"
+        <div id="collection_list" class="row justify-content-center justify-content-md-start" oncontextmenu="return false;">
+            {% for album in playlist_albums %}
+                <!-- col-5 -->
+                <div class="col col-auto col-md-auto album_item"
+                    id="{{album.id}}"
+                    data-album_id="{{album.id}}"
+                    data-album_name="{{album.name}}"
+                    data-album_artists="{{album.get_artists_comma_separated()}}"
+                    data-album_img_url="{{album.img_url}}"
+                    data-album_link="{{album.link}}">
+                    <div class="card bg-light album_card" data-toggle="modal" data-target="#album_control_modal">
+                        <img
+                            '{% if album.img_url %}'
+                                src="{{album.img_url}}"
+                            '{% else %}'
+                                src="/static/unknown_sp_item.jpg"
+                            '{% endif %}'
+                            alt="{{album.name}}"
+                            class="card-img img-fluid album_img"
+                            '{% if playlist_albums|length < 15 %}'
+                                style="min-width: 100px;"
+                            '{% elif playlist_albums|length < 30 %}'
+                                style="min-width: 75px;"
                             '{% endif %}'
                         >
-                            <img
-                                '{% if album.img_url %}'
-                                    src="{{album.img_url}}"
-                                '{% else %}'
-                                    src="/static/unknown_sp_item.jpg"
-                                '{% endif %}'
-                                alt="{{album.name}}"
-                            >
-                        </a>
-                    </div>
-                    <div class="col div_spotify_item_name">
-                        <b>{{album.name}}</b> by {{album.get_artists_comma_separated()}}
+                        <div class="album-item-move-container d-flex align-items-center justify-content-center">
+                            <img class="album-item-move img-fluid" src="/static/arrows-move.svg" style="width: 30px; display: none;"/>
+                        </div>
                     </div>
                 </div>
-                {% if is_user_logged_in() %}
-                    <span class="close remove_album"></span>
-                {% endif %}
+            {% endfor %}
+        </div>
+
+    <!-- Select device popup window-->
+    <div id="select_device_modal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Select device to play collection</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <select id="device_select" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                    </select>
+                    <div id="device_play_loader" class="d-flex flex-column align-items-center">
+                        <div class="device_play_load_item loader py-2" style="display: none;"></div>
+                        <div class="device_play_load_item py-2" style="display: none;"><p>Dropping the needle...</p></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="play_on_selected_device" class="btn btn-primary"><img src="/static/play.svg"/></button>
+                </div>
             </div>
-        {% endfor %}
+        </div>
+    </div>
+
+    <!-- Album control popup window-->
+    <div id="album_control_modal" class="modal fade" role="dialog" data-target_album_item_id="">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-center">
+                        <img
+                            class="img-fluid"
+                            id="album_control_modal_img"
+                        >
+                    </div>
+                    <div class="one-line-album-title mt-2">
+                        <span id="album_control_modal_title"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="play_collection_from_album" class="btn btn-primary mx-2"><img src="/static/play.svg"/></button>
+                    <a class="btn btn-secondary" role="button" id="album_control_modal_spotify_link">
+                        <img src="/static/info-circle.svg"/>
+                    </a>
+                    {% if is_user_logged_in() %}
+                        <button id="album_control_modal_remove" type="button" class="btn btn-danger ms-auto">Remove</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
     </body>
 
     <!-- Javascript used in this page-->

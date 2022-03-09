@@ -8,7 +8,6 @@ from flask_bootstrap import Bootstrap
 from flask_session import Session
 from flask_caching import Cache
 
-from albumcollections.spotify.spotify import Spotify
 from albumcollections.spotify import spotipy_cache_handler
 from albumcollections.config import DevConfig, ProdConfig
 
@@ -18,9 +17,6 @@ db = SQLAlchemy()
 
 # Create cache
 cache = Cache()
-
-# Create 'client credentials' spotify interface
-spotify_iface = Spotify()
 
 # Create flask session spotipy cache handler
 spoipy_cache_handler = spotipy_cache_handler.FlaskSessionCacheHandler(session)
@@ -40,10 +36,6 @@ def create_app(test_config=None):
         app.config.from_object(DevConfig)
     else:
         app.config.from_object(ProdConfig)
-
-    # Initialize spotify as long as we're not testing
-    if not app.config["TESTING"]:
-        spotify_iface.init_sp()
 
     # init database
     db.init_app(app)

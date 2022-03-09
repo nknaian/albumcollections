@@ -1,4 +1,4 @@
-from flask import redirect, url_for, flash
+from flask import redirect, render_template, url_for, flash
 from flask.globals import request
 
 from spotipy.exceptions import SpotifyException
@@ -27,7 +27,8 @@ def login():
         spotify_user.logout()
         raise albumcollectionsError(f"Failed to authenticate with spotify\n{e}", url_for('main.index'))
 
-    return redirect(url_for('main.index'))
+    return render_template('main/load-collections.html')
+    # return redirect(url_for('main.index'))
 
 
 @bp.route('/user/logout', methods=['POST'])

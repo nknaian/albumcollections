@@ -13,8 +13,8 @@
             </form>
         </div>
     {% else %}
-        {% for playlist in user_playlists %}
-            <div class="bg-dark text-light div_spotify_item">
+        {% for playlist in user_collections %}
+            <div class="bg-dark text-light collection_item">
                 <div class="row">
                     <div class="col col-auto">
                         <a class="btn" role="button" href="{{url_for('collection.index', playlist_id=playlist.id)}}">
@@ -28,7 +28,7 @@
                             >
                         </a>
                     </div>
-                    <div class="col div_spotify_item_name">
+                    <div class="col collection_item_name">
                         {{playlist.name}}
                     </div>
                 </div>

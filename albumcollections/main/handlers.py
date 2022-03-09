@@ -13,11 +13,11 @@ from . import bp
 def index():
     if spotify_user.is_authenticated():
         try:
-            user_playlists = spotify_user.get_user_playlists()
+            user_collections = spotify_user.get_user_collections()
         except SpotifyException as e:
             spotify_user.logout()
             raise albumcollectionsError(f"Failed to get playlists - {e}", url_for('main.index'))
     else:
-        user_playlists = None
+        user_collections = None
 
-    return render_template('main/index.html', user_playlists=user_playlists)
+    return render_template('main/index.html', user_collections=user_collections)

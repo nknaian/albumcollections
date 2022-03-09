@@ -18,6 +18,9 @@ class SpotifyItem():
         # Get the spotify id of the music
         self.id = spotify_item["id"]
 
+        # Get the uri
+        self.uri = spotify_item["uri"]
+
         # url for image of item
         self.img_url = None
 

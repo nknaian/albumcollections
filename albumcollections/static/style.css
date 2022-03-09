@@ -4,17 +4,24 @@ Styling that is specific to one instance are located in the "ID Styles" section 
 
 
 /* Class Styles */
-.main_navbar {
-    position:sticky;
-    top: 0;
-    z-index: 100;
+/* This is hack but not sure how else to do it. 56px is the height of a navbar.
+   Giving this bar a margin of 56px, along with the class 'fixed-top', makes
+   this bar fixed underneath the main nav bar */
+/* .collection_title_bar {
+    margin-top: 56px;
+} */
+
+.album_item {
+    margin: 5px;
 }
 
-.btn_main {
-    white-space: normal;
+.album_img {
+    min-width: 50px;
+    width: 10vw;
+    cursor: pointer"
 }
 
-.div_spotify_item {
+.collection_item {
     padding-top: 10px;
     padding-bottom: 10px;
     padding-left: 10px;
@@ -23,46 +30,65 @@ Styling that is specific to one instance are located in the "ID Styles" section 
     display: inline-block;
 }
 
-.div_spotify_item_name {
+.collection_item_name {
     min-width: 200px;
-    padding-top: 40px;
 }
 
-.album_close_wrapper {
-    position: relative;
+/* Style album title to fit on one line and
+scroll when hovering or focusing on it */
+.one-line-album-title {
+    width: 100%;
+    display: inline-block; /* important */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* when not hovering show ellipsis */
+one-line-album-title:not(:hover) {
+    text-overflow: ellipsis;
+}
+  
+/* animate on either hover or focus */
+.one-line-album-title:hover span, .one-line-album-title:focus span {
     display: inline-block;
+    animation-name: scroll-text;
+    animation-duration: 7s;
+    animation-timing-function: linear;
+    animation-delay: 0s;
+    animation-iteration-count: infinite;
+    animation-direction: normal;
+    /* FYI this would be the shorthand:
+        animation: scroll-text 5s ease 0s 2 normal;
+    */
 }
-.album_close_wrapper .close:before {
-    content: '✕';
+  
+/* define the animation */
+@keyframes scroll-text {
+    0% {
+    transform: translateX(0%);
+    }
+    90% {
+    transform: translateX(-100%);
+    }
+    95% {
+    transform: translateX(0%);
+    }
+    100% {
+    transform: translateX(0%);
+    }
 }
-.album_close_wrapper .close {
-    position: absolute;
-    top: 5px;
-    right: 10px;
-    cursor: pointer;
+  
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
 }
 
-.album_close_wrapper .close:hover {
-    color: rgb(124, 7, 7);
-}
-
-/* ID Styles (organized by page) */
-
-/* PAGE base.html */
-#base_content {
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-
-#loading {
-    display: none;
-    cursor: wait;
-}
-
-#loading div {
-    margin-left: 50%;
-    margin-top: 20px;
-    width: 35px;
-    height: 35px;
-    background: url(/static/loadingimage.gif) no-repeat;
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }

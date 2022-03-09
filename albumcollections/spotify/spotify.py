@@ -11,8 +11,9 @@ from typing import List
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
-from .item.spotify_music import SpotifyAlbum, SpotifyTrack
+from .item.spotify_music import SpotifyAlbum, SpotifyTrack, AlbumType
 from .item.spotify_playlist import SpotifyPlaylist
+from .item.spotify_collection import SpotifyCollection
 
 
 class Spotify:
@@ -22,7 +23,7 @@ class Spotify:
 
     """Public Functions"""
 
-    def init_sp(self):
+    def __init__(self):
         self.sp = spotipy.Spotify(
             client_credentials_manager=SpotifyClientCredentials())
 
@@ -30,6 +31,37 @@ class Spotify:
         """Use spotify playlist link to get `SpotifyPlaylist` object"""
         spotify_playlist = self.sp.playlist(link)
         return SpotifyPlaylist(spotify_playlist)
+
+    def get_collection_from_playlist_id(self, id, reload_albums=False):
+        return self.get_collection_from_playlist_dict(self.sp.playlist(id), reload_albums)
+
+    def get_collection_from_playlist_dict(self, playlist_dict, reload_albums=False):
+        """Create a spotify collection item based on playlist dictionary
+
+        The `SpotifyCollection` class makes use of a database and caching
+        to store information so it doesn't always have to be loaded again.
+
+        If the collection has been changed in spotify, then reload albums
+        and num_albums. If it hasn't been changed, then only reload the
+        albums if they're not stored anymore and it's been explictly
+        requested to reload them using `reload_albums`.
+        """
+        collection = SpotifyCollection(playlist_dict)
+
+        if collection.changed:
+            # Get albums from spotify interface again, because
+            # they may have changed. Use this to set albums and num_albums
+            # properties
+            collection_albums = self._get_collection_albums(collection.id)
+            collection.albums = collection_albums
+            collection.num_albums = len(collection_albums)
+        else:
+            # Only get albums again if the cache entry doesn't exist and
+            # we've specified that we need to have them
+            if collection.albums is None and reload_albums:
+                collection.albums = self._get_collection_albums(collection.id)
+
+        return collection
 
     def get_playlist_tracks(self, id) -> List[SpotifyTrack]:
         """Get all tracks in the given playlist, retaining track order"""
@@ -49,13 +81,106 @@ class Spotify:
 
         return tracks
 
-    def get_playlist_albums(self, id) -> List[SpotifyAlbum]:
-        """Get all albums in the given playlist, retaining album order
-        and removing duplicates
-        """
-        albums = []
-        for track in self.get_playlist_tracks(id):
-            if track.album not in albums:
-                albums.append(track.album)
+    def get_album_track_ids(self, spotify_album: SpotifyAlbum) -> List[str]:
+        """Get the list of track ids that comprise the given spotify album"""
+        track_items = self.sp.album(spotify_album.id)["tracks"]["items"]
+        if len(track_items):
+            return [track_item["id"] for track_item in track_items]
+        else:
+            return []
 
-        return albums
+    def _get_collection_albums(self, playlist_id) -> List[SpotifyAlbum]:
+        """Get all valid albums in the given playlist.
+        Albums will only be valid if the tracks are in the correct
+        sequential order, not separated from eachother by tracks
+        from other albums, and only occur once
+
+        NOTE: albums should be returned in the playlist order as long
+        as python version is 3.7+ because dictionaries retain insertion
+        order
+
+        NOTE: I'm making this a 'private' function to signify that it really
+        shouldn't be used outside of the scope of getting the albums for a
+        SpotifyCollection item. This does a lot of expensive spotify api requests,
+        so it should only be used if the playlist was changed or if the album items
+        in the cache have expired.
+        """
+        # Create dictionary to hold albums
+        album_entries = {}
+
+        # Make iterator of tracks in playlist
+        playlist_iter = iter(self.get_playlist_tracks(playlist_id))
+
+        try:
+            # Get the first track in playlist
+            playlist_track = next(playlist_iter)
+
+            # Act on the current playlist track in the iterator
+            while True:
+                # The current playlist track's album hasn't been seen before.
+                # Make an entry for the album and iterate through the subsequent
+                # playlist tracks
+                if playlist_track.album.album_type == AlbumType.album and playlist_track.album.id not in album_entries:
+                    # Record the album of this first-encountered track
+                    album = playlist_track.album
+
+                    # Make an entry for this album
+                    album_entries[album.id] = album
+
+                    # Walk through subsequent tracks with the same album id, using disc and track
+                    # numbers to confirm that the full album is present in the correct order
+                    last_disc_num = None
+                    last_track_num = None
+                    while album.id == playlist_track.album.id:
+                        # To start out, the disc number and track number should both be equal to 1
+                        if last_disc_num is None and last_track_num is None and \
+                                playlist_track.disc_number == 1 and \
+                                playlist_track.track_number == 1:
+                            pass
+                        # If this disc number is equal to last disc number then the track number
+                        # should have been incremented by one
+                        elif last_disc_num is not None and last_track_num is not None and \
+                                last_disc_num == playlist_track.disc_number and \
+                                playlist_track.track_number == (last_track_num + 1):
+                            pass
+                        # If this disc number is one greater than the last disc number, then the
+                        # track number should be equal to 1
+                        elif last_disc_num is not None and last_track_num is not None and \
+                                playlist_track.disc_number == (last_disc_num + 1) and \
+                                playlist_track.track_number == 1:
+                            pass
+                        # Otherwise the current track must be out of order
+                        else:
+                            break
+
+                        # Set last equal to current
+                        last_disc_num = playlist_track.disc_number
+                        last_track_num = playlist_track.track_number
+
+                        # Add this track id to the album
+                        album.track_ids.append(playlist_track.id)
+
+                        # Move to the next track in the playlist
+                        playlist_track = next(playlist_iter)
+
+                # The current playlist track's album has been seen before. This means that
+                # the track is either a duplicate, or separated from the first track in
+                # the album by tracks from other albums. In any case, it invalidates the
+                # album entry. Set the album entry to invalid, and move on to the next
+                # track in the playlist.
+                elif playlist_track.album.id in album_entries:
+                    album_entries[playlist_track.album.id] = None
+                    playlist_track = next(playlist_iter)
+
+                # Otherwise the album type is not an 'album'...just move to the next track
+                else:
+                    playlist_track = next(playlist_iter)
+
+        # If a stop iteration is received, that means the playlist's tracks have been
+        # exhausted - pencils down.
+        except StopIteration:
+            pass
+
+        # Return albums from valid entries
+        return [album for album in album_entries.values()
+                if album is not None and len(album.track_ids) == album.total_tracks]
