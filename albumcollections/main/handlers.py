@@ -9,7 +9,6 @@ from . import bp
 
 
 @bp.route('/', methods=['GET', 'POST'])
-@bp.route('/index', methods=['GET', 'POST'])
 def index():
     if spotify_user.is_authenticated():
         try:

@@ -56,6 +56,9 @@ def create_app(test_config=None):
     from albumcollections.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
 
+    from albumcollections.pwa import bp as pwa_bp
+    app.register_blueprint(pwa_bp)
+
     if app.config["TESTING"]:
         from albumcollections.test import bp as test_bp
         app.register_blueprint(test_bp)

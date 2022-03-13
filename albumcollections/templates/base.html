@@ -5,6 +5,13 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+        <!-- PWA  -->
+        <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="transparent">
+        <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/icons/icon-152x152.png') }}">
+        <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+
         <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
@@ -19,8 +26,6 @@
         <title>{% block title %} {% endblock %}</title>
     </head>
     <body>
-
-
         <nav class="navbar main_navbar navbar-light bg-light" style="padding: 10px;">
             <a class="navbar-brand" href="{{ url_for('main.index')}}">Album Collections</a>
             <div class="navbar-nav">
@@ -44,7 +49,6 @@
             </div>
         </nav>
         {% block secondary_nav %}{% endblock %}
-
         <div class="container-fluid" style="padding: 0 !important">
             <!-- Loading content goes here -->
             <div id="loading" style="display: none; cursor: wait;">
@@ -73,5 +77,6 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
         <script type="text/javascript" src="{{url_for('static', filename='js/base.js')}}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/app.js') }}"></script>
     </body>
 </html>
