@@ -25,7 +25,6 @@ class UserLoginTestCase(UserTestCase):
         # Verify that post was successful and redirected back to the main page
         # and now UI is ready for user to log out
         self.assert200(response)
-        self.assertIn(bytes("Album Collections", 'utf-8'), response.data)
         self.assertIn(bytes("Log out", 'utf-8'), response.data)
 
 
@@ -44,7 +43,6 @@ class UserLogoutTestCase(UserTestCase):
         )
 
         # Verify that post was successful and redirected back to the main page
-        # and now UI is ready for user to log out
+        # and now UI is ready for user to log in
         self.assert200(response)
-        self.assertIn(bytes("Album Collections", 'utf-8'), response.data)
         self.assertIn(bytes("Log in", 'utf-8'), response.data)

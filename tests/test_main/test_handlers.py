@@ -8,7 +8,6 @@ class MainIndexTestCase(MainTestCase):
     def test_get_index(self):
         response = self.client.get(url_for("main.index"))
         self.assert_200(response)
-        self.assertIn(b"Album Collections", response.data)
 
 
 # class MainAboutTestCase(MainTestCase):

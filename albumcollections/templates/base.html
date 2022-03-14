@@ -27,7 +27,7 @@
     </head>
     <body>
         <nav class="navbar main_navbar navbar-light bg-light" style="padding: 10px;">
-            <a class="navbar-brand" href="{{ url_for('main.index')}}">Album Collections</a>
+            <a class="navbar-brand" href="{{ url_for('main.index')}}"><img src="/static/favicon.ico" class="navbar_logo" width="32px"></a>
             <div class="navbar-nav">
                 <li class="nav-item active">
                     {% if is_user_logged_in() %}
