@@ -4,13 +4,6 @@ Styling that is specific to one instance are located in the "ID Styles" section 
 
 
 /* Class Styles */
-/* This is hack but not sure how else to do it. 56px is the height of a navbar.
-   Giving this bar a margin of 56px, along with the class 'fixed-top', makes
-   this bar fixed underneath the main nav bar */
-/* .collection_title_bar {
-    margin-top: 56px;
-} */
-
 .album_item {
     margin: 5px;
 }
@@ -36,21 +29,21 @@ Styling that is specific to one instance are located in the "ID Styles" section 
 
 /* Style album title to fit on one line and
 scroll when hovering or focusing on it */
-.one-line-album-title {
+.scroll-to-fit-title {
     width: 100%;
-    display: inline-block; /* important */
+    display: inline-block;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 /* when not hovering show ellipsis */
-one-line-album-title:not(:hover) {
+scroll-to-fit-title:not(:hover) {
     text-overflow: ellipsis;
 }
   
 /* animate on either hover or focus */
-.one-line-album-title:hover span, .one-line-album-title:focus span {
+.scroll-to-fit-title:hover span, .scroll-to-fit-title:focus span {
     display: inline-block;
     animation-name: scroll-text;
     animation-duration: 7s;
@@ -91,4 +84,14 @@ one-line-album-title:not(:hover) {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+.content {
+    margin-top: 68px;  /* 8px of room above - height of top navbar is 60px... */
+    margin-bottom: 62px; /* 8px of room below - height of collection control bar on bottom is 54px... */
+}
+
+/* Id styles */
+#shuffle_play_collection {
+    white-space: nowrap;  /* Need to have this because the button contains two images */
 }

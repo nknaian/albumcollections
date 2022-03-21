@@ -1,22 +1,8 @@
 {% extends 'base.html' %}
 
-{% block secondary_nav %}
-    <nav class="navbar collection_title_bar navbar-dark bg-dark text-light">
-        <div class="me-auto mx-2"><h4> {{playlist_name}}</h4></div>
-
-        <input type="checkbox" class="btn-check" id="reorder-active" autocomplete="off">
-        <label class="btn btn-primary mx-2" for="reorder-active">
-            <img src="/static/images/bootstrap/arrows-move.svg"/>
-        </label>
-
-        <button id="shuffle_play_collection" class="btn btn-primary mx-2">
-            <img src="/static/images/bootstrap/shuffle.svg"/><img src="/static/images/bootstrap/play.svg"/>
-        </button>
-    </nav>
-{% endblock %}
-
 {% block content %}
     <body onload="init('{{playlist_id}}')">
+        <!-- Collection Albums -->
         <div id="collection_list" class="row justify-content-center justify-content-md-start" oncontextmenu="return false;">
             {% for album in playlist_albums %}
                 <!-- col-5 -->
@@ -48,6 +34,19 @@
                     </div>
                 </div>
             {% endfor %}
+        </div>
+
+        <!-- Collection control navbar -->
+        <div class="bg-light py-2 d-flex fixed-bottom">
+            <div class="scroll-to-fit-title me-auto mx-2"><span class="fs-3">{{playlist_name}}</span></div>
+            <input type="checkbox" class="btn-check" id="reorder-active" autocomplete="off">
+            <label class="btn btn-primary mx-2" for="reorder-active">
+                <img src="/static/images/bootstrap/arrows-move.svg"/>
+            </label>
+
+            <button id="shuffle_play_collection" class="btn btn-primary mx-2">
+                <img src="/static/images/bootstrap/shuffle.svg"/><img src="/static/images/bootstrap/play.svg"/>
+            </button>
         </div>
 
     <!-- Select device popup window-->
@@ -87,7 +86,7 @@
                             id="album_control_modal_img"
                         >
                     </div>
-                    <div class="one-line-album-title mt-2">
+                    <div class="scroll-to-fit-title mt-2">
                         <span id="album_control_modal_title"></span>
                     </div>
                 </div>
@@ -96,6 +95,7 @@
                     <a class="btn btn-dark" role="button" id="album_control_modal_spotify_link">
                         <img src="/static/images/spotify/Spotify_Icon_RGB_Green.png" style="width: 21px;"/>
                     </a>
+                    <!-- TODO: Check whether user is owner of playlist instead -->
                     {% if is_user_logged_in() %}
                         <button id="album_control_modal_remove" type="button" class="btn btn-danger ms-auto">Remove</button>
                     {% endif %}
