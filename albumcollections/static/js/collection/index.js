@@ -204,11 +204,8 @@ document.querySelectorAll('.album_card').forEach(item => {
     });
 })
 
-document.getElementById("play_collection_from_album").addEventListener("click", function() {
-    album_item = document.getElementById(
-        document.getElementById("album_control_modal").getAttribute("data-target_album_item_id")
-    )
-    start_album_id = album_item.getAttribute("data-album_id")
+document.getElementById("play_collection").addEventListener("click", function() {
+    start_album_id = null
     shuffle_albums = false
     device_play_select()
 });
@@ -216,6 +213,15 @@ document.getElementById("play_collection_from_album").addEventListener("click", 
 document.getElementById("shuffle_play_collection").addEventListener("click", function() {
     start_album_id = null
     shuffle_albums = true
+    device_play_select()
+});
+
+document.getElementById("play_collection_from_album").addEventListener("click", function() {
+    album_item = document.getElementById(
+        document.getElementById("album_control_modal").getAttribute("data-target_album_item_id")
+    )
+    start_album_id = album_item.getAttribute("data-album_id")
+    shuffle_albums = false
     device_play_select()
 });
 
