@@ -91,6 +91,10 @@ scroll-to-fit-title:not(:hover) {
     margin-bottom: 62px; /* 8px of room below - height of collection control bar on bottom is 54px... */
 }
 
+.text-blue-theme {
+    color: #0b5394ff;
+}
+
 /* Id styles */
 #shuffle_play_collection {
     white-space: nowrap;  /* Need to have this because the button contains two images */

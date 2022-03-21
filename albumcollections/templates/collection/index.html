@@ -38,9 +38,10 @@
 
         <!-- Collection control navbar -->
         <div class="bg-light py-2 d-flex fixed-bottom">
-            <div class="scroll-to-fit-title me-auto mx-2"><span class="fs-3">{{playlist_name}}</span></div>
+            <div class="scroll-to-fit-title me-auto mx-2 text-blue-theme"><span class="fs-3">{{playlist_name}}</span></div>
+
             <input type="checkbox" class="btn-check" id="reorder-active" autocomplete="off">
-            <label class="btn btn-primary mx-2" for="reorder-active">
+            <label class="btn btn-outline-primary mx-2" for="reorder-active">
                 <img src="/static/images/bootstrap/arrows-move.svg"/>
             </label>
 
@@ -95,13 +96,13 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button id="play_collection_from_album" class="btn btn-primary mx-2"><img src="/static/images/bootstrap/play.svg"/></button>
-                    <a class="btn btn-dark" role="button" id="album_control_modal_spotify_link">
-                        <img src="/static/images/spotify/Spotify_Icon_RGB_Green.png" style="width: 21px;"/>
+                    <button id="play_collection_from_album" class="btn btn-outline-success mx-2"><img src="/static/images/bootstrap/play.svg"/></button>
+                    <a class="btn btn-outline-secondary" role="button" id="album_control_modal_spotify_link">
+                        <img src="/static/images/spotify/Spotify_Icon_RGB_Black.png" style="width: 21px;"/>
                     </a>
                     <!-- TODO: Check whether user is owner of playlist instead -->
                     {% if is_user_logged_in() %}
-                        <button id="album_control_modal_remove" type="button" class="btn btn-danger ms-auto">Remove</button>
+                        <button id="album_control_modal_remove" type="button" class="btn btn-danger ms-auto"><img src="/static/images/bootstrap/trash.svg"/></button>
                     {% endif %}
                 </div>
             </div>
