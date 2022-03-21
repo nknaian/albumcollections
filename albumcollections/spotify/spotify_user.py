@@ -12,6 +12,8 @@ url and then direct back towards what the user was trying to do.
 from typing import List
 import random
 import copy
+from flask import flash
+from requests.exceptions import ConnectionError
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
@@ -107,7 +109,14 @@ def get_user_display_name():
 def get_user_collections() -> List[SpotifyCollection]:
     sp = _get_sp_instance()
 
-    playlist_infos = sp.current_user_playlists()
+    try:
+        playlist_infos = sp.current_user_playlists()
+    except ConnectionError:
+        flash("Connection Error while getting collections", "warning")
+        playlist_infos = None
+    except Exception as e:
+        flash(f"Exception encountered while getting collections: {e}", "danger")
+        playlist_infos = None
 
     collections = []
     while playlist_infos:

@@ -1,5 +1,6 @@
-from flask import render_template, request, url_for, jsonify
+from flask import flash, render_template, request, url_for, jsonify
 import json
+from requests.exceptions import ConnectionError
 
 from spotipy.exceptions import SpotifyException
 
@@ -10,21 +11,35 @@ from albumcollections.spotify import spotify_user
 from albumcollections.errors.exceptions import albumcollectionsError
 
 from . import bp
+from .test_collection import TestSpotifyCollection
 
 
 @bp.route('/collection/<string:playlist_id>', methods=['GET'])
 def index(playlist_id):
     try:
+        # Backdoor to test visuals with no connection to spotify
+        if playlist_id == "offline":
+            collection = TestSpotifyCollection()
         # Get the collection by playlist id, reloading albums objects for it
-        collection = spotify_iface.Spotify().get_collection_from_playlist_id(playlist_id, reload_albums=True)
+        else:
+            collection = spotify_iface.Spotify().get_collection_from_playlist_id(playlist_id, reload_albums=True)
+
+        collection_name = collection.name
+        collection_albums = collection.albums
 
     except SpotifyException as e:
-        raise albumcollectionsError(f"Failed to process playlist - {e}", url_for('main.index'))
+        raise albumcollectionsError(f"Spotify Exception occurred while loading collection: {e}", url_for('main.index'))
+    except ConnectionError:
+        flash("Connection error encountered while loading playlist", "warning")
+        collection_name = ""
+        collection_albums = []
+    except Exception as e:
+        raise albumcollectionsError(f"Exception occured while loading collection: {e}", url_for('main.index'))
 
     return render_template('collection/index.html',
                            playlist_id=playlist_id,
-                           playlist_name=collection.name,
-                           playlist_albums=collection.albums)
+                           playlist_name=collection_name,
+                           playlist_albums=collection_albums)
 
 
 @bp.route('/collection/remove_album', methods=['POST'])

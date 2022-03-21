@@ -1,22 +1,27 @@
-from flask import render_template, url_for
+from flask import render_template, flash
 
 from spotipy.exceptions import SpotifyException
 
 from albumcollections.spotify import spotify_user
-from albumcollections.errors.exceptions import albumcollectionsError
 
 from . import bp
 
 
 @bp.route('/', methods=['GET', 'POST'])
 def index():
-    if spotify_user.is_authenticated():
-        try:
+    try:
+        if spotify_user.is_authenticated():
             user_collections = spotify_user.get_user_collections()
-        except SpotifyException as e:
-            spotify_user.logout()
-            raise albumcollectionsError(f"Failed to get playlists - {e}", url_for('main.index'))
-    else:
+        else:
+            user_collections = None
+    except SpotifyException as e:
+        flash(f"Spotify Exception occurred while loading collections: {e}", "warning")
+        user_collections = None
+    except ConnectionError:
+        flash("Connection error encountered while loading collections", "warning")
+        user_collections = None
+    except Exception as e:
+        flash(f"Exception occurred while loading collections: {e}", "danger")
         user_collections = None
 
     return render_template('main/index.html', user_collections=user_collections)
