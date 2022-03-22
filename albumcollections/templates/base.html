@@ -26,23 +26,31 @@
         <title>{% block title %} {% endblock %}</title>
     </head>
     <body>
-        <nav class="navbar navbar-light bg-light fixed-top p-2">
-            <a class="navbar-brand" href="{{ url_for('main.index')}}"><img src="/static/favicon.ico" class="navbar_logo" width="32px"></a>
-            <div class="navbar-nav">
-                <li class="nav-item active">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top p-2">
+            <div class="container-fluid">
+                <a class="navbar-brand navbar_logo" href="{{ url_for('main.index')}}"><img src="/static/favicon.ico" class="navbar_logo_img"></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarToggler">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <!-- Placeholder for navbar items -->
+                    </ul>
                     {% if is_user_logged_in() %}
                         <form
+                            class="d-flex"
                             method="post"
                             name="logout_from_spotify"
                             action="{{ url_for('user.logout')}}";>
-                            <a class="nav-link" href="#" onclick="document.logout_from_spotify.submit();">Log out</a>
+                            <a class="btn btn-outline-secondary" role="button" href="#" onclick="document.logout_from_spotify.submit();">Log out</a>
                         </form>
                     {% else %}
                         <form
+                            class="d-flex"
                             method="post"
                             name="login_from_spotify"
                             action="{{ url_for('user.login')}}";>
-                            <a class="nav-link" href="#" onclick="document.login_from_spotify.submit();">Log in</a>
+                            <a class="btn btn-outline-success" role="button" href="#" onclick="document.login_from_spotify.submit();">Log in</a>
                         </form>
                     {% endif %}
                 </li>
