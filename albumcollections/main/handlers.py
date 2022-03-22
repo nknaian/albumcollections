@@ -20,3 +20,8 @@ def index():
         user_collections = None
 
     return render_template('main/index.html', user_collections=user_collections)
+
+
+@bp.route('/about', methods=['GET'])
+def about():
+    return render_template('main/about.html')
