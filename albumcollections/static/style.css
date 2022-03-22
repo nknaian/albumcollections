@@ -15,19 +15,23 @@ Styling that is specific to one instance are located in the "ID Styles" section 
 }
 
 .collection_item {
-    padding-top: 10px;
-    padding-bottom: 10px;
-    padding-left: 10px;
-    padding-right: 30px;
-    margin: 10px;
     display: inline-block;
 }
 
-.collection_item_name {
-    min-width: 200px;
+.collection_item_img {
+    width: 64px;
+    height: 64px;
 }
 
-/* Style album title to fit on one line and
+/* Style the collection name to fit
+on one line, w/ ... */
+.collection_item_name {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* Style a title to fit on one line and
 scroll when hovering or focusing on it */
 .scroll-to-fit-title {
     width: 100%;
