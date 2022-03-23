@@ -49,15 +49,16 @@
                             method="post"
                             name="logout_from_spotify"
                             action="{{ url_for('user.logout')}}";>
-                            <a class="btn btn-outline-secondary" role="button" href="#" onclick="document.logout_from_spotify.submit();">Log out</a>
+                            <a class="btn btn-outline-dark" role="button" href="#" onclick="document.logout_from_spotify.submit();">Log out</a>
                         </form>
                     {% else %}
                         <form
-                            class="d-flex"
                             method="post"
-                            name="login_from_spotify"
+                            name="login_with_spotify"
                             action="{{ url_for('user.login')}}";>
-                            <a class="btn btn-outline-success" role="button" href="#" onclick="document.login_from_spotify.submit();">Log in</a>
+                            <a class="btn btn-dark text-light" role="button" href="#" onclick="document.login_with_spotify.submit();">
+                                Login with <img src="/static/images/spotify/Spotify_Logo_RGB_Green.png" class="login_with_spotify_nav_img ps-1"/>
+                            </a>
                         </form>
                     {% endif %}
                 </li>

@@ -103,6 +103,23 @@ scroll-to-fit-title:not(:hover) {
     width: 32px;
 }
 
+.login_with_spotify_nav_img {
+    width: 80px;
+}
+
+.login_with_spotify_main_img {
+    width: 160px;
+}
+
+.spotify_icon_small_img {
+    width: 21px;
+}
+
+.login_with_spotify_main_link {
+    text-decoration: none;
+    color: black;
+}
+
 /* Id styles */
 #shuffle_play_collection {
     white-space: nowrap;  /* Need to have this because the button contains two images */
