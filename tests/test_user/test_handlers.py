@@ -10,10 +10,10 @@ class UserLoginTestCase(UserTestCase):
     these tests.
     """
     def test_login_user(self):
-        # Visit main page. Verify that the text 'Log in' is on the page
+        # Visit main page. Verify that the text 'Login' is on the page
         response = self.client.get(url_for('main.index'))
         self.assert_200(response)
-        self.assertIn(bytes('Log in', 'utf-8'), response.data)
+        self.assertIn(bytes('Login', 'utf-8'), response.data)
 
         # Make post to login from the main page
         response = self.client.post(
@@ -45,4 +45,4 @@ class UserLogoutTestCase(UserTestCase):
         # Verify that post was successful and redirected back to the main page
         # and now UI is ready for user to log in
         self.assert200(response)
-        self.assertIn(bytes("Log in", 'utf-8'), response.data)
+        self.assertIn(bytes("Login", 'utf-8'), response.data)
