@@ -21,10 +21,7 @@ def index(playlist_id):
     except SpotifyException as e:
         raise albumcollectionsError(f"Failed to process playlist - {e}", url_for('main.index'))
 
-    return render_template('collection/index.html',
-                           playlist_id=playlist_id,
-                           playlist_name=collection.name,
-                           playlist_albums=collection.albums)
+    return render_template('collection/index.html', collection=collection)
 
 
 @bp.route('/collection/remove_album', methods=['POST'])
