@@ -17,7 +17,7 @@
         </div>
     {% else %}
         {% for playlist in user_collections %}
-            <a class="btn bg-dark text-light p-2 m-2 d-flex collection_item" role="button" href="{{url_for('collection.index', playlist_id=playlist.id)}}">
+            <a class="btn btn-dark p-2 m-2 d-flex collection_item" role="button" href="{{url_for('collection.index', playlist_id=playlist.id)}}">
                 <img class="collection_item_img"
                     '{% if playlist.img_url %}'
                         src="{{playlist.img_url}}"
