@@ -115,6 +115,10 @@ scroll-to-fit-title:not(:hover) {
     width: 21px;
 }
 
+.about_header_icon {
+    width: 30px;
+}
+
 .login_with_spotify_main_link {
     text-decoration: none;
     color: black;
