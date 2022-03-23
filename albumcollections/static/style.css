@@ -124,3 +124,20 @@ scroll-to-fit-title:not(:hover) {
 #shuffle_play_collection {
     white-space: nowrap;  /* Need to have this because the button contains two images */
 }
+
+/* TOC nav styling */
+nav[data-toggle="toc"] {
+    top: 64px;  /* Displays sticky TOC below fixed top navbar */
+}
+
+@media (max-width: 768px) {  /* small screens */
+    /* override stickyness so that the navigation does not follow scrolling */
+    nav[data-toggle="toc"] {
+        margin-bottom: 42px;
+        position: static;
+    }
+}
+
+nav[data-toggle='toc'] .nav .nav {
+    display: block;  /* Enables secondary headings to show up in TOC */
+}
