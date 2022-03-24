@@ -1,4 +1,4 @@
-from flask import render_template, url_for
+from flask import render_template, url_for, request
 
 from spotipy.exceptions import SpotifyException
 
@@ -25,3 +25,12 @@ def index():
 @bp.route('/about', methods=['GET'])
 def about():
     return render_template('main/about.html')
+
+
+@bp.route('/load_redirect', methods=['GET'])
+def load_redirect():
+    return render_template(
+        'main/load-redirect.html',
+        redirect_location=request.args.get("redirect_location"),
+        load_message=request.args.get("load_message")
+    )

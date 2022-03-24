@@ -27,8 +27,11 @@ def login():
         spotify_user.logout()
         raise albumcollectionsError(f"Failed to authenticate with spotify\n{e}", url_for('main.index'))
 
-    return render_template('main/load-collections.html')
-    # return redirect(url_for('main.index'))
+    return render_template(
+        'main/load-redirect.html',
+        redirect_location=url_for('main.index'),
+        load_message="Catalogging your collections...this may take a minute"
+    )
 
 
 @bp.route('/user/logout', methods=['POST'])

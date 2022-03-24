@@ -30,7 +30,15 @@
     <body>
         <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top p-2">
             <div class="container-fluid">
-                <a class="navbar-brand navbar_logo" href="{{ url_for('main.index')}}"><img src="/static/favicon.ico" class="navbar_logo_img"></a>
+                <a class="navbar-brand navbar_logo"
+                   {% if is_user_logged_in() %}
+                        href="{{url_for('main.load_redirect')}}?redirect_location={{url_for('main.index')}}&load_message=Organizing your shelves..."
+                   {% else %}
+                        href="{{url_for('main.index')}}"
+                   {% endif %}
+                >
+                   <img src="/static/favicon.ico" class="navbar_logo_img">
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>

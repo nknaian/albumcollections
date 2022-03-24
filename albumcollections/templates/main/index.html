@@ -16,18 +16,21 @@
             </form>
         </div>
     {% else %}
-        {% for playlist in user_collections %}
-            <a class="btn btn-dark p-2 m-2 d-flex collection_item" role="button" href="{{url_for('collection.index', playlist_id=playlist.id)}}">
+        {% for collection in user_collections %}
+            <a class="btn btn-dark p-2 m-2 d-flex collection_item"
+               role="button"
+               href="{{url_for('main.load_redirect')}}?redirect_location={{url_for('collection.index', playlist_id=collection.id)}}&load_message=Dusting off those records..."
+            >
                 <img class="collection_item_img"
-                    '{% if playlist.img_url %}'
-                        src="{{playlist.img_url}}"
+                    '{% if collection.img_url %}'
+                        src="{{collection.img_url}}"
                     '{% else %}'
                         src="/static/images/other/unknown_sp_item.jpg"
                     '{% endif %}'
-                    alt="{{playlist.name}}"
+                    alt="{{collection.name}}"
                 >
 
-                <div class="collection_item_name ms-auto px-2 fs-4">{{playlist.name}}</div>
+                <div class="collection_item_name ms-auto px-2 fs-4">{{collection.name}}</div>
             </a>
         {% endfor %}
     {% endif %}
