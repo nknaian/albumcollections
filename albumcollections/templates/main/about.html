@@ -19,9 +19,9 @@
                         great features like turning the record over for you), and your friend telling you what
                         new stuff to check out (who knows you weirdly well).
                     </p> 
-                    <p> Spotify is also your strangely constructed record cabinet, providing you with infinite customizable 
-                        shelves to store your singles (and ripped LP tracks) but only lending a single shelf with the appropriate
-                        dimensions to store your LPs.
+                    <p> Spotify is also your strangely constructed record cabinet, providing you with infinitely customizable 
+                        shelves to store your <a href="https://en.wikipedia.org/wiki/Single_(music)">Single</a>s but only lending 
+                        a single shelf with the appropriate dimensions to store your <a href="https://en.wikipedia.org/wiki/LP_record">LP</a>s.
                     </p>
                     <p>
                         <i>Album Collections</i> is a project that seeks to fill this organizational gap. It represents additional
@@ -82,10 +82,12 @@
                         Click on the album you would like to play. Then press the <img src="/static/images/spotify/Spotify_Icon_RGB_Black.png" class="spotify_icon_small_img px-1"/> button
                         to take you to the album in the Spotify app. Then play.
                     </p>
-                    <h4>Play multiple albums in the collection</h4>
+                    <h4 id="play_multiple_albums">Play multiple albums in the collection</h4>
                     <p>
-                        <i>These actions may require opening up the Spotify app to allow
-                        the Connect API to discover the avaiable device.</i>
+                        <i>
+                            These actions may require opening up the Spotify app to allow
+                            the Connect API to discover the avaiable device.
+                        </i>
                     </p>
                     <p>
                         <i>These actions are also restricted to Premium Spotify users.</i>
@@ -133,6 +135,33 @@
                         button, and respond to the 'are you sure' prompt. This will remove all songs from this album from the 
                         containing playlist, and remove the album art image from the screen (but won't remove it from playback after
                         it has already commenced -- see explanation of temporary playlist in <a href="#play_albums_from_start">Play albums from start</a>).
+                    </p>
+                    <br>
+                    <h2>Limitations</h2>
+                    <h3>Free accounts</h3>
+                    <p>
+                        The <a href="play_multiple_albums">Play multiple albums</a> features of <i>Album Collections</i>
+                        will not work with a free Spotify account -- the <a href="https://developer.spotify.com/documentation/web-api/guides/using-connect-web-api/">Spotify Connect API</a>
+                        only can control Premium users' playback. However, the app will still be perfectly functional for
+                        organizing and visualizing albums in your collections and linking to Spotify to be able to play them.
+                    </p>
+                    <h3>EPs</h3>
+                    <p>
+                        Currently, <a href="https://en.wikipedia.org/wiki/Extended_play">EP</a>s are not included in <i>collections</i>.
+                        This is due to there being no special classification for them in the Spotify API (they are grouped with Singles).
+                    </p>
+                    <h3>Web Player</h3>
+                    <p>
+                        The behavior of <a href="play_multiple_albums">playing multiple albums</a> is a bit odd when pairing with the
+                        web player. If you try to play a collection on a web player device before interacting in some way with it,
+                        you will get a Spotify API error. Pressing play/pause in the web player and <i>then</i> playing the collection
+                        however will succeed.
+                    </p>
+                    <h3>Device Discovery</h3>
+                    <p>
+                        Devices may not always show up in the list in <i>Album Collections</i> as available even though they do
+                        show up in your Spotify app. Sometimes it will be necessary to manually open the Spotify app on a device
+                        before it will show up in <i>Album Collections</i>.
                     </p>
                 </div>
             </div>
