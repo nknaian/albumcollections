@@ -82,8 +82,17 @@ var sortable_collection = new Sortable(collection_list, {
 
 /* Functions */
 
-function init(play_id) {
+function init(play_id, user_logged_in) {
     playlist_id = play_id
+
+    /* Hide buttons that are only usable if logged in */
+    if (!user_logged_in) {
+        $('#play_collection').hide()
+        $('#shuffle_play_collection').hide()
+        $('#reorder_collection').hide()
+        $('#play_collection_from_album').hide()
+        $('#album_control_modal_remove').hide()
+    }
 }
 
 function device_play_select() {
