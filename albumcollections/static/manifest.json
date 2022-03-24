@@ -1,7 +1,7 @@
 {
     "name": "Album Collections",
     "short_name": "Albums",
-    "description": "Organize, visualize and play Spotify albums.",
+    "description": "Organize, visualize and play your Spotify albums.",
     "theme_color": "#f8f9fa",
     "background_color": "#f8f9fa",
     "display": "standalone",
