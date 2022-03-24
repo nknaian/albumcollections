@@ -100,15 +100,19 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button id="play_collection_from_album" class="btn btn-outline-success mx-2"><img src="/static/images/bootstrap/play.svg"/></button>
-                    <a class="btn btn-outline-secondary" role="button" id="album_control_modal_spotify_link">
+                    <button id="play_collection_from_album" class="album_control_bar btn btn-outline-success mx-2"><img src="/static/images/bootstrap/play.svg"/></button>
+                    <a class="album_control_bar btn btn-outline-secondary" role="button" id="album_control_modal_spotify_link">
                         <img src="/static/images/spotify/Spotify_Icon_RGB_Black.png" class="spotify_icon_small_img"/>
                     </a>
                     <!-- TODO: Check whether user is owner of playlist instead -->
                     {% if is_user_logged_in() %}
-                        <button id="album_control_modal_remove" type="button" class="btn btn-danger ms-auto"><img src="/static/images/bootstrap/trash.svg"/></button>
+                        <button id="album_control_modal_remove" type="button" class="album_control_bar btn btn-danger ms-auto"><img src="/static/images/bootstrap/trash.svg"/></button>
                     {% endif %}
                 </div>
+                <div class="d-flex flex-column align-items-center">
+                    <div class="remove_album_load_item loader py-2" style="display: none;"></div>
+                    <div class="remove_album_load_item py-2" style="display: none;"><p>Returning this record to the store...</p></div>
+                <div id="device_play_loader" class="d-flex flex-column align-items-center">
             </div>
         </div>
     </div>

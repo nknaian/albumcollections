@@ -238,18 +238,26 @@ document.getElementById("album_control_modal_remove").addEventListener("click", 
     album_name = album_item.getAttribute("data-album_name")
 
     if (confirm(`Are you sure you want to remove ${album_name} from the collection?`)) {
+        $('.remove_album_load_item').show()
+        $('.album_control_bar').hide()
         $.post('/collection/remove_album', {
             playlist_id: playlist_id,
             album_id: album_id
         }).done(function (response) {
             if (response["success"]) {
+                $('.remove_album_load_item').hide()
+                $('.album_control_bar').show()
                 $(album_item).hide()
                 $('#album_control_modal').modal('hide')
             }
             else {
+                $('.remove_album_load_item').hide()
+                $('.album_control_bar').show()
                 alert(`Sorry, failed to remove album.\n\n${response["exception"]}`)
             }
         }).fail(function() {
+            $('.remove_album_load_item').hide()
+            $('.album_control_bar').show()
             alert("Sorry, a server failure occured.")
         });
     }
