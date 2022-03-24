@@ -25,7 +25,7 @@ var sortable_collection = new Sortable(collection_list, {
     forceAutoscrollFallback: true,
     scrollSensitivity: 30,
     scrollSpeed: 100,
-    delay: 120,
+    delay: 10,
     delayOnTouchOnly: true,
     forceFallback: true,  // This is necessary for mobile (although can't find any documentation saying so). Without this set, there's some other draggable animation that happens that interferes with sortablejs
     // handle: ".album-drag-handle",  // NOTE: This actually does work...maybe I'll want to use a design with this...
