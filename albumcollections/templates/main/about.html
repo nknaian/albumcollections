@@ -32,13 +32,19 @@
                     </p>
                     <p>
                         The <i>Mixtape</i> has had a fantastic modern representation for a long time. This app introduces the concept 
-                        of <b>playlists for your albums</b>, bringing album enjoyment into the music subscription age.
+                        of <b>playlists for your albums</b>, bringing album collection into the music subscription age.
                     </p>
-                    <br>
                     <h2>Guide</h2>
-                    <p> Using <i>Album Collections</i> requires a mix of actions between this app and Spotify. Each section in this guide
-                        is labeled with an icon based on which application -- <i>Album Collections</i> and/or Spotify -- you will need
-                        to use to execute the action.
+                    <p>
+                        Each playlist in your Spotify account that contains complete albums will be represented in this app as a <i>collection</i>.
+                        Here's an <a href="{{url_for('collection.index', playlist_id='4ucljWzVJnEB0cdWErJTsT')}}">example</a> of one. Within a 
+                        collection, you can view the contents and link to the corresponding Spotify playlist and contained Spotify albums.
+                        You also have the ability to perform playlist-like actions, such as playing the albums in sequence (if you're logged in) and
+                        reordering and removing albums (if you own the playlist).
+                    </p>
+                    <p>
+                        The sections in this guide go into detail on specific capabilities of the app. They are labeled with icons based on which application --
+                        <i>Album Collections</i> and/or Spotify -- will be involved in the task.
                     </p>
                     <h3>Install <img src="/static/favicon.ico" class="about_header_icon ps-1"/></h3>
                     <p> <i>Album Collections</i> is a 
@@ -136,7 +142,6 @@
                         containing playlist, and remove the album art image from the screen (but won't remove it from playback after
                         it has already commenced -- see explanation of temporary playlist in <a href="#play_albums_from_start">Play albums from start</a>).
                     </p>
-                    <br>
                     <h2>Limitations</h2>
                     <h3>Free accounts</h3>
                     <p>
