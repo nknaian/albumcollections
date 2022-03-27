@@ -12,8 +12,8 @@ MAX_SPOTIFY_SNAPSHOT_ID_LENGTH = 100
 class Collection(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     playlist_id = db.Column(db.String(MAX_SPOTIFY_PLAYLIST_ID_LENGTH), unique=True, nullable=False)
-    snapshot_id = db.Column(db.String(MAX_SPOTIFY_SNAPSHOT_ID_LENGTH), unique=True)
-    num_albums = db.Column(db.Integer)  # TODO: Add list of albums references instead
+    snapshot_id = db.Column(db.String(MAX_SPOTIFY_SNAPSHOT_ID_LENGTH))
+    num_albums = db.Column(db.Integer)
 
     def __repr__(self):
         return '<User %r>' % self.id
