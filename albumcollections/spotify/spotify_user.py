@@ -112,6 +112,9 @@ def get_user_collections() -> List[SpotifyCollection]:
     collections = []
     while playlist_infos:
         for playlist in playlist_infos['items']:
+            if playlist['id'] == '3RqIDq8IPL6nJKFkk4fWOQ':
+                playlist['snapshot_id'] = "MzIsZDMwNzE5Y2VhM2QxYTAyZmJjZjMwZDljMWY0NjEwM2E3MWQ5MWNjYg=="
+
             # Make a collection from the playlist dict
             collection = Spotify().get_collection_from_playlist_dict(playlist)
 
