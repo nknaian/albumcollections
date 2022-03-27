@@ -1,8 +1,6 @@
 from flask import render_template, request, url_for, jsonify
 import json
 
-from spotipy.exceptions import SpotifyException
-
 # Importing like this is necessary for unittest framework to patch
 import albumcollections.spotify.spotify as spotify_iface
 
@@ -18,8 +16,8 @@ def index(playlist_id):
         # Get the collection by playlist id, reloading albums objects for it
         collection = spotify_iface.Spotify().get_collection_from_playlist_id(playlist_id, reload_albums=True)
 
-    except SpotifyException as e:
-        raise albumcollectionsError(f"Failed to process playlist - {e}", url_for('main.index'))
+    except Exception as e:
+        raise albumcollectionsError(f"Failed to load collection {playlist_id} - {e}", url_for('main.index'))
 
     return render_template('collection/index.html', collection=collection)
 
@@ -40,7 +38,7 @@ def remove_album():
         # Try removing the requested album
         try:
             spotify_user.remove_album_from_playlist(playlist_id, album_id)
-        except SpotifyException as e:
+        except Exception as e:
             response_dict["success"] = False
             response_dict["exception"] = str(e)
 
@@ -58,7 +56,7 @@ def get_devices():
 
         try:
             response_dict["devices"] = spotify_user.get_devices()
-        except SpotifyException as e:
+        except Exception as e:
             response_dict["exception"] = str(e)
 
     return jsonify(response_dict)
@@ -82,7 +80,7 @@ def play_collection():
 
         try:
             spotify_user.play_collection(playlist_id, start_album_id, shuffle_albums, device_id=device_id)
-        except SpotifyException as e:
+        except Exception as e:
             response_dict["played"] = False
             response_dict["exception"] = str(e)
 
@@ -106,7 +104,7 @@ def reorder_collection():
 
         try:
             spotify_user.reorder_collection(playlist_id, moved_album_id, next_album_id)
-        except SpotifyException as e:
+        except Exception as e:
             response_dict["success"] = False
             response_dict["exception"] = str(e)
 
