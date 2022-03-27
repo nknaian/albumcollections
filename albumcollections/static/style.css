@@ -4,6 +4,12 @@ Styling that is specific to one instance are located in the "ID Styles" section 
 
 
 /* Class Styles */
+.main_text {
+    padding-top: 15vh;
+    text-align: center;
+    font-size: larger;
+}
+
 .album_item {
     margin: 5px;
 }
@@ -93,6 +99,11 @@ scroll-to-fit-title:not(:hover) {
 .content {
     margin-top: 68px;  /* 8px of room above - height of top navbar is 60px... */
     margin-bottom: 62px; /* 8px of room below - height of collection control bar on bottom is 54px... */
+}
+
+.about_section {
+    padding-top: 60px;
+    margin-top: -60px;
 }
 
 .text-blue-theme {

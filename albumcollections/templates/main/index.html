@@ -2,9 +2,8 @@
 
 {% block content %}
     {% if not is_user_logged_in() %}
-        <div class="mx-auto" style="padding-top: 15vh; text-align: center; font-size: larger;">
+        <div class="main_text">
             <p>Organize, visualize and play your Spotify albums.</p>
-            <p></p>
             <p>
                 Each playlist in your Spotify account that contains complete albums will be represented in this app as a <i>collection</i>.
                 Here's an <a href="{{url_for('collection.index', playlist_id='4ucljWzVJnEB0cdWErJTsT')}}">example</a> of one.
@@ -20,6 +19,17 @@
             </form>
         </div>
     {% else %}
+        {% if user_collections|length == 0 %}
+            <div class="main_text">
+                <p>
+                    You don't have any collections yet! Make a playlist with at least one album in Spotify and then come back here.
+                </p>
+                <p>
+                    For more details check out the <a href="{{url_for('main.about')}}#guide">guide</a>.
+                </p>
+            </div>
+        {% endif %}
+
         {% for collection in user_collections %}
             <a class="btn btn-dark p-2 m-2 d-flex collection_item"
                role="button"

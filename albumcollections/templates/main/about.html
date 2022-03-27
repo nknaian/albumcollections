@@ -10,7 +10,7 @@
                 </div>
                 <!-- main content area -->
                 <div class="col-sm-9">
-                    <h2 data-toc-text="Purpose">Digital Record Shelves for your Spotify Albums</h2>
+                    <h2 class="about_section" data-toc-text="Purpose">Digital Record Shelves for your Spotify Albums</h2>
                     <div class="h4">A metaphor for the purpose of this app</div>
                     <p> Imagine Spotify's role in your music listening experience in classic physical terms.
                     </p>
@@ -34,7 +34,7 @@
                         The <i>Mixtape</i> has had a fantastic modern representation for a long time. This app introduces the concept 
                         of <b>playlists for your albums</b>, bringing album collection into the music subscription age.
                     </p>
-                    <h2>Guide</h2>
+                    <h2 class="about_section" id="guide" class="about_section">Guide</h2>
                     <p>
                         Each playlist in your Spotify account that contains complete albums will be represented in this app as a <i>collection</i>.
                         Here's an <a href="{{url_for('collection.index', playlist_id='4ucljWzVJnEB0cdWErJTsT')}}">example</a> of one. Within a 
@@ -46,49 +46,49 @@
                         The sections in this guide go into detail on specific capabilities of the app. They are labeled with icons based on which application --
                         <i>Album Collections</i> and/or Spotify -- will be involved in the task.
                     </p>
-                    <h3>Install <img src="/static/favicon.ico" class="about_header_icon ps-1"/></h3>
+                    <h3 class="about_section">Install <img src="/static/favicon.ico" class="about_header_icon ps-1"/></h3>
                     <p> <i>Album Collections</i> is a 
                         <a href="https://en.wikipedia.org/wiki/Progressive_web_application">progressive web app</a>. Install it 
                         on your device/s via a browser for the smoothest experience. Offline capabilities are not currently supported
                         but are a possibility in the future.
                     </p>
-                    <h3>Login <img src="/static/favicon.ico" class="about_header_icon ps-1"/></h3>
+                    <h3 class="about_section">Login <img src="/static/favicon.ico" class="about_header_icon ps-1"/></h3>
                     <p> Press the <i>Login</i> button on the navbar or main page to authenticate with your Spotify account. 
                         This will allow you to view your Spotify playlists as <i>collections</i> and also enable collection playing and modifying.
                     </p>
-                    <h3>Create a Collection <img src="/static/images/spotify/Spotify_Icon_RGB_Green.png" class="about_header_icon ps-1"/></h3>
+                    <h3 class="about_section">Create a Collection <img src="/static/images/spotify/Spotify_Icon_RGB_Green.png" class="about_header_icon ps-1"/></h3>
                     <p>
                         Make a new playlist in your Spotify Account that is both public and displayed on your 
                         profile (This should be the default for a new playlist). Then, add at least one album
                         to it.
                     </p>
-                    <h3>Add to a Collection <img src="/static/images/spotify/Spotify_Icon_RGB_Green.png" class="about_header_icon ps-1"/></h3>
+                    <h3 class="about_section">Add to a Collection <img src="/static/images/spotify/Spotify_Icon_RGB_Green.png" class="about_header_icon ps-1"/></h3>
                     <p>
                         Navigate to the album you'd like to add to the collection. In the options for the album, select 
                         <i>Add to playlist</i>, and choose the playlist corresponding to the collection you would like it
                         to be a part of. Alternatively in the desktop Spotify App, you can utilize the drag n' drop functionality 
                         to drag the album/s into the desired playlist.
                     </p>
-                    <h3>View your Collections <img src="/static/favicon.ico" class="about_header_icon ps-1"/></h3>
+                    <h3 class="about_section">View your Collections <img src="/static/favicon.ico" class="about_header_icon ps-1"/></h3>
                     <p>
                         The main page on <i>Album Collections</i> displays your collections. Click on a collection to open it 
                         in a new page. The collection page shows the cover art for all albums in the collections, and has a 
                         <i>collection control bar</i> at the bottom that shows the name of collection, along with several buttons to 
                         modify, play, or access it.
                     </p>
-                    <h3>Play from a Collection <img src="/static/favicon.ico" class="about_header_icon ps-1"/> <img src="/static/images/spotify/Spotify_Icon_RGB_Green.png" class="about_header_icon ps-1"/></h3>
+                    <h3 class="about_section">Play from a Collection <img src="/static/favicon.ico" class="about_header_icon ps-1"/> <img src="/static/images/spotify/Spotify_Icon_RGB_Green.png" class="about_header_icon ps-1"/></h3>
                     <p>There are several ways to play music from a collection.</p>
-                    <h4>Play the playlist</h4>
+                    <h4 class="about_section">Play the playlist</h4>
                     <p>
                         Press the <img src="/static/images/spotify/Spotify_Icon_RGB_Black.png" class="spotify_icon_small_img px-1"/> button in the <i>collection 
                         control bar</i> to take you to the Spotify playlist container for the collection. Then play.
                     </p>
-                    <h4>Play a single album from the collection</h4>
+                    <h4 class="about_section">Play a single album from the collection</h4>
                     <p>
                         Click on the album you would like to play. Then press the <img src="/static/images/spotify/Spotify_Icon_RGB_Black.png" class="spotify_icon_small_img px-1"/> button
                         to take you to the album in the Spotify app. Then play.
                     </p>
-                    <h4 id="play_multiple_albums">Play multiple albums in the collection</h4>
+                    <h4 class="about_section" id="play_multiple_albums">Play multiple albums in the collection</h4>
                     <p>
                         <i>
                             These actions may require opening up the Spotify app to allow
@@ -98,7 +98,7 @@
                     <p>
                         <i>These actions are also restricted to Premium Spotify users.</i>
                     </p>
-                    <h5 id="play_albums_from_start">Play albums from start</h5>
+                    <h5 class="about_section" id="play_albums_from_start">Play albums from start</h5>
                     <p>
                         Press the <img class="px-1" src="/static/images/bootstrap/play.svg"/> button on the <i>collection control bar</i>. As long 
                         as there is at least one avaiable device to play from, you will then be prompted to select a device to play on. Select the device you'd 
@@ -116,18 +116,18 @@
                         The above events will ensure that the albums are played in their correct order and that no tracks in the containing 
                         playlist that do not belong to an album get played.
                     </p>
-                    <h5>Shuffle play albums</h5>
+                    <h5 class="about_section">Shuffle play albums</h5>
                     <p> Press the <img class="ps-1" src="/static/images/bootstrap/shuffle.svg"/><img class="pe-1" src="/static/images/bootstrap/play.svg"/> 
                         button on the <i>collection control bar</i>. After, proceed as with <a href="#play_albums_from_start">Play albums from start</a>. Behavior
                         is identical except the temporary playback playlist will be shuffled by album.
                     </p>
-                    <h5>Play starting at a particular album</h5>
+                    <h5 class="about_section">Play starting at a particular album</h5>
                     <p>
                         Click on the album you would like to commence playback from, then press the <img class="px-1" src="/static/images/bootstrap/play.svg"/> 
                         button. After, proceed as with <a href="#play_albums_from_start">Play albums from start</a>. Behavior
                         is identical except the temporary playback playlist will be played starting from the chosen album.
                     </p>
-                    <h3>Reorder a Collection <img src="/static/favicon.ico" class="about_header_icon ps-1"/></h3>
+                    <h3 class="about_section">Reorder a Collection <img src="/static/favicon.ico" class="about_header_icon ps-1"/></h3>
                     <p>
                         The order of the albums in the collection can be changed via drag n' drop. This functionality
                         can be toggled using the <img class="px-1" src="/static/images/bootstrap/arrows-move.svg"/> button.
@@ -135,40 +135,40 @@
                         changes the order of playback (but won't change the playback order after it has already commenced -- see 
                         explanation of temporary playlist in <a href="#play_albums_from_start">Play albums from start</a>).
                     </p>
-                    <h3>Remove an Album from a Collection <img src="/static/favicon.ico" class="about_header_icon ps-1"/></h3>
+                    <h3 class="about_section">Remove an Album from a Collection <img src="/static/favicon.ico" class="about_header_icon ps-1"/></h3>
                     <p>
                         Click on the album you would like to remove from the collection. Then press the <img class="px-1" src="/static/images/bootstrap/trash.svg"/>
                         button, and respond to the 'are you sure' prompt. This will remove all songs from this album from the 
                         containing playlist, and remove the album art image from the screen (but won't remove it from playback after
                         it has already commenced -- see explanation of temporary playlist in <a href="#play_albums_from_start">Play albums from start</a>).
                     </p>
-                    <h2>Limitations</h2>
-                    <h3>Free accounts</h3>
+                    <h2 class="about_section">Limitations</h2>
+                    <h3 class="about_section">Free accounts</h3>
                     <p>
                         <a href="#play_multiple_albums">Playing multiple albums</a>
                         will not work with a free Spotify account -- the <a href="https://developer.spotify.com/documentation/web-api/guides/using-connect-web-api/">Spotify Connect API</a>
                         only can control Premium users' playback. However, the app will still be perfectly functional for
                         organizing and visualizing albums in your collections and linking to Spotify to be able to play them.
                     </p>
-                    <h3>EPs</h3>
+                    <h3 class="about_section">EPs</h3>
                     <p>
                         Currently, <a href="https://en.wikipedia.org/wiki/Extended_play">EP</a>s are not included in <i>collections</i>.
                         This is due to there being no special classification for them in the Spotify API (they are grouped with Singles).
                     </p>
-                    <h3>Web Player</h3>
+                    <h3 class="about_section">Web Player</h3>
                     <p>
                         <a href="#play_multiple_albums">Playing multiple albums</a> behaves a bit strangely when pairing with the
                         web player. If you try to play a collection on a web player device before interacting in some way with it,
                         you will get a Spotify API error. Pressing play/pause in the web player and <i>then</i> playing the collection
                         however will succeed.
                     </p>
-                    <h3>Device Discovery</h3>
+                    <h3 class="about_section">Device Discovery</h3>
                     <p>
                         Devices may not always show up in the list in <i>Album Collections</i> as available even though they do
                         show up in your Spotify app. Sometimes it will be necessary to manually open the Spotify app on a device
                         before it will show up in <i>Album Collections</i>.
                     </p>
-                    <h2>Credits</h2>
+                    <h2 class="about_section">Credits</h2>
                     <p>
                         <ul>
                             <li><a href="https://flask.palletsprojects.com/en/2.0.x/">Flask</a></li>
