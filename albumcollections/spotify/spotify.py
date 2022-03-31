@@ -69,9 +69,15 @@ class Spotify:
 
         offset = 0
         while True:
-            next_tracks = \
-                [SpotifyTrack(track_item["track"])
-                 for track_item in self.sp.playlist_tracks(id, limit=100, offset=offset)["items"]]
+            # Get next 100 (or remainder) tracks in playlist.
+            # Ignore anything that's not a track (if podcast/s are included
+            # in a playlist, the podcast items will turn up in the search,
+            # as well as what looks like a 'user object'?)
+            next_tracks = [
+                    SpotifyTrack(track_item["track"])
+                    for track_item in self.sp.playlist_tracks(id, limit=100, offset=offset)["items"]
+                    if track_item["track"] is not None
+                ]
 
             if len(next_tracks):
                 tracks.extend(next_tracks)
