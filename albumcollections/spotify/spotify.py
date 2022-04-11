@@ -32,36 +32,19 @@ class Spotify:
         spotify_playlist = self.sp.playlist(link)
         return SpotifyPlaylist(spotify_playlist)
 
-    def get_collection_from_playlist_id(self, id, reload_albums=False):
-        return self.get_collection_from_playlist_dict(self.sp.playlist(id), reload_albums)
+    def get_collection(self, playlist_id, load_albums=False):
+        """Get `SpotifyCollection` item based on a database collection entry
 
-    def get_collection_from_playlist_dict(self, playlist_dict, reload_albums=False):
-        """Create a spotify collection item based on playlist dictionary
-
-        The `SpotifyCollection` class makes use of a database and caching
-        to store information so it doesn't always have to be loaded again.
-
-        If the collection has been changed in spotify, then reload albums
-        and num_albums. If it hasn't been changed, then only reload the
-        albums if they're not stored anymore and it's been explictly
-        requested to reload them using `reload_albums`.
+        The `SpotifyCollection` class makes use of caching
+        to store albums so they don't always have to be loaded again.
         """
-        collection = SpotifyCollection(playlist_dict)
+        spotify_collection = SpotifyCollection(self.sp.playlist(playlist_id))
 
-        if collection.changed:
-            # Get albums from spotify interface again, because
-            # they may have changed. Use this to set albums and num_albums
-            # properties
-            collection_albums = self._get_collection_albums(collection.id)
-            collection.albums = collection_albums
-            collection.num_albums = len(collection_albums)
-        else:
-            # Only get albums again if the cache entry doesn't exist and
-            # we've specified that we need to have them
-            if collection.albums is None and reload_albums:
-                collection.albums = self._get_collection_albums(collection.id)
+        # Load the albums in the spotify_collection
+        if load_albums and spotify_collection.albums is None:
+            spotify_collection.albums = self._get_collection_albums(spotify_collection.id)
 
-        return collection
+        return spotify_collection
 
     def get_playlist_tracks(self, id) -> List[SpotifyTrack]:
         """Get all tracks in the given playlist, retaining track order"""

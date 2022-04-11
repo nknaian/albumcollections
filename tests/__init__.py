@@ -38,7 +38,7 @@ class SpotifyMock(Mock):
     """Mock object to patch in to replace
     albumcollections.spotify.spotify.Spotify() class
     """
-    def get_collection_from_playlist_id(self, *args, **kwargs):
+    def get_collection(self, *args, **kwargs):
         """Return dummy mock collection
         """
         album_mock1 = PickableMock(spec=SpotifyAlbum)

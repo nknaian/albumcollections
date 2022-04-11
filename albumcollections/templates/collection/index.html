@@ -8,6 +8,17 @@
         onload="init('{{collection.id}}', false)"
     {% endif %}
     >
+        {% if collection.albums|length == 0 %}
+            <div class="main_text">
+                <p>
+                    You don't have any albums in this collection yet! Add at least one album to the corresponding Spotify playlist then come back here.
+                </p>
+                <p>
+                    For more details check out the <a href="{{url_for('main.about')}}#guide">guide</a>.
+                </p>
+            </div>
+        {% endif %}
+
         <!-- Collection Albums -->
         <div id="collection_list" class="row justify-content-center justify-content-md-start" oncontextmenu="return false;">
             {% for album in collection.albums %}

@@ -4,7 +4,7 @@ import os
 
 from flask import Flask, session
 from flask_sqlalchemy import SQLAlchemy
-from flask_bootstrap import Bootstrap
+from flask_bootstrap import Bootstrap5
 from flask_session import Session
 from flask_caching import Cache
 
@@ -64,7 +64,7 @@ def create_app(test_config=None):
         app.register_blueprint(test_bp)
 
     # Create bootstrap flask app
-    Bootstrap(app)
+    Bootstrap5(app)
 
     # Create flask session
     app.config['SESSION_SQLALCHEMY'] = db

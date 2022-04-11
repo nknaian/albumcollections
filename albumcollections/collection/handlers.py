@@ -13,8 +13,8 @@ from . import bp
 @bp.route('/collection/<string:playlist_id>', methods=['GET'])
 def index(playlist_id):
     try:
-        # Get the collection by playlist id, reloading albums objects for it
-        collection = spotify_iface.Spotify().get_collection_from_playlist_id(playlist_id, reload_albums=True)
+        # Get the collection by playlist id, loading albums objects for it
+        collection = spotify_iface.Spotify().get_collection(playlist_id, load_albums=True)
 
     except Exception as e:
         raise albumcollectionsError(f"Failed to load collection {playlist_id} - {e}", url_for('main.index'))

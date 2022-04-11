@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% from 'bootstrap5/form.html' import render_form %}
 
 {% block content %}
     {% if not is_user_logged_in() %}
@@ -19,16 +20,9 @@
             </form>
         </div>
     {% else %}
-        {% if user_collections|length == 0 %}
-            <div class="main_text">
-                <p>
-                    You don't have any collections yet! Make a playlist with at least one album in Spotify and then come back here.
-                </p>
-                <p>
-                    For more details check out the <a href="{{url_for('main.about')}}#guide">guide</a>.
-                </p>
-            </div>
-        {% endif %}
+        <div class="btn btn-success p-2 m-2 d-flex" data-bs-toggle="modal" data-bs-target="#addCollections" style="display: inline-block;">
+            <div class="px-2 fs-4">Add Collections</div>
+        </div>
 
         {% for collection in user_collections %}
             <a class="btn btn-dark p-2 m-2 d-flex collection_item"
@@ -47,5 +41,20 @@
                 <div class="collection_item_name ms-auto px-2 fs-4">{{collection.name}}</div>
             </a>
         {% endfor %}
+
+        <!-- Add collections popup window-->
+        <div class="modal fade" id="addCollections" tabindex="-1" aria-labelledby="addCollectionsLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="addCollectionsLabel">Add Collections</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{ render_form(add_collections_form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
     {% endif %}
 {% endblock %}

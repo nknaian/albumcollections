@@ -4,9 +4,12 @@ from flask.globals import request
 from spotipy.exceptions import SpotifyException
 
 from albumcollections.errors.exceptions import albumcollectionsError
-
 from albumcollections.spotify import spotify_user
 from albumcollections.spotify.spotify_user import SpotifyUserAuthFailure
+from albumcollections.models import User
+
+
+from albumcollections import db
 
 from . import bp
 
@@ -19,18 +22,28 @@ def login():
     # Attempt to get user id. This will trigger spotify authentication
     # the first time around, and second time have no side effect
     try:
-        spotify_user.get_user_id()
+        spotify_user_id = spotify_user.get_user_id()
 
-        flash(f"Hello {spotify_user.get_user_display_name()}! You are now logged in through your Spotify account.",
-              "success")
     except SpotifyException as e:
         spotify_user.logout()
         raise albumcollectionsError(f"Failed to authenticate with spotify\n{e}", url_for('main.index'))
 
+    # Add user to database if they don't exist already
+    try:
+        if User.query.filter_by(spotify_user_id=spotify_user_id).first() is None:
+            db.session.add(User(spotify_user_id=spotify_user_id))
+            db.session.commit()
+    except Exception as e:
+        spotify_user.logout()
+        raise albumcollectionsError(f"Failed add user to database\n{e}", url_for('main.index'))
+
+    flash(f"Hello {spotify_user.get_user_display_name()}! You are now logged in through your Spotify account.",
+          "success")
+
     return render_template(
         'main/load-redirect.html',
         redirect_location=url_for('main.index'),
-        load_message="Catalogging your collections...this may take a minute"
+        load_message="Organizing your shelves..."
     )
 
 

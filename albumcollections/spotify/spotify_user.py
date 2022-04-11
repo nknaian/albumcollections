@@ -22,7 +22,6 @@ from albumcollections import spoipy_cache_handler
 
 from .item.spotify_music import SpotifyTrack
 from .item.spotify_playlist import SpotifyPlaylist
-from .item.spotify_collection import SpotifyCollection
 
 
 '''CONSTANTS'''
@@ -104,26 +103,21 @@ def get_user_display_name():
     return _get_sp_instance().me()['display_name']
 
 
-def get_user_collections() -> List[SpotifyCollection]:
+def get_user_playlists() -> List[SpotifyPlaylist]:
     sp = _get_sp_instance()
 
     playlist_infos = sp.current_user_playlists()
 
-    collections = []
+    playlists = []
     while playlist_infos:
         for playlist in playlist_infos['items']:
-            # Make a collection from the playlist dict
-            collection = Spotify().get_collection_from_playlist_dict(playlist)
-
-            # If the collection has albums, add it
-            if collection.num_albums:
-                collections.append(collection)
+            playlists.append(SpotifyPlaylist(playlist))
         if playlist_infos['next']:
             playlist_infos = sp.next(playlist_infos)
         else:
             playlist_infos = None
 
-    return collections
+    return playlists
 
 
 def create_playlist(name: str) -> SpotifyPlaylist:
@@ -257,8 +251,8 @@ def play_collection(playlist_id, start_album_id, shuffle_albums: bool, device_id
     # so I can't accurately add an error message at this time.)
     sp.shuffle(False, device_id)
 
-    # Get the collection (making sure to reload albums if necessary!)
-    collection = sp_cc_iface.get_collection_from_playlist_id(playlist_id, reload_albums=True)
+    # Get the collection (making sure to load albums if necessary!)
+    collection = sp_cc_iface.get_collection(playlist_id, load_albums=True)
 
     # Get a copy of the collection albums
     collection_albums = copy.deepcopy(collection.albums)
