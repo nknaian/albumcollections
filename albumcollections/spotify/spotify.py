@@ -32,7 +32,7 @@ class Spotify:
         spotify_playlist = self.sp.playlist(link)
         return SpotifyPlaylist(spotify_playlist)
 
-    def get_collection(self, playlist_id, load_albums=False):
+    def get_collection(self, playlist_id):
         """Get `SpotifyCollection` item based on a database collection entry
 
         The `SpotifyCollection` class makes use of caching
@@ -40,8 +40,9 @@ class Spotify:
         """
         spotify_collection = SpotifyCollection(self.sp.playlist(playlist_id))
 
-        # Load the albums in the spotify_collection
-        if load_albums and spotify_collection.albums is None:
+        # Load the albums in the spotify_collection if they're not already
+        # available
+        if spotify_collection.albums is None:
             spotify_collection.albums = self._get_collection_albums(spotify_collection.id)
 
         return spotify_collection

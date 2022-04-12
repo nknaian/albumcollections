@@ -1,11 +1,8 @@
 from typing import List
 from flask import redirect, render_template, url_for, flash, request
 
-import albumcollections.spotify.spotify as spotify_iface
-
 from albumcollections.spotify import spotify_user
 from albumcollections.errors.exceptions import albumcollectionsError
-from albumcollections.spotify.item.spotify_collection import SpotifyCollection
 from albumcollections.spotify.item.spotify_playlist import SpotifyPlaylist
 from albumcollections.user import is_user_logged_in, get_user_id
 from albumcollections.models import Collection
@@ -34,8 +31,8 @@ def index():
         except Exception as e:
             raise albumcollectionsError(f"Failed to load user playlists - {e}", url_for('main.index'))
 
-        # Load the user's collections
-        user_collections = _load_collections()
+        # Filter user playlist to get their collections
+        user_collections = _user_collections(user_playlists)
 
         # Add the playlist names to the add_collections_form
         add_collections_form.playlists.choices.extend(
@@ -61,7 +58,6 @@ def index():
         elif remove_collections_form.errors:
             print("rerrors?: ", remove_collections_form.errors)
             flash("Failed to remove collections", "danger")
-
 
     # Otherwise load nothing
     else:
@@ -114,7 +110,7 @@ def _add_collections(add_collections_form: AddCollectionsForm, user_playlists: L
             raise albumcollectionsError(f"Failed to add collections - {e}", url_for('main.index'))
 
 
-def _remove_collections(remove_collections_form: RemoveCollectionsForm, user_collections: List[SpotifyCollection]):
+def _remove_collections(remove_collections_form: RemoveCollectionsForm, user_collections: List[SpotifyPlaylist]):
     # Get user's chosen collections to remove from the form
     collections_to_delete = [
         user_collection
@@ -136,16 +132,22 @@ def _remove_collections(remove_collections_form: RemoveCollectionsForm, user_col
             raise albumcollectionsError(f"Failed to remove collections - {e}", url_for('main.index'))
 
 
-def _load_collections() -> List[SpotifyCollection]:
-    # TODO: This function is taking too long. Should make it so this utilizes the 'user_playlists' object
-    # that we already retrieved instead of making more 
+def _user_collections(user_playlists: List[SpotifyPlaylist]) -> List[SpotifyPlaylist]:
+    # Get list of playlist ids of user's collections
+    user_collection_playlist_ids = [
+        collection.playlist_id
+        for collection in Collection.query.filter_by(user_id=get_user_id())
+    ]
+
+    # Get playlists that user has stored as collections
     return [
-        spotify_iface.Spotify().get_collection(collection_entry.playlist_id, load_albums=False)
-        for collection_entry in Collection.query.filter_by(user_id=get_user_id())
+        user_playlist
+        for user_playlist in user_playlists
+        if user_playlist.id in user_collection_playlist_ids
     ]
 
 
-def _get_available_playlist_names(user_playlists, user_collections: List[SpotifyCollection]):
+def _get_available_playlist_names(user_playlists: List[SpotifyPlaylist], user_collections: List[SpotifyPlaylist]):
     user_collection_ids = [collection.id for collection in user_collections]
 
     return [user_playlist.name for user_playlist in user_playlists if user_playlist.id not in user_collection_ids]
