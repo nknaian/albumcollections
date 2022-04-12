@@ -10,6 +10,10 @@ Styling that is specific to one instance are located in the "ID Styles" section 
     font-size: larger;
 }
 
+.shelf_item {
+    height: 82px;
+}
+
 .album_item {
     margin: 5px;
 }
@@ -17,7 +21,7 @@ Styling that is specific to one instance are located in the "ID Styles" section 
 .album_img {
     min-width: 50px;
     width: 10vw;
-    cursor: pointer"
+    cursor: "pointer";
 }
 
 .collection_item {

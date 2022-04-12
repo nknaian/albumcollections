@@ -20,10 +20,16 @@
             </form>
         </div>
     {% else %}
-        <div class="btn btn-success p-2 m-2 d-flex" data-bs-toggle="modal" data-bs-target="#addCollections" style="display: inline-block;">
-            <div class="px-2 fs-4">Add Collections</div>
+        <div class="row m-2 shelf_item">
+            <div class="col p-2 me-2 btn btn-dark d-flex flex-column justify-content-center" data-bs-toggle="modal" data-bs-target="#addCollections">
+                <div class="fs-1 text-success">+</div>
+            </div>
+            {% if user_collections|length > 0 %}
+            <div class="col p-2 btn btn-dark d-flex flex-column justify-content-center" data-bs-toggle="modal" data-bs-target="#removeCollections">
+                <div class="fs-1 text-danger">-</div>
+            </div>
+            {% endif %}
         </div>
-
         {% for collection in user_collections %}
             <a class="btn btn-dark p-2 m-2 d-flex collection_item"
                role="button"
@@ -42,6 +48,18 @@
             </a>
         {% endfor %}
 
+        {% if user_collections|length == 0 %}
+            <div class="main_text">
+                <p>
+                    You don't have any collections yet! Use the + button above to add some.
+                </p>
+                <p>
+                    For more details check out the <a href="{{url_for('main.about')}}#guide">guide</a>.
+                </p>
+            </div>
+        {% endif %}
+
+
         <!-- Add collections popup window-->
         <div class="modal fade" id="addCollections" tabindex="-1" aria-labelledby="addCollectionsLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -52,6 +70,21 @@
                     </div>
                     <div class="modal-body">
                         {{ render_form(add_collections_form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Remove collections popup window-->
+        <div class="modal fade" id="removeCollections" tabindex="-1" aria-labelledby="removeCollectionsLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="removeCollectionsLabel">Remove Collections</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{ render_form(remove_collections_form) }}
                     </div>
                 </div>
             </div>
