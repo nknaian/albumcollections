@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 from flask import redirect, render_template, url_for, flash, request
 
 from albumcollections.spotify import spotify_user
@@ -18,6 +18,12 @@ from . import bp
 
 @bp.route('/', methods=['GET', 'POST'])
 def index():
+    user_collections = None
+    add_collections_form = None
+    remove_collections_form = None
+    add_playlists_disp_len = None
+    remove_collections_disp_len = None
+
     # If user is logged in then process collection addition and removal forms
     # and load their collections
     if is_user_logged_in():
@@ -36,40 +42,41 @@ def index():
 
         # Add the playlist names to the add_collections_form
         add_collections_form.playlists.choices.extend(
-            _get_available_playlist_names(user_playlists, user_collections)
+            _get_available_playlists(user_playlists, user_collections)
         )
+
+        # Get display length of playlist choices
+        add_playlists_disp_len = _choices_display_len(len(add_collections_form.playlists.choices))
 
         # Handle add_collections_form submission
         if add_collections_form.submit_new_collections.data and add_collections_form.validate():
-            _add_collections(add_collections_form, user_playlists)
+            _add_collections(add_collections_form)
             return redirect(url_for('main.index'))
         elif add_collections_form.errors:
             flash("Failed to add collections", "danger")
 
         # Add the collection names to the remove_collections_form
         remove_collections_form.collections.choices.extend(
-            [collection.name for collection in user_collections]
+            [(collection.id, collection.name) for collection in user_collections]
         )
+
+        # Get display length of playlist choices
+        remove_collections_disp_len = _choices_display_len(len(remove_collections_form.collections.choices))
 
         # Handle remove_collections_form submission
         if remove_collections_form.submit_collection_removal.data and remove_collections_form.validate():
-            _remove_collections(remove_collections_form, user_collections)
+            _remove_collections(remove_collections_form)
             return redirect(url_for('main.index'))
         elif remove_collections_form.errors:
-            print("rerrors?: ", remove_collections_form.errors)
             flash("Failed to remove collections", "danger")
-
-    # Otherwise load nothing
-    else:
-        user_collections = None
-        add_collections_form = None
-        remove_collections_form = None
 
     return render_template(
         'main/index.html',
         user_collections=user_collections,
         add_collections_form=add_collections_form,
-        remove_collections_form=remove_collections_form
+        remove_collections_form=remove_collections_form,
+        add_playlists_disp_len=add_playlists_disp_len,
+        remove_collections_disp_len=remove_collections_disp_len
     )
 
 
@@ -90,41 +97,26 @@ def load_redirect():
 """PRIVATE HELPER FUNCTIONS"""
 
 
-def _add_collections(add_collections_form: AddCollectionsForm, user_playlists: List[SpotifyPlaylist]):
-    # Get user's chosen playlists to add as collections from the form
-    chosen_user_playlists = [
-        user_playlist
-        for user_playlist in user_playlists
-        if user_playlist.name in add_collections_form.playlists.data
-    ]
-
-    # Add new collections to the db
-    for user_playlist in chosen_user_playlists:
+def _add_collections(add_collections_form: AddCollectionsForm):
+    """Add user's chosen playlists to their Collections in the database"""
+    for chosen_playlist_id in add_collections_form.playlists.data:
         try:
-            if Collection.query.filter_by(playlist_id=user_playlist.id, user_id=get_user_id()).first():
-                raise Exception(f"'{user_playlist.name}' already imported as a collection")
+            if Collection.query.filter_by(playlist_id=chosen_playlist_id, user_id=get_user_id()).first():
+                raise Exception(f"'{chosen_playlist_id}' already imported as a collection")
             else:
-                db.session.add(Collection(playlist_id=user_playlist.id, user_id=get_user_id()))
+                db.session.add(Collection(playlist_id=chosen_playlist_id, user_id=get_user_id()))
                 db.session.commit()
         except Exception as e:
             raise albumcollectionsError(f"Failed to add collections - {e}", url_for('main.index'))
 
 
-def _remove_collections(remove_collections_form: RemoveCollectionsForm, user_collections: List[SpotifyPlaylist]):
-    # Get user's chosen collections to remove from the form
-    collections_to_delete = [
-        user_collection
-        for user_collection in user_collections
-        if user_collection.name in remove_collections_form.collections.data
-    ]
-
-    print("collections to delete: ", collections_to_delete)
-
-    for collection in collections_to_delete:
+def _remove_collections(remove_collections_form: RemoveCollectionsForm):
+    """Remove user's chosen collections from their Collections in the database"""
+    for chosen_collection_id in remove_collections_form.collections.data:
         try:
-            collection = Collection.query.filter_by(playlist_id=collection.id, user_id=get_user_id()).first()
+            collection = Collection.query.filter_by(playlist_id=chosen_collection_id, user_id=get_user_id()).first()
             if collection is None:
-                raise Exception(f"'{collection.name}' not found")
+                raise Exception(f"'{chosen_collection_id}' not found")
             else:
                 db.session.delete(collection)
                 db.session.commit()
@@ -147,7 +139,18 @@ def _user_collections(user_playlists: List[SpotifyPlaylist]) -> List[SpotifyPlay
     ]
 
 
-def _get_available_playlist_names(user_playlists: List[SpotifyPlaylist], user_collections: List[SpotifyPlaylist]):
+def _get_available_playlists(
+    user_playlists: List[SpotifyPlaylist],
+    user_collections: List[SpotifyPlaylist]
+) -> List[Tuple[str, str]]:
     user_collection_ids = [collection.id for collection in user_collections]
 
-    return [user_playlist.name for user_playlist in user_playlists if user_playlist.id not in user_collection_ids]
+    return [
+        (user_playlist.id, user_playlist.name)
+        for user_playlist in user_playlists
+        if user_playlist.id not in user_collection_ids
+    ]
+
+
+def _choices_display_len(num_choices: int) -> int:
+    return num_choices if num_choices < 10 else 10

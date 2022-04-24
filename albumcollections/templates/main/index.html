@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% from 'bootstrap5/form.html' import render_form %}
+{% from 'bootstrap5/form.html' import render_field %}
 
 {% block content %}
     {% if not is_user_logged_in() %}
@@ -69,7 +69,11 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        {{ render_form(add_collections_form) }}
+                        <form method="post">
+                            {{ add_collections_form.hidden_tag() }}
+                            {{ render_field(add_collections_form.playlists, size=add_playlists_disp_len) }}
+                            {{ render_field(add_collections_form.submit_new_collections) }}
+                        </form>
                     </div>
                 </div>
             </div>
@@ -84,7 +88,11 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        {{ render_form(remove_collections_form) }}
+                        <form method="post">
+                            {{ remove_collections_form.hidden_tag() }}
+                            {{ render_field(remove_collections_form.collections, size=remove_collections_disp_len) }}
+                            {{ render_field(remove_collections_form.submit_collection_removal) }}
+                        </form>
                     </div>
                 </div>
             </div>
