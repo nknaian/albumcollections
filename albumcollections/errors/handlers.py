@@ -1,4 +1,4 @@
-from flask import flash, redirect
+from flask import flash, redirect, current_app
 from flask.globals import request
 
 from . import bp
@@ -17,11 +17,20 @@ def handle_user_errors(e):
       is internal...it is not their fault.
     """
     if isinstance(e, albumcollectionsAlert):
+        current_app.logger.warn(f"User alert: {e}")
         flash(str(e), "warning")
     elif isinstance(e, albumcollectionsError):
+        current_app.logger.error(f"User error: {e}")
         flash(str(e), "danger")
 
     if e._redirect_location:
         return redirect(e._redirect_location)
     else:
         return redirect(request.referrer)
+
+
+@bp.app_errorhandler(Exception)
+def handle_base_exception(e):
+    current_app.logger.critical(f"Base exception encountered: {e}")
+    flash("Unexpected failure occurred", "danger")
+    return redirect(request.referrer)

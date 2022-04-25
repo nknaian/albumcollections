@@ -16,16 +16,16 @@ from .item.spotify_playlist import SpotifyPlaylist
 from .item.spotify_collection import SpotifyCollection
 
 
-class Spotify:
+class SpotifyInterface:
     """Class to interface with Spotify API through an
     instance of client credentials authenticated spotipy.
     """
 
-    """Public Functions"""
-
     def __init__(self):
         self.sp = spotipy.Spotify(
             client_credentials_manager=SpotifyClientCredentials())
+
+    '''PUBLIC FUNCTIONS'''
 
     def get_playlist_from_link(self, link):
         """Use spotify playlist link to get `SpotifyPlaylist` object"""
@@ -78,6 +78,15 @@ class Spotify:
             return [track_item["id"] for track_item in track_items]
         else:
             return []
+
+    def remove_album_from_playlist(self, playlist_id, album_id):
+        # Get list of track ids for tracks in the album
+        album_track_ids = [spotify_track["id"] for spotify_track in self.sp.album_tracks(album_id)["items"]]
+
+        # Remove all instances of these tracks from the playlist
+        self.sp.playlist_remove_all_occurrences_of_items(playlist_id, album_track_ids)
+
+    '''PRIVATE FUNCTIONS'''
 
     def _get_collection_albums(self, playlist_id) -> List[SpotifyAlbum]:
         """Get all valid albums in the given playlist.

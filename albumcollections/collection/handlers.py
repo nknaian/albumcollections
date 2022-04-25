@@ -2,9 +2,9 @@ from flask import render_template, request, url_for, jsonify
 import json
 
 # Importing like this is necessary for unittest framework to patch
-import albumcollections.spotify.spotify as spotify_iface
+import albumcollections.spotify.spotify_interface as spotify_iface
+import albumcollections.spotify.spotify_user_interface as spotify_user_iface
 
-from albumcollections.spotify import spotify_user
 from albumcollections.errors.exceptions import albumcollectionsError
 
 from . import bp
@@ -14,7 +14,7 @@ from . import bp
 def index(playlist_id):
     try:
         # Get the spotify collection object by playlist id
-        collection = spotify_iface.Spotify().get_collection(playlist_id)
+        collection = spotify_iface.SpotifyInterface().get_collection(playlist_id)
 
     except Exception as e:
         raise albumcollectionsError(f"Failed to load collection {playlist_id} - {e}", url_for('main.index'))
@@ -37,7 +37,7 @@ def remove_album():
 
         # Try removing the requested album
         try:
-            spotify_user.remove_album_from_playlist(playlist_id, album_id)
+            spotify_user_iface.SpotifyUserInterface().remove_album_from_playlist(playlist_id, album_id)
         except Exception as e:
             response_dict["success"] = False
             response_dict["exception"] = str(e)
@@ -55,7 +55,7 @@ def get_devices():
         response_dict = {"exception": None, "devices": None}
 
         try:
-            response_dict["devices"] = spotify_user.get_devices()
+            response_dict["devices"] = spotify_user_iface.SpotifyUserInterface().get_devices()
         except Exception as e:
             response_dict["exception"] = str(e)
 
@@ -79,7 +79,12 @@ def play_collection():
         response_dict = {"played": True, "exception": None, "devices": None}
 
         try:
-            spotify_user.play_collection(playlist_id, start_album_id, shuffle_albums, device_id=device_id)
+            spotify_user_iface.SpotifyUserInterface().play_collection(
+                playlist_id,
+                start_album_id,
+                shuffle_albums,
+                device_id=device_id
+            )
         except Exception as e:
             response_dict["played"] = False
             response_dict["exception"] = str(e)
@@ -103,7 +108,7 @@ def reorder_collection():
         response_dict = {"success": True, "exception": None}
 
         try:
-            spotify_user.reorder_collection(playlist_id, moved_album_id, next_album_id)
+            spotify_user_iface.SpotifyUserInterface().reorder_collection(playlist_id, moved_album_id, next_album_id)
         except Exception as e:
             response_dict["success"] = False
             response_dict["exception"] = str(e)

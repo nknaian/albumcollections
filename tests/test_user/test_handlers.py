@@ -1,5 +1,11 @@
+from unittest.mock import patch
+
 from flask.helpers import url_for
 
+from albumcollections.models import User
+import albumcollections.spotify.spotify_user_interface as spotify_user_iface
+
+from tests import SpotifyUserInterfaceMock
 from tests.test_user import UserTestCase
 
 
@@ -9,7 +15,11 @@ class UserLoginTestCase(UserTestCase):
     The 'user.sp_auth_complete' route is also exercised through
     these tests.
     """
-    def test_login_user(self):
+    @patch(
+        'albumcollections.spotify.spotify_user_interface.SpotifyUserInterface',
+        new_callable=SpotifyUserInterfaceMock
+    )
+    def test_login_user(self, _mock):
         # Visit main page. Verify that the text 'Login' is on the page
         response = self.client.get(url_for('main.index'))
         self.assert_200(response)
@@ -22,10 +32,12 @@ class UserLoginTestCase(UserTestCase):
             follow_redirects=True,
         )
 
-        # Verify that post was successful and redirected back to the main page
-        # and now UI is ready for user to log out
-        self.assert200(response)
-        self.assertIn(bytes("Log out", 'utf-8'), response.data)
+        # Verify that the post was successful and the user
+        # was added to the database and is authenticated
+        users = User.query.all()
+        self.assertEqual(len(users), 1)
+        self.assertEqual(users[0].spotify_user_id, SpotifyUserInterfaceMock.user_id)
+        self.assertTrue(spotify_user_iface.is_auth())
 
 
 class UserLogoutTestCase(UserTestCase):
@@ -42,7 +54,7 @@ class UserLogoutTestCase(UserTestCase):
             follow_redirects=True,
         )
 
-        # Verify that post was successful and redirected back to the main page
-        # and now UI is ready for user to log in
+        # Verify that post was successful and the user is now
+        # marked as being not authenticated
         self.assert200(response)
-        self.assertIn(bytes("Login", 'utf-8'), response.data)
+        self.assertFalse(spotify_user_iface.is_auth())

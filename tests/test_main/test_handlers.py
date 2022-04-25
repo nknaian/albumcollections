@@ -1,8 +1,12 @@
+from unittest.mock import patch
+
 from flask import url_for
 
 from albumcollections.models import User, Collection
 
 from tests.test_main import MainTestCase
+
+from tests import SpotifyUserInterfaceMock
 
 from albumcollections import db
 
@@ -13,19 +17,27 @@ class MainIndexTestCase(MainTestCase):
         response = self.client.get(url_for("main.index"))
         self.assert_200(response)
 
-    def test_get_index_logged_in(self):
+    @patch(
+        'albumcollections.spotify.spotify_user_interface.SpotifyUserInterface',
+        new_callable=SpotifyUserInterfaceMock
+    )
+    def test_get_index_logged_in(self, _mock):
         # Auth dummy user and add them to database
         self.auth_dummy_user()
-        db.session.add(User(spotify_user_id=self.DUMMY_USER_SP_ID))
+        db.session.add(User(spotify_user_id=SpotifyUserInterfaceMock.user_id))
         db.session.commit()
 
         response = self.client.get(url_for("main.index"))
         self.assert_200(response)
 
-    def test_add_collections(self):
+    @patch(
+        'albumcollections.spotify.spotify_user_interface.SpotifyUserInterface',
+        new_callable=SpotifyUserInterfaceMock
+    )
+    def test_add_collections(self, _mock):
         # Auth dummy user and add them to database
         self.auth_dummy_user()
-        db.session.add(User(spotify_user_id=self.DUMMY_USER_SP_ID))
+        db.session.add(User(spotify_user_id=SpotifyUserInterfaceMock.user_id))
         db.session.commit()
 
         # Make post with `AddCollectionsForm` data
@@ -42,10 +54,14 @@ class MainIndexTestCase(MainTestCase):
         self.assertEqual(collections[0].playlist_id, "dummyplaylistid1")
         self.assertEqual(collections[1].playlist_id, "dummyplaylistid2")
 
-    def test_remove_collections(self):
+    @patch(
+        'albumcollections.spotify.spotify_user_interface.SpotifyUserInterface',
+        new_callable=SpotifyUserInterfaceMock
+    )
+    def test_remove_collections(self, _mock):
         # Auth dummy user and add them to database
         self.auth_dummy_user()
-        db.session.add(User(spotify_user_id=self.DUMMY_USER_SP_ID))
+        db.session.add(User(spotify_user_id=SpotifyUserInterfaceMock.user_id))
         db.session.commit()
 
         # Add a few collections
