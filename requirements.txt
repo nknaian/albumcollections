@@ -2,6 +2,7 @@ flake8
 python-dotenv
 Flask
 Flask-sqlalchemy
+Flask-WTF
 Bootstrap-Flask
 Flask-Session
 Flask-Testing
