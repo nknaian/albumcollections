@@ -72,7 +72,7 @@
                         <div class="modal-body">
                             <form method="post" onsubmit="show_loading_add_collections()">
                                 {{ add_collections_form.hidden_tag() }}
-                                {{ render_field(add_collections_form.playlists, size=add_playlists_disp_len) }}
+                                {{ render_field(add_collections_form.playlists, size=choices_display_len(add_collections_form.playlists.choices|length)) }}
                                 {{ render_field(add_collections_form.submit_new_collections) }}
                             </form>
                         </div>
@@ -91,7 +91,7 @@
                         <div class="modal-body">
                             <form method="post" onsubmit="show_loading_remove_collections()">
                                 {{ remove_collections_form.hidden_tag() }}
-                                {{ render_field(remove_collections_form.collections, size=remove_collections_disp_len) }}
+                                {{ render_field(remove_collections_form.collections, size=choices_display_len(remove_collections_form.collections.choices|length)) }}
                                 {{ render_field(remove_collections_form.submit_collection_removal) }}
                             </form>
                         </div>
