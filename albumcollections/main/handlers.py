@@ -152,6 +152,9 @@ def _add_collections(add_collections_form: AddCollectionsForm):
         else:
             db.session.add(Collection(playlist_id=chosen_playlist_id, user_id=get_user_id()))
             db.session.commit()
+            current_app.logger.info(
+                f'User {spotify_user_iface.SpotifyUserInterface().display_name} added collection: {chosen_playlist_id}'
+            )
 
 
 def _remove_collections(remove_collections_form: RemoveCollectionsForm):
@@ -164,7 +167,8 @@ def _remove_collections(remove_collections_form: RemoveCollectionsForm):
             db.session.delete(collection)
             db.session.commit()
             current_app.logger.info(
-                f'User {spotify_user_iface.SpotifyUserInterface().display_name} removed collections'
+                f'User {spotify_user_iface.SpotifyUserInterface().display_name}'
+                f' removed collection: {chosen_collection_id}'
             )
 
 

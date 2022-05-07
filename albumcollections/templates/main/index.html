@@ -2,100 +2,120 @@
 {% from 'bootstrap5/form.html' import render_field %}
 
 {% block content %}
-    {% if not is_user_logged_in() %}
-        <div class="main_text">
-            <p>Organize, visualize and play your Spotify albums.</p>
-            <p>
-                Each playlist in your Spotify account that contains complete albums will be represented in this app as a <i>collection</i>.
-                Here's an <a href="{{url_for('collection.index', playlist_id='4ucljWzVJnEB0cdWErJTsT')}}">example</a> of one.
-            </p>
-            <br>
-            <form
-                method="post"
-                name="login_with_spotify_main"
-                action="{{ url_for('user.login')}}";>
-                <a class="login_with_spotify_main_link fs-3" href="#" onclick="document.login_with_spotify_main.submit();">
-                    Login with <img src="/static/images/spotify/Spotify_Logo_RGB_Green.png" class="login_with_spotify_main_img ps-1"/>
-                </a>
-            </form>
-        </div>
-    {% else %}
-        <div class="row m-2 shelf_item">
-            <div class="col p-2 me-2 btn btn-dark d-flex flex-column justify-content-center" data-bs-toggle="modal" data-bs-target="#addCollections">
-                <div class="fs-1 text-success">+</div>
-            </div>
-            {% if user_collections|length > 0 %}
-            <div class="col p-2 btn btn-dark d-flex flex-column justify-content-center" data-bs-toggle="modal" data-bs-target="#removeCollections">
-                <div class="fs-1 text-danger">-</div>
-            </div>
-            {% endif %}
-        </div>
-        {% for collection in user_collections %}
-            <a class="btn btn-dark p-2 m-2 d-flex collection_item"
-               role="button"
-               href="{{url_for('main.load_redirect')}}?redirect_location={{url_for('collection.index', playlist_id=collection.id)}}&load_message=Dusting off those records..."
-            >
-                <img class="collection_item_img"
-                    '{% if collection.img_url %}'
-                        src="{{collection.img_url}}"
-                    '{% else %}'
-                        src="/static/images/other/unknown_sp_item.jpg"
-                    '{% endif %}'
-                    alt="{{collection.name}}"
-                >
-
-                <div class="collection_item_name ms-auto px-2 fs-4">{{collection.name}}</div>
-            </a>
-        {% endfor %}
-
-        {% if user_collections|length == 0 %}
+    <div id="index_content">
+        {% if not is_user_logged_in() %}
             <div class="main_text">
+                <p>Organize, visualize and play your Spotify albums.</p>
                 <p>
-                    You don't have any collections yet! Use the + button above to add some.
+                    Each playlist in your Spotify account that contains complete albums will be represented in this app as a <i>collection</i>.
+                    Here's an <a href="{{url_for('collection.index', playlist_id='4ucljWzVJnEB0cdWErJTsT')}}">example</a> of one.
                 </p>
-                <p>
-                    For more details check out the <a href="{{url_for('main.about')}}#guide">guide</a>.
-                </p>
+                <br>
+                <form
+                    method="post"
+                    name="login_with_spotify_main"
+                    action="{{ url_for('user.login')}}";>
+                    <a class="login_with_spotify_main_link fs-3" href="#" onclick="document.login_with_spotify_main.submit();">
+                        Login with <img src="/static/images/spotify/Spotify_Logo_RGB_Green.png" class="login_with_spotify_main_img ps-1"/>
+                    </a>
+                </form>
+            </div>
+        {% else %}
+            <div class="row m-2 shelf_item">
+                <div class="col p-2 me-2 btn btn-dark d-flex flex-column justify-content-center" data-bs-toggle="modal" data-bs-target="#addCollections">
+                    <div class="fs-1 text-success">+</div>
+                </div>
+                {% if user_collections|length > 0 %}
+                <div class="col p-2 btn btn-dark d-flex flex-column justify-content-center" data-bs-toggle="modal" data-bs-target="#removeCollections">
+                    <div class="fs-1 text-danger">-</div>
+                </div>
+                {% endif %}
+            </div>
+            {% for collection in user_collections %}
+                <a class="btn btn-dark p-2 m-2 d-flex collection_item"
+                role="button"
+                href="{{url_for('main.load_redirect')}}?redirect_location={{url_for('collection.index', playlist_id=collection.id)}}&load_message=Dusting off those records..."
+                >
+                    <img class="collection_item_img"
+                        '{% if collection.img_url %}'
+                            src="{{collection.img_url}}"
+                        '{% else %}'
+                            src="/static/images/other/unknown_sp_item.jpg"
+                        '{% endif %}'
+                        alt="{{collection.name}}"
+                    >
+
+                    <div class="collection_item_name ms-auto px-2 fs-4">{{collection.name}}</div>
+                </a>
+            {% endfor %}
+
+            {% if user_collections|length == 0 %}
+                <div class="main_text">
+                    <p>
+                        You don't have any collections yet! Use the + button above to add some.
+                    </p>
+                    <p>
+                        For more details check out the <a href="{{url_for('main.about')}}#guide">guide</a>.
+                    </p>
+                </div>
+            {% endif %}
+
+
+            <!-- Add collections popup window-->
+            <div class="modal fade" id="addCollections" tabindex="-1" aria-labelledby="addCollectionsLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="addCollectionsLabel">Add Collections</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" onsubmit="show_loading_add_collections()">
+                                {{ add_collections_form.hidden_tag() }}
+                                {{ render_field(add_collections_form.playlists, size=add_playlists_disp_len) }}
+                                {{ render_field(add_collections_form.submit_new_collections) }}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Remove collections popup window-->
+            <div class="modal fade" id="removeCollections" tabindex="-1" aria-labelledby="removeCollectionsLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="removeCollectionsLabel">Remove Collections</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" onsubmit="show_loading_remove_collections()">
+                                {{ remove_collections_form.hidden_tag() }}
+                                {{ render_field(remove_collections_form.collections, size=remove_collections_disp_len) }}
+                                {{ render_field(remove_collections_form.submit_collection_removal) }}
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         {% endif %}
+    </div>
 
-
-        <!-- Add collections popup window-->
-        <div class="modal fade" id="addCollections" tabindex="-1" aria-labelledby="addCollectionsLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="addCollectionsLabel">Add Collections</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form method="post">
-                            {{ add_collections_form.hidden_tag() }}
-                            {{ render_field(add_collections_form.playlists, size=add_playlists_disp_len) }}
-                            {{ render_field(add_collections_form.submit_new_collections) }}
-                        </form>
-                    </div>
-                </div>
-            </div>
+    <div id="index_loading_add_collections" style="display: none;">
+        <div class="d-flex flex-column align-items-center">
+            <div class="loader py-2"></div>
+            <div class="py-2"><p>Grabbing those records from the store...</p></div>
         </div>
+    </div>
 
-        <!-- Remove collections popup window-->
-        <div class="modal fade" id="removeCollections" tabindex="-1" aria-labelledby="removeCollectionsLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="removeCollectionsLabel">Remove Collections</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form method="post">
-                            {{ remove_collections_form.hidden_tag() }}
-                            {{ render_field(remove_collections_form.collections, size=remove_collections_disp_len) }}
-                            {{ render_field(remove_collections_form.submit_collection_removal) }}
-                        </form>
-                    </div>
-                </div>
-            </div>
+    <div id="index_loading_remove_collections" style="display: none;">
+        <div class="d-flex flex-column align-items-center">
+            <div class="loader py-2"></div>
+            <div class="py-2"><p>Returning those records...</p></div>
         </div>
-    {% endif %}
+    </div>
+
+
+    <!-- Javascript used in this page-->
+    <script type="text/javascript" src="{{url_for('static', filename='js/main/index.js')}}"></script>
 {% endblock %}
