@@ -1,10 +1,11 @@
 import random
 import time
 import os
+import logging
 
 from flask import Flask, session
 from flask_sqlalchemy import SQLAlchemy
-from flask_bootstrap import Bootstrap
+from flask_bootstrap import Bootstrap5
 from flask_session import Session
 from flask_caching import Cache
 
@@ -19,7 +20,7 @@ db = SQLAlchemy()
 cache = Cache()
 
 # Create flask session spotipy cache handler
-spoipy_cache_handler = spotipy_cache_handler.FlaskSessionCacheHandler(session)
+spotipy_cache_handler = spotipy_cache_handler.FlaskSessionCacheHandler(session)
 
 # Seed random
 random.seed(time.time())
@@ -36,6 +37,11 @@ def create_app(test_config=None):
         app.config.from_object(DevConfig)
     else:
         app.config.from_object(ProdConfig)
+
+        # Use gunicorn logger for production
+        gunicorn_logger = logging.getLogger('gunicorn.error')
+        app.logger.handlers = gunicorn_logger.handlers
+        app.logger.setLevel(gunicorn_logger.level)
 
     # init database
     db.init_app(app)
@@ -64,7 +70,7 @@ def create_app(test_config=None):
         app.register_blueprint(test_bp)
 
     # Create bootstrap flask app
-    Bootstrap(app)
+    Bootstrap5(app)
 
     # Create flask session
     app.config['SESSION_SQLALCHEMY'] = db

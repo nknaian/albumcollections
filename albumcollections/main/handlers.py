@@ -1,23 +1,59 @@
-from flask import render_template, url_for, request
+from flask import redirect, render_template, url_for, flash, request, current_app
 
-from albumcollections.spotify import spotify_user
-from albumcollections.errors.exceptions import albumcollectionsError
+# Importing like this is necessary for unittest framework to patch
+import albumcollections.spotify.spotify_user_interface as spotify_user_iface
+
+from albumcollections.user import is_user_logged_in
+from albumcollections.main import collections
 
 from . import bp
+from .forms import AddCollectionsForm, RemoveCollectionsForm
+
+
+"""HANDLER FUNCTIONS"""
 
 
 @bp.route('/', methods=['GET', 'POST'])
 def index():
-    if spotify_user.is_authenticated():
-        try:
-            user_collections = spotify_user.get_user_collections()
-        except Exception as e:
-            spotify_user.logout()
-            raise albumcollectionsError(f"Failed to load user collections - {e}", url_for('main.index'))
-    else:
-        user_collections = None
+    """If a user is unauthenticated with Spotify when they visit this route it
+    is a very simple page, just a launcher with text and a button
+    to log in with Spotify
 
-    return render_template('main/index.html', user_collections=user_collections)
+    Otherwise this page displays the user's collections from a high level, giving
+    them the ability to add/remove them using multi-select forms.
+
+    This route is the destination of many errors
+    """
+    user_collections = None
+    add_collections_form = None
+    remove_collections_form = None
+
+    if is_user_logged_in():
+        # Get the spotify user that is logged in
+        try:
+            spotify_user = spotify_user_iface.SpotifyUserInterface()
+        except Exception as e:
+            current_app.logger.critical(f"Failed to create spotify user interface: {e}")
+            spotify_user_iface.unauth_user()
+            flash("Failed to create Spotify user interface", "danger")
+
+        # Initialize the forms
+        add_collections_form = AddCollectionsForm()
+        remove_collections_form = RemoveCollectionsForm()
+
+        # Process the user's collections, reloading the page if collections changed
+        collections_changed, user_collections = collections.process(
+            spotify_user, add_collections_form, remove_collections_form
+        )
+        if collections_changed:
+            return redirect(url_for('main.index'))
+
+    return render_template(
+        'main/index.html',
+        user_collections=user_collections,
+        add_collections_form=add_collections_form,
+        remove_collections_form=remove_collections_form,
+    )
 
 
 @bp.route('/about', methods=['GET'])

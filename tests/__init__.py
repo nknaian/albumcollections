@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import Mock
 from flask.helpers import url_for
+import logging
 
 import flask_testing
 
@@ -8,14 +9,17 @@ from albumcollections.config import Config
 from albumcollections.spotify.item.spotify_artist import SpotifyArtist
 from albumcollections.spotify.item.spotify_music import SpotifyAlbum
 from albumcollections.spotify.item.spotify_collection import SpotifyCollection
-import albumcollections.spotify.spotify_user as sp_user
+from albumcollections.spotify.item.spotify_playlist import SpotifyPlaylist
+import albumcollections.spotify.spotify_user_interface as spotify_user_iface
 
 from albumcollections import create_app
 
 
 class TestingConfig(Config):
     TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite://'
     PRESERVE_CONTEXT_ON_EXCEPTION = False
+    WTF_CSRF_ENABLED = False
 
     # Overwrite session type to not have to deal with database in tests
     SESSION_TYPE = 'filesystem'
@@ -34,11 +38,11 @@ class PickableMock(Mock):
 """MOCK SPOTIFY CLIENT CREDENTIALS INTERFACE"""
 
 
-class SpotifyMock(Mock):
+class SpotifyInterfaceMock(Mock):
     """Mock object to patch in to replace
-    albumcollections.spotify.spotify.Spotify() class
+    albumcollections.spotify.spotify_interface.SpotifyInterface() class
     """
-    def get_collection_from_playlist_id(self, *args, **kwargs):
+    def get_collection(self, *args, **kwargs):
         """Return dummy mock collection
         """
         album_mock1 = PickableMock(spec=SpotifyAlbum)
@@ -64,6 +68,33 @@ class SpotifyMock(Mock):
         return collection_mock
 
 
+class SpotifyUserInterfaceMock(SpotifyInterfaceMock):
+    user_id = "12345ABC"
+
+    def get_playlists(self, *args):
+        """Return a list of dummy spotify playlists
+        """
+        playlist1_mock = Mock(spec=SpotifyPlaylist)
+        playlist1_mock.id = "dummyplaylistid1"
+        playlist1_mock.link = "dummyplaylistlink1"
+        playlist1_mock.name = "dummyplaylist1"
+        playlist1_mock.img_url = None
+
+        playlist2_mock = Mock(spec=SpotifyPlaylist)
+        playlist2_mock.id = "dummyplaylistid2"
+        playlist2_mock.link = "dummyplaylistlink2"
+        playlist2_mock.name = "dummyplaylist2"
+        playlist2_mock.img_url = None
+
+        playlist3_mock = Mock(spec=SpotifyPlaylist)
+        playlist3_mock.id = "dummyplaylistid3"
+        playlist3_mock.link = "dummyplaylistlink3"
+        playlist3_mock.name = "dummyplaylist3"
+        playlist3_mock.img_url = None
+
+        return ([playlist1_mock, playlist2_mock, playlist3_mock], [])
+
+
 class AlbumCollectionsTestCase(flask_testing.TestCase, unittest.TestCase):
     """Base test case class for all tests in albumcollections. Creates app
     using TestingConfig.
@@ -73,48 +104,18 @@ class AlbumCollectionsTestCase(flask_testing.TestCase, unittest.TestCase):
         return create_app(TestingConfig)
 
     def setUp(self):
-        # Mock the user being logged out
         self.unauth_dummy_user()
 
     def tearDown(self):
         pass
 
-    """MOCK SPOTIFY USER INTERFACE"""
-
-    DUMMY_USER_SP_ID = "12345ABC"
-    DUMMY_USER_DISPLAY_NAME = "Dummy User"
-
-    def _raise_sp_test_exception(self, *args):
-        """Raises an exception to authorize at the fake sp auth route"""
-        raise sp_user.SpotifyUserAuthFailure(auth_url=url_for("test.fake_sp_auth"))
-
-    def _mock_get_user_collections(self, *args):
-        """Return a list of dummy spotify playlists
-        """
-        playlist1_mock = Mock(spec=SpotifyCollection)
-        playlist1_mock.id = "dummyplaylistid1"
-        playlist1_mock.link = "dummyplaylistlink1"
-        playlist1_mock.name = "dummyplaylist1"
-        playlist1_mock.img_url = None
-
-        playlist2_mock = Mock(spec=SpotifyCollection)
-        playlist2_mock.id = "dummyplaylistid2"
-        playlist2_mock.link = "dummyplaylistlink2"
-        playlist1_mock.name = "dummyplaylist2"
-        playlist2_mock.img_url = None
-
-        return [playlist1_mock, playlist2_mock]
+    """MOCK SPOTIFY USER INTERFACE MODULE FUNCTIONS"""
 
     def auth_dummy_user(self, *args):
-        sp_user.get_user_id = Mock(side_effect=lambda *args: self.DUMMY_USER_SP_ID)
-        sp_user.is_authenticated = Mock(side_effect=lambda *args: True)
-        sp_user.get_user_display_name = Mock(side_effect=lambda *args: self.DUMMY_USER_DISPLAY_NAME)
-        sp_user.logout = Mock(side_effect=self.unauth_dummy_user)
-        sp_user.get_user_collections = Mock(side_effect=self._mock_get_user_collections)
+        spotify_user_iface.is_auth = Mock(side_effect=lambda *args: True)
+        spotify_user_iface.unauth_user = Mock(side_effect=self.unauth_dummy_user)
 
     def unauth_dummy_user(self, *args):
-        sp_user.get_user_id = Mock(side_effect=self._raise_sp_test_exception)
-        sp_user.is_authenticated = Mock(side_effect=lambda *args: False)
-        sp_user.get_user_display_name = Mock(side_effect=self._raise_sp_test_exception)
-        sp_user.auth_new_user = Mock(side_effect=self.auth_dummy_user)
-        sp_user.get_user_collections = Mock(side_effect=lambda *args: [])
+        spotify_user_iface.is_auth = Mock(side_effect=lambda *args: False)
+        spotify_user_iface.auth_user = Mock(side_effect=self.auth_dummy_user)
+        spotify_user_iface.get_auth_url = Mock(side_effect=lambda *args: url_for("test.fake_sp_auth"))

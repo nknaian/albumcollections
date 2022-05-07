@@ -2,7 +2,8 @@ flake8
 python-dotenv
 Flask
 Flask-sqlalchemy
-Flask-Bootstrap4
+Flask-WTF
+Bootstrap-Flask
 Flask-Session
 Flask-Testing
 Flask-Caching
