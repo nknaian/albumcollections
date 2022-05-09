@@ -2,8 +2,10 @@ from flask import render_template, request, url_for, jsonify
 import json
 
 # Importing like this is necessary for unittest framework to patch
+import albumcollections.spotify.spotify_interface as spotify_iface
 import albumcollections.spotify.spotify_user_interface as spotify_user_iface
 
+from albumcollections.user import is_user_logged_in
 from albumcollections.errors.exceptions import albumcollectionsError
 
 from . import bp
@@ -11,12 +13,21 @@ from . import bp
 
 @bp.route('/collection/<string:playlist_id>', methods=['GET'])
 def index(playlist_id):
+    # Get a spotify interface to use based on whether user is logged in
     try:
-        # Get the spotify collection object by playlist id
-        collection = spotify_user_iface.SpotifyUserInterface().get_collection(playlist_id)
+        if is_user_logged_in():
+            sp_interface = spotify_user_iface.SpotifyUserInterface()
+        else:
+            sp_interface = spotify_iface.SpotifyInterface()
+    except Exception as e:
+        raise albumcollectionsError(f"Failed to create spotify interface: {e}", url_for('main.index'))
+
+    # Get collection based on the playlist id
+    try:
+        collection = sp_interface.get_collection(playlist_id)
 
     except Exception as e:
-        raise albumcollectionsError(f"Failed to load collection {playlist_id} - {e}", url_for('main.index'))
+        raise albumcollectionsError(f"Failed to load collection {playlist_id}: {e}", url_for('main.index'))
 
     return render_template('collection/index.html', collection=collection)
 

@@ -6,12 +6,15 @@ for music, or getting information about music based on a
 spotify link.
 """
 
-from typing import List
+from typing import Dict, List
 
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
-from .item.spotify_music import SpotifyAlbum
+from albumcollections.spotify.item.spotify_collection import SpotifyCollection
+from albumcollections.spotify import collection_albums
+
+from .item.spotify_music import SpotifyAlbum, SpotifyTrack
 
 
 class SpotifyInterface:
@@ -32,3 +35,70 @@ class SpotifyInterface:
             return [track_item["id"] for track_item in track_items]
         else:
             return []
+
+    def get_playlist_tracks(self, id) -> List[SpotifyTrack]:
+        """Get all tracks in the given playlist, retaining track order"""
+        tracks = []
+
+        offset = 0
+        while True:
+            # Get next tracks in playlist.
+            next_tracks = self._playlist_spotify_tracks(id, offset)
+
+            if len(next_tracks):
+                tracks.extend(next_tracks)
+                offset += len(next_tracks)
+            else:
+                break
+
+        return tracks
+
+    def get_collection(self, playlist_id):
+        """Get `SpotifyCollection` item based on a database collection entry
+
+        The `SpotifyCollection` class makes use of caching
+        to store albums so they don't always have to be loaded again.
+        """
+        playlist = self._playlist(playlist_id)
+        spotify_collection = SpotifyCollection(playlist)
+
+        # Load the albums in the spotify_collection if they're not already
+        # available
+        if spotify_collection.albums is None:
+            # Make iterator of tracks in playlist
+            playlist_tracks_iter = iter(self.get_playlist_tracks(spotify_collection.id))
+
+            # Set the list of albums in the collection based on the playlist tracks
+            spotify_collection.albums = collection_albums.get(playlist_tracks_iter)
+
+        return spotify_collection
+
+    '''SPOTIPY WRAPPER FUNCTIONS'''
+
+    def _playlist(self, playlist_id: str) -> Dict:
+        """Call spotipy playlist method with client credentials interface"""
+        return self.sp.playlist(playlist_id)
+
+    def _playlist_tracks(self, playlist_id, track_offset: int, track_limit: int) -> Dict:
+        """Call spotipy playlist_tracks method with client credentials interface"""
+        return self.sp.playlist_tracks(playlist_id, limit=track_limit, offset=track_offset)
+
+    '''PRIVATE FUNCTIONS'''
+
+    def _playlist_spotify_tracks(
+        self,
+        playlist_id: str,
+        track_offset: int,
+        track_limit: int = 100
+    ) -> List[SpotifyTrack]:
+        """Get tracks from the playlist as `SpotifyTrack` objects
+
+        Ignore anything that's not a track (if podcast/s are included
+        in a playlist, the podcast items will turn up in the search,
+        as well as what looks like a 'user object'?)
+        """
+        return [
+            SpotifyTrack(track_item["track"])
+            for track_item in self._playlist_tracks(playlist_id, track_offset, track_limit)["items"]
+            if track_item["track"] is not None
+        ]

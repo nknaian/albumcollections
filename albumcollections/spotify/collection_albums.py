@@ -12,12 +12,6 @@ def get(playlist_tracks_iter) -> List[SpotifyAlbum]:
     NOTE: albums should be returned in the playlist order as long
     as python version is 3.7+ because dictionaries retain insertion
     order
-
-    NOTE: I'm making this a 'private' function to signify that it really
-    shouldn't be used outside of the scope of getting the albums for a
-    SpotifyCollection item. This does a lot of expensive spotify api requests,
-    so it should only be used if the playlist was changed or if the album items
-    in the cache have expired.
     """
     # Create dictionary to hold albums
     album_entries = {}
