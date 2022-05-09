@@ -1,14 +1,17 @@
 from unittest.mock import patch
 from flask import url_for
 
-from tests import SpotifyInterfaceMock
+from tests import SpotifyUserInterfaceMock
 
 from tests.test_main import MainTestCase
 
 
 class CollectionIndexTestCase(MainTestCase):
     """Test GET on main index route."""
-    @patch('albumcollections.spotify.spotify_interface.SpotifyInterface', new_callable=SpotifyInterfaceMock)
+    @patch(
+        'albumcollections.spotify.spotify_user_interface.SpotifyUserInterface',
+        new_callable=SpotifyUserInterfaceMock
+    )
     def test_get_index(self, _mock):
         response = self.client.get(url_for("collection.index", playlist_id="dummyplaylistid1"))
         self.assert_200(response)

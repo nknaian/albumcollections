@@ -2,7 +2,6 @@ from flask import render_template, request, url_for, jsonify
 import json
 
 # Importing like this is necessary for unittest framework to patch
-import albumcollections.spotify.spotify_interface as spotify_iface
 import albumcollections.spotify.spotify_user_interface as spotify_user_iface
 
 from albumcollections.errors.exceptions import albumcollectionsError
@@ -14,7 +13,7 @@ from . import bp
 def index(playlist_id):
     try:
         # Get the spotify collection object by playlist id
-        collection = spotify_iface.SpotifyInterface().get_collection(playlist_id)
+        collection = spotify_user_iface.SpotifyUserInterface().get_collection(playlist_id)
 
     except Exception as e:
         raise albumcollectionsError(f"Failed to load collection {playlist_id} - {e}", url_for('main.index'))

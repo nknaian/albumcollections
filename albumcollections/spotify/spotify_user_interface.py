@@ -17,14 +17,23 @@ from spotipy.oauth2 import SpotifyOAuth
 import albumcollections.spotify.spotify_interface as spotify_iface
 
 from albumcollections import spotipy_cache_handler
+from albumcollections.spotify import collection_albums
 
+from .item.spotify_music import SpotifyTrack
 from .item.spotify_playlist import SpotifyPlaylist
-
+from .item.spotify_collection import SpotifyCollection
 
 '''CONSTANTS'''
 
 
-SCOPE = 'playlist-modify-public,user-modify-playback-state,user-read-playback-state'
+SCOPE = [
+    'playlist-modify-public',
+    'playlist-modify-private',
+    'playlist-read-private',
+    'playlist-read-collaborative',
+    'user-modify-playback-state',
+    'user-read-playback-state'
+]
 
 
 '''PUBLIC AUTH FUNCTIONS'''
@@ -66,10 +75,16 @@ def _auth_manager(show_dialog=False):
 
 
 class SpotifyUserInterface(spotify_iface.SpotifyInterface):
-    """Creates a spotify user interface if user is authorized. Otherwise raises
-    an exception
+    """Class to interface with Spotify API through a user's OAuth instance, in addition to
+    client credentials interface.
+
+    This allows operations to be done with user's data, such as viewing, modifying playlists etc.
     """
+    
     def __init__(self):
+        """Creates a spotify user interface if user is authorized. Otherwise raises
+        an exception
+        """
         super().__init__()
 
         auth_manager = _auth_manager()
@@ -119,6 +134,57 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
         devices = self.sp_user.devices()['devices']
 
         return {device["name"]: device["id"] for device in devices}
+
+    def get_collection(self, playlist_id):
+        """Get `SpotifyCollection` item based on a database collection entry
+
+        The `SpotifyCollection` class makes use of caching
+        to store albums so they don't always have to be loaded again.
+        """
+        playlist = self.sp_user.playlist(playlist_id)
+        spotify_collection = SpotifyCollection(playlist)
+
+        # Load the albums in the spotify_collection if they're not already
+        # available
+        if spotify_collection.albums is None:
+            # Make iterator of tracks in playlist
+            playlist_tracks_iter = iter(self.get_playlist_tracks(spotify_collection.id))
+
+            # Set the list of albums in the collection based on the playlist tracks
+            spotify_collection.albums = collection_albums.get(playlist_tracks_iter)
+
+        return spotify_collection
+
+    def get_playlist_tracks(self, id) -> List[SpotifyTrack]:
+        """Get all tracks in the given playlist, retaining track order"""
+        tracks = []
+
+        offset = 0
+        while True:
+            # Get next 100 (or remainder) tracks in playlist.
+            # Ignore anything that's not a track (if podcast/s are included
+            # in a playlist, the podcast items will turn up in the search,
+            # as well as what looks like a 'user object'?)
+            next_tracks = [
+                    SpotifyTrack(track_item["track"])
+                    for track_item in self.sp_user.playlist_tracks(id, limit=100, offset=offset)["items"]
+                    if track_item["track"] is not None
+                ]
+
+            if len(next_tracks):
+                tracks.extend(next_tracks)
+                offset += len(next_tracks)
+            else:
+                break
+
+        return tracks
+
+    def remove_album_from_playlist(self, playlist_id, album_id):
+        # Get list of track ids for tracks in the album
+        album_track_ids = [spotify_track["id"] for spotify_track in self.sp.album_tracks(album_id)["items"]]
+
+        # Remove all instances of these tracks from the playlist
+        self.sp_user.playlist_remove_all_occurrences_of_items(playlist_id, album_track_ids)
 
     def reorder_collection(self, playlist_id, moved_album_id, next_album_id):
         """

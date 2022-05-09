@@ -1,8 +1,6 @@
 import unittest
 from unittest.mock import Mock
 from flask.helpers import url_for
-import logging
-
 import flask_testing
 
 from albumcollections.config import Config
