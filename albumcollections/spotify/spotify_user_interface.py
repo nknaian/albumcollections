@@ -80,7 +80,7 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
 
     This allows operations to be done with user's data, such as viewing, modifying playlists etc.
     """
-    
+
     def __init__(self):
         """Creates a spotify user interface if user is authorized. Otherwise raises
         an exception

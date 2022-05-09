@@ -1,6 +1,6 @@
 from typing import List
 
-from .item.spotify_music import SpotifyAlbum, AlbumType
+from .item.spotify_music import SpotifyAlbum
 
 
 def get(playlist_tracks_iter) -> List[SpotifyAlbum]:
@@ -31,7 +31,7 @@ def get(playlist_tracks_iter) -> List[SpotifyAlbum]:
             # The current playlist track's album hasn't been seen before.
             # Make an entry for the album and iterate through the subsequent
             # playlist tracks
-            if playlist_track.album.album_type == AlbumType.album and playlist_track.album.id not in album_entries:
+            if playlist_track.album.id not in album_entries:
                 # Record the album of this first-encountered track
                 album = playlist_track.album
 
