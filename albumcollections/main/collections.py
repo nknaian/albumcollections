@@ -8,7 +8,9 @@ from albumcollections.errors.exceptions import albumcollectionsError
 from albumcollections.spotify.item.spotify_playlist import SpotifyPlaylist
 from albumcollections.main import add_collections, remove_collections
 from albumcollections.models import Collection
-from albumcollections.user import get_user_id
+from albumcollections.user import get_user_id, get_user_playback_playlist_id
+
+from albumcollections import db
 
 from .forms import AddCollectionsForm, RemoveCollectionsForm
 
@@ -77,28 +79,35 @@ def process(
 
 
 def _user_collections(user_playlists: List[SpotifyPlaylist]) -> List[SpotifyPlaylist]:
-    # Get list of playlist ids of user's collections
-    user_collection_playlist_ids = [
-        collection.playlist_id
-        for collection in Collection.query.filter_by(user_id=get_user_id())
-    ]
+    # Make dictionary of user playlists w/ ids as keys
+    user_playlist_dict = {user_playlist.id: user_playlist for user_playlist in user_playlists}
 
-    # Get playlists that user has stored as collections
-    return [
-        user_playlist
-        for user_playlist in user_playlists
-        if user_playlist.id in user_collection_playlist_ids
-    ]
+    # Get the user's playlists that have been stored as collections
+    user_collections = []
+    for collection in Collection.query.filter_by(user_id=get_user_id()):
+        if collection.playlist_id in user_playlist_dict:
+            user_collections.append(user_playlist_dict[collection.playlist_id])
+        else:
+            # If the stored collection is not present in the user's collections
+            # then remove it
+            db.session.delete(collection)
+            db.session.commit()
+
+    return user_collections
 
 
 def _get_available_playlists(
     user_playlists: List[SpotifyPlaylist],
     user_collections: List[SpotifyPlaylist]
 ) -> List[Tuple[str, str]]:
-    user_collection_ids = [collection.id for collection in user_collections]
+    # Don't show playlists that are already displayed as collections as options
+    unavaliable_ids = [collection.id for collection in user_collections]
+
+    # Don't show the user playback playlist as an option
+    unavaliable_ids.append(get_user_playback_playlist_id())
 
     return [
         (user_playlist.id, user_playlist.name)
         for user_playlist in user_playlists
-        if user_playlist.id not in user_collection_ids
+        if user_playlist.id not in unavaliable_ids
     ]

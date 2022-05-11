@@ -8,6 +8,7 @@ MAX_SPOTIFY_USER_ID_LENGTH = 50
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     spotify_user_id = db.Column(db.String(MAX_SPOTIFY_USER_ID_LENGTH), unique=True, nullable=False)
+    playback_playlist_id = db.Column(db.String(MAX_SPOTIFY_PLAYLIST_ID_LENGTH), unique=True)
 
     collections = db.relationship('Collection', backref=db.backref('user', lazy=True))
 

@@ -10,9 +10,11 @@ from typing import Dict, List
 
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
+from spotipy.exceptions import SpotifyException
 
 from albumcollections.spotify.item.spotify_collection import SpotifyCollection
 from albumcollections.spotify import collection_albums
+from albumcollections.spotify.item.spotify_playlist import SpotifyPlaylist
 
 from .item.spotify_music import SpotifyAlbum, SpotifyTrack
 
@@ -27,6 +29,26 @@ class SpotifyInterface:
             client_credentials_manager=SpotifyClientCredentials())
 
     '''PUBLIC FUNCTIONS'''
+
+    def playlist_exists(self, id) -> bool:
+        """Attempts to get the playlist. If it cannot be retrieved then return
+        False. Otherwise return True
+        """
+        try:
+            self._playlist(id)
+            return True
+        except SpotifyException as e:
+            # NOTE: There are more reasons besides the playlist not existing that a 404
+            # can be returned but I'm not sure of any way to definitely tell that it doesn't
+            # exist from the code or any other information returned
+            if e.http_status != 404:
+                raise e
+
+        return False
+
+    def get_playlist(self, id) -> SpotifyPlaylist:
+        """Gets the spotify playlist object from the id."""
+        return SpotifyPlaylist(self._playlist(id))
 
     def get_album_track_ids(self, spotify_album: SpotifyAlbum) -> List[str]:
         """Get the list of track ids that comprise the given spotify album"""

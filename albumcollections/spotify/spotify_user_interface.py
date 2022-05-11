@@ -12,6 +12,7 @@ import copy
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+from albumcollections.spotify.item.spotify_collection import SpotifyCollection
 
 # Importing like this is necessary for unittest framework to patch
 import albumcollections.spotify.spotify_interface as spotify_iface
@@ -31,7 +32,6 @@ SCOPE = [
     'user-modify-playback-state',
     'user-read-playback-state'
 ]
-
 
 '''PUBLIC AUTH FUNCTIONS'''
 
@@ -95,6 +95,26 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
 
     '''PUBLIC FUNCTIONS'''
 
+    def create_playlist(self, name: str, description: str = "") -> SpotifyPlaylist:
+        """Create a playlist for the user, returning the spotify playlist object"""
+        # Create the playlist
+        self.sp_user.user_playlist_create(self.user_id, name, description=description)
+
+        # Get the playlist that was just created
+        playlist = SpotifyPlaylist(self.sp_user.current_user_playlists()['items'][0])
+
+        # Make sure that this playlist is actually the one we just created (maybe it's
+        # possible for it not to show up first in the list sometimes...wouldn't want to
+        # set one of the user's actual playlists to be the playback playlist and get squashed...)
+        # NOTE: This is not a foolproof way of verifying that we didn't get a different playlist
+        # since names aren't unique, but I'm not aware of a better method
+        assert playlist.name == name
+
+        return playlist
+
+    def remove_playlist(self, id: str):
+        self.sp_user.user_playlist_unfollow(self.user_id, id)
+
     def get_playlists(self) -> Tuple[List[SpotifyPlaylist], List[str]]:
         """Get the user's spotify playlists.
 
@@ -145,7 +165,7 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
         "next album"'s first track is currently in.
 
         NOTE: This relies on the collection being constructed as in
-        the rules in `_get_collection_albums`
+        the rules in `collection_albums.get`
 
         TODO: Try to utilize cached collection Spotify album tracks to
         reduce spotify api requests. To do this, I think the indices of
@@ -188,16 +208,22 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
             range_length=moved_album_num_tracks
         )
 
-    def play_collection(self, playlist_id, start_album_id, shuffle_albums: bool, device_id=None):
+    def play_collection(
+        self,
+        spotify_collection: SpotifyCollection,
+        start_album_id: str,
+        shuffle_albums: bool,
+        playback_playlist: SpotifyPlaylist,
+        device_id=None
+    ):
         """This function attempts to mimic the ability to play songs
         within the context of a playlist.
 
-        Playback will start from the first track of `start_album_id`
+        The user's playback playlist is used to play the collection
+
+        Playback will start from the first track of thte "start album"
 
         If shuffle_albums is set to true then the list order will be randomized.
-
-        A playlist is created just for playback and then immediately torn down
-        after playback starts.
 
         NOTE: start_album_id must be in the collection or undefined behavior will occur
         """
@@ -209,70 +235,35 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
         # so I can't accurately add an error message at this time.)
         self.sp_user.shuffle(False, device_id)
 
-        # Get the collection
-        collection = self.get_collection(playlist_id)
-
-        # Get a copy of the collection albums
-        collection_albums = copy.deepcopy(collection.albums)
+        # Make a copy of the collection albums
+        collection_albums = copy.deepcopy(spotify_collection.albums)
 
         # Shuffle the albums if specified
         if shuffle_albums:
             random.shuffle(collection_albums)
 
-        # Create temporary playlist to hold playback tracks
-        playback_playlist = self._create_playlist(f"Album Collection: {collection.name}")
+        # Get list of tracks from list of albums and get the uri of the
+        # track that should be played first (the first track of the start album)
+        playback_track_ids = []
+        start_track_uri = None
+        for album in collection_albums:
+            # Record start track uri
+            if start_track_uri is None and \
+                    (start_album_id is None or album.id == start_album_id):
+                start_track_uri = _track_uri_from_id(album.track_ids[0])
 
-        try:
-            # If there is a 'start album' then add tracks from the start album to temporary playlist
-            if start_album_id is not None:
-                self._add_tracks_to_playlist(
-                    playback_playlist.id,
-                    next(album.track_ids for album in collection_albums if album.id == start_album_id))
+            # Add tracks from album to list
+            playback_track_ids.extend(album.track_ids)
 
-            # Otherwise just add tracks from the first album in the collection
-            else:
-                self._add_tracks_to_playlist(
-                    playback_playlist.id,
-                    collection_albums[0].track_ids)
+        # Add the tracks to the playlist
+        self._add_tracks_to_playlist(playback_playlist.id, playback_track_ids)
 
-            # Begin playback of the playlist (only one album so far, but that's fine)
-            self.sp_user.start_playback(device_id=device_id, context_uri=playback_playlist.uri)
-
-            # Get list of tracks from list of albums and mark which track should be played first
-            playback_track_ids = []
-            start_album_offset = None
-            start_album_num_tracks = None
-            for album in collection_albums:
-                # Record start album information
-                if start_album_offset is None and \
-                        (start_album_id is None or album.id == start_album_id):
-                    start_album_offset = len(playback_track_ids)
-                    start_album_num_tracks = album.total_tracks
-
-                # Add tracks from album to list
-                playback_track_ids.extend(album.track_ids)
-
-            # Add tracks from before the start album to the temporary playlist
-            self._add_tracks_to_playlist(playback_playlist.id, playback_track_ids[0:start_album_offset])
-
-            # Put start album in it's correct position at the end of the playlist as it's been built thusfar
-            self.sp_user.playlist_reorder_items(
-                playback_playlist.id,
-                0,
-                start_album_num_tracks + start_album_offset,
-                range_length=start_album_num_tracks)
-
-            # Add remaining tracks to the temporary playlist
-            self._add_tracks_to_playlist(
-                playback_playlist.id,
-                playback_track_ids[start_album_offset+start_album_num_tracks:]
-            )
-
-        except Exception as e:
-            raise e
-        finally:
-            # Remove the temporary playlist
-            self.sp_user.current_user_unfollow_playlist(playback_playlist.id)
+        # Begin playback of the playlist from the start track
+        self.sp_user.start_playback(
+            device_id=device_id,
+            context_uri=playback_playlist.uri,
+            offset={"uri": start_track_uri}
+        )
 
     '''SPOTIPY WRAPPER FUNCTIONS'''
 
@@ -311,13 +302,9 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
             # Chop off used chunk
             track_ids = track_ids[chunk_size:]
 
-    def _create_playlist(self, name: str) -> SpotifyPlaylist:
-        """Create a playlist with the given name
 
-        It will return the created playlist object
-        """
-        # Create the playlist with the given name, for the current user.
-        self.sp_user.user_playlist_create(self.user_id, name)
+"""HELPER FUNCTIONS"""
 
-        # Make a playlist object for the playlist that was just created
-        return SpotifyPlaylist(self.sp_user.current_user_playlists()['items'][0])
+
+def _track_uri_from_id(id: str) -> str:
+    return f"spotify:track:{id}"

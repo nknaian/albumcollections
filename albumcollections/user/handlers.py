@@ -1,8 +1,6 @@
 from flask import redirect, render_template, url_for, flash, current_app
 from flask.globals import request
 
-from spotipy.exceptions import SpotifyException
-
 from albumcollections.errors.exceptions import albumcollectionsError
 
 # Importing like this is necessary for unittest framework to patch
@@ -58,7 +56,7 @@ def sp_auth_complete():
 
             flash(f"Hello {spotify_user.display_name}! You are now logged in through your Spotify account.",
                   "success")
-        except SpotifyException as e:
+        except Exception as e:
             spotify_user_iface.unauth_user()
             raise albumcollectionsError(f"Failed to authorize spotify account: {e}", url_for('main.index'))
 
