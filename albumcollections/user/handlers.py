@@ -6,7 +6,7 @@ from albumcollections.errors.exceptions import albumcollectionsError
 # Importing like this is necessary for unittest framework to patch
 import albumcollections.spotify.spotify_user_interface as spotify_user_iface
 
-from albumcollections.models import User
+from albumcollections.models import AcUser
 
 
 from albumcollections import db
@@ -49,8 +49,8 @@ def sp_auth_complete():
 
             spotify_user = spotify_user_iface.SpotifyUserInterface()
 
-            if User.query.filter_by(spotify_user_id=spotify_user.user_id).first() is None:
-                db.session.add(User(spotify_user_id=spotify_user.user_id))
+            if AcUser.query.filter_by(spotify_user_id=spotify_user.user_id).first() is None:
+                db.session.add(AcUser(spotify_user_id=spotify_user.user_id))
                 db.session.commit()
                 current_app.logger.info(f"Added new user: {spotify_user.display_name}")
 

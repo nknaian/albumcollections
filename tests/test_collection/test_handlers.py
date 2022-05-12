@@ -1,7 +1,7 @@
 from unittest.mock import patch
 from flask import url_for
 
-from albumcollections.models import User
+from albumcollections.models import AcUser
 
 from albumcollections import db
 
@@ -20,7 +20,7 @@ class CollectionIndexTestCase(MainTestCase):
     def test_authed_user_get_index(self, _mock):
         """Test that an authenticated user can view a collection"""
         self.auth_dummy_user()
-        db.session.add(User(spotify_user_id=SpotifyUserInterfaceMock.user_id))
+        db.session.add(AcUser(spotify_user_id=SpotifyUserInterfaceMock.user_id))
         db.session.commit()
 
         response = self.client.get(url_for("collection.index", playlist_id="dummyplaylistid1"))

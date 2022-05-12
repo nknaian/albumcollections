@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 from flask import url_for
 
-from albumcollections.models import User, Collection
+from albumcollections.models import AcUser, Collection
 
 from tests.test_main import MainTestCase
 
@@ -24,7 +24,7 @@ class MainIndexTestCase(MainTestCase):
     def test_get_index_logged_in(self, _mock):
         # Auth dummy user and add them to database
         self.auth_dummy_user()
-        db.session.add(User(spotify_user_id=SpotifyUserInterfaceMock.user_id))
+        db.session.add(AcUser(spotify_user_id=SpotifyUserInterfaceMock.user_id))
         db.session.commit()
 
         response = self.client.get(url_for("main.index"))
@@ -37,7 +37,7 @@ class MainIndexTestCase(MainTestCase):
     def test_add_collections(self, _mock):
         # Auth dummy user and add them to database
         self.auth_dummy_user()
-        db.session.add(User(spotify_user_id=SpotifyUserInterfaceMock.user_id))
+        db.session.add(AcUser(spotify_user_id=SpotifyUserInterfaceMock.user_id))
         db.session.commit()
 
         # Make post with `AddCollectionsForm` data
@@ -61,7 +61,7 @@ class MainIndexTestCase(MainTestCase):
     def test_remove_collections(self, _mock):
         # Auth dummy user and add them to database
         self.auth_dummy_user()
-        db.session.add(User(spotify_user_id=SpotifyUserInterfaceMock.user_id))
+        db.session.add(AcUser(spotify_user_id=SpotifyUserInterfaceMock.user_id))
         db.session.commit()
 
         # Add a few collections

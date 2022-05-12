@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 from flask.helpers import url_for
 
-from albumcollections.models import User
+from albumcollections.models import AcUser
 import albumcollections.spotify.spotify_user_interface as spotify_user_iface
 
 from tests import SpotifyUserInterfaceMock
@@ -34,7 +34,7 @@ class UserLoginTestCase(UserTestCase):
 
         # Verify that the post was successful and the user
         # was added to the database and is authenticated
-        users = User.query.all()
+        users = AcUser.query.all()
         self.assertEqual(len(users), 1)
         self.assertEqual(users[0].spotify_user_id, SpotifyUserInterfaceMock.user_id)
         self.assertTrue(spotify_user_iface.is_auth())

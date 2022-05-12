@@ -11,7 +11,7 @@ from flask import Blueprint
 # Importing like this is necessary for unittest framework to patch
 import albumcollections.spotify.spotify_user_interface as spotify_user_iface
 
-from albumcollections.models import User
+from albumcollections.models import AcUser
 
 from albumcollections import db
 
@@ -36,14 +36,14 @@ def is_user_logged_in() -> bool:
     return spotify_user_iface.is_auth()
 
 
-def get_user() -> User:
+def get_user() -> AcUser:
     """Get the user's database entry.
 
     This function must be called within a try block to catch
     exceptions
     """
     if is_user_logged_in():
-        return User.query.filter_by(spotify_user_id=spotify_user_iface.SpotifyUserInterface().user_id).first()
+        return AcUser.query.filter_by(spotify_user_id=spotify_user_iface.SpotifyUserInterface().user_id).first()
 
     raise Exception("Failed to get user id - user not logged in to spotify")
 
