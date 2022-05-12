@@ -42,11 +42,19 @@ def index():
         remove_collections_form = RemoveCollectionsForm()
 
         # Process the user's collections, reloading the page if collections changed
-        collections_changed, user_collections = collections.process(
-            spotify_user, add_collections_form, remove_collections_form
-        )
-        if collections_changed:
-            return redirect(url_for('main.index'))
+        # If a processing error occurs then unauthenticate the user, as it's likely
+        # failure will occur on every retry and create an infinite loop
+        try:
+            collections_changed, user_collections = collections.process(
+                spotify_user, add_collections_form, remove_collections_form
+            )
+        except collections.RoutineProcessingError as e:
+            current_app.logger.critical(f"Failed to process collections for user {spotify_user.display_name}: {e}")
+            spotify_user_iface.unauth_user()
+            flash("Failed to process collections", "danger")
+        else:
+            if collections_changed:
+                return redirect(url_for('main.index'))
 
     return render_template(
         'main/index.html',

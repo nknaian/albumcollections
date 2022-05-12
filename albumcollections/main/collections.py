@@ -1,10 +1,9 @@
 from typing import List, Tuple
-from flask import url_for, flash, current_app
+from flask import flash, current_app
 
 # Importing like this is necessary for unittest framework to patch
 import albumcollections.spotify.spotify_user_interface as spotify_user_iface
 
-from albumcollections.errors.exceptions import albumcollectionsError
 from albumcollections.spotify.item.spotify_playlist import SpotifyPlaylist
 from albumcollections.main import add_collections, remove_collections
 from albumcollections.models import Collection
@@ -13,6 +12,13 @@ from albumcollections.user import get_user_id, get_user_playback_playlist_id
 from albumcollections import db
 
 from .forms import AddCollectionsForm, RemoveCollectionsForm
+
+
+class RoutineProcessingError(Exception):
+    """Custom exception to denote an error in routine processing of
+    the user's collections.
+    """
+    pass
 
 
 def process(
@@ -47,12 +53,13 @@ def process(
     try:
         user_collections = _user_collections(user_playlists)
     except Exception as e:
-        raise albumcollectionsError(
-            f"{spotify_user.display_name} failed to get user collections - {e}", url_for('main.index')
-        )
+        raise RoutineProcessingError(f"Failed to get collections: {e}")
 
     # Get the available playlists from the user's account that could be added as collections
-    available_playlists = _get_available_playlists(user_playlists, user_collections)
+    try:
+        available_playlists = _get_available_playlists(user_playlists, user_collections)
+    except Exception as e:
+        raise RoutineProcessingError(f"Falied to filter available playlists: {e}")
 
     # Process the `add_collections_form`
     add_collections_form.playlists.choices.extend(available_playlists)
