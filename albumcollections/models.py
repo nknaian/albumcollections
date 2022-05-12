@@ -23,4 +23,4 @@ class Collection(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('ac_user.id'), nullable=False)
 
     def __repr__(self):
-        return '<AcUser %r>' % self.id
+        return '<Collection %r>' % self.id
