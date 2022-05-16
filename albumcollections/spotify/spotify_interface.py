@@ -122,5 +122,5 @@ class SpotifyInterface:
         return [
             SpotifyTrack(track_item["track"])
             for track_item in self._playlist_tracks(playlist_id, track_offset, track_limit)["items"]
-            if track_item["track"] is not None
+            if track_item["track"]["type"] == "track"
         ]
