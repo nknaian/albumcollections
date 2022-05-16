@@ -100,3 +100,6 @@ class SpotifyTrack(SpotifyMusic):
 
         # Get track number (in disc)
         self.track_number = spotify_track["track_number"]
+
+        # Get the track type
+        self.type = spotify_track["type"]
