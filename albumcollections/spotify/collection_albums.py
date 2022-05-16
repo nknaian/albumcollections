@@ -32,6 +32,9 @@ def get(playlist_tracks_iter) -> List[SpotifyAlbum]:
                 # Make an entry for this album
                 album_entries[album.id] = album
 
+                # Keep track of consecutive album tracks seen in the playlist
+                album_track_ids = []
+
                 # Walk through subsequent tracks with the same album id, using disc and track
                 # numbers to confirm that the full album is present in the correct order
                 last_disc_num = None
@@ -63,22 +66,25 @@ def get(playlist_tracks_iter) -> List[SpotifyAlbum]:
                     last_track_num = playlist_track.track_number
 
                     # Add this track id to the album
-                    album.track_ids.append(playlist_track.id)
+                    album_track_ids.append(playlist_track.id)
 
-                    # Move to the next track in the playlist
-                    playlist_track = next(playlist_tracks_iter)
+                    # If all tracks were seen, then mark the album as
+                    # complete, move to the next track and break out of the loop
+                    if len(album_track_ids) == album.total_tracks:
+                        album.track_ids = album_track_ids
+                        playlist_track = next(playlist_tracks_iter)
+                        break
+                    # Otherwise the album isn't complete yet so stay in the loop
+                    # and iterate to the next track in the playlist
+                    else:
+                        playlist_track = next(playlist_tracks_iter)
 
             # The current playlist track's album has been seen before. This means that
             # the track is either a duplicate, or separated from the first track in
-            # the album by tracks from other albums. In any case, it invalidates the
-            # album entry. Set the album entry to invalid, and move on to the next
-            # track in the playlist.
-            elif playlist_track.album.id in album_entries:
-                album_entries[playlist_track.album.id] = None
-                playlist_track = next(playlist_tracks_iter)
-
-            # Otherwise the album type is not an 'album'...just move to the next track
+            # the album by tracks from other albums. In any case, it means that the
+            # complete album isn't present in the playlist, so clear the track ids
             else:
+                album_entries[playlist_track.album.id].track_ids.clear()
                 playlist_track = next(playlist_tracks_iter)
 
     # If a stop iteration is received, that means the playlist's tracks have been
@@ -87,5 +93,4 @@ def get(playlist_tracks_iter) -> List[SpotifyAlbum]:
         pass
 
     # Return albums from valid entries
-    return [album for album in album_entries.values()
-            if album is not None and len(album.track_ids) == album.total_tracks]
+    return list(album_entries.values())
