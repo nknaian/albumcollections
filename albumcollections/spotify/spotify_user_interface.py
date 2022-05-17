@@ -154,7 +154,7 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
 
     def remove_album_from_playlist(self, playlist_id, album_id):
         # Get list of track ids for tracks in the album
-        album_track_ids = [spotify_track["id"] for spotify_track in self.sp.album_tracks(album_id)["items"]]
+        album_track_ids = self.get_album_track_ids(album_id)
 
         # Remove all instances of these tracks from the playlist
         self.sp_user.playlist_remove_all_occurrences_of_items(playlist_id, album_track_ids)
@@ -265,6 +265,48 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
             context_uri=playback_playlist.uri,
             offset={"uri": start_track_uri}
         )
+
+    def fill_collection_missing_tracks(self, spotify_collection: SpotifyCollection):
+        """Replace the current spotify collection playlist with a new one
+        that includes the full list of tracks for every album in the collection. The
+        previously incomplete album tracks are inserted where the first track was
+        encountered for that album in the old playlist
+
+        TODO: This is a good candidate for trying out with unit testing first - maybe
+        """
+        # Create a dictionary of album id to album for the incomplete albums in the collection
+        incomplete_albums = {album.id: album for album in spotify_collection.albums if not album.complete}
+
+        # Make API requests to record the full list of track ids for each
+        # of the currently incomplete albums
+        for album in incomplete_albums.values():
+            album.track_ids = self.get_album_track_ids(album.id)
+
+        # Build a list of track ids to replace the current playlist.
+        # Iterate through the current playlist. When the first track from an
+        # incomplete albums is encountered, add it's newfound full track list
+        # in-place to the playlist. When a track that is from a complete album
+        # or is not included in the collection at all (ex: podcase episodes) is
+        # encountered, simply add it the the list to retain its presence in
+        # the playlist.
+        new_playlist_track_ids = []
+        for playlist_track in self.get_playlist_tracks(spotify_collection.id):
+            if playlist_track.album.id in incomplete_albums:
+                incomplete_album = incomplete_albums[playlist_track.album.id]
+                if not incomplete_album.complete:
+                    new_playlist_track_ids.extend(incomplete_album.track_ids)
+                    incomplete_album.complete = True
+                else:
+                    # Ignore subsequent tracks from this incomplete album
+                    pass
+            else:
+                new_playlist_track_ids.append(playlist_track.id)
+
+        # Clear the playlist of it's current track list
+        self.sp_user.user_playlist_replace_tracks(self.user_id, spotify_collection.id, [])
+
+        # Add the new list of tracks
+        self._add_tracks_to_playlist(spotify_collection.id, new_playlist_track_ids)
 
     '''SPOTIPY WRAPPER FUNCTIONS'''
 
