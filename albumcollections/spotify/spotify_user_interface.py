@@ -242,18 +242,19 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
         if shuffle_albums:
             random.shuffle(collection_albums)
 
-        # Get list of tracks from list of albums and get the uri of the
+        # Get list of tracks from list of complete albums and get the uri of the
         # track that should be played first (the first track of the start album)
         playback_track_ids = []
         start_track_uri = None
         for album in collection_albums:
-            # Record start track uri
-            if start_track_uri is None and \
-                    ((start_album_id is None and len(album.track_ids)) or album.id == start_album_id):
-                start_track_uri = _track_uri_from_id(album.track_ids[0])
+            if album.complete:
+                # Record start track uri
+                if start_track_uri is None and \
+                        (start_album_id is None or album.id == start_album_id):
+                    start_track_uri = _track_uri_from_id(album.track_ids[0])
 
-            # Add tracks from album to list
-            playback_track_ids.extend(album.track_ids)
+                # Add tracks from album to list
+                playback_track_ids.extend(album.track_ids)
 
         # Add the tracks to the playlist
         self._add_tracks_to_playlist(playback_playlist.id, playback_track_ids)

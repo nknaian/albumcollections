@@ -32,9 +32,6 @@ def get(playlist_tracks_iter) -> List[SpotifyAlbum]:
                 # Make an entry for this album
                 album_entries[album.id] = album
 
-                # Keep track of consecutive album tracks seen in the playlist
-                album_track_ids = []
-
                 # Walk through subsequent tracks with the same album id, using disc and track
                 # numbers to confirm that the full album is present in the correct order
                 last_disc_num = None
@@ -66,12 +63,12 @@ def get(playlist_tracks_iter) -> List[SpotifyAlbum]:
                     last_track_num = playlist_track.track_number
 
                     # Add this track id to the album
-                    album_track_ids.append(playlist_track.id)
+                    album.track_ids.append(playlist_track.id)
 
                     # If all tracks were seen, then mark the album as
                     # complete, move to the next track and break out of the loop
-                    if len(album_track_ids) == album.total_tracks:
-                        album.track_ids = album_track_ids
+                    if len(album.track_ids) == album.total_tracks:
+                        album.complete = True
                         playlist_track = next(playlist_tracks_iter)
                         break
                     # Otherwise the album isn't complete yet so stay in the loop
@@ -82,9 +79,9 @@ def get(playlist_tracks_iter) -> List[SpotifyAlbum]:
             # The current playlist track's album has been seen before. This means that
             # the track is either a duplicate, or separated from the first track in
             # the album by tracks from other albums. In any case, it means that the
-            # complete album isn't present in the playlist, so clear the track ids
+            # complete album isn't present in the playlist
             else:
-                album_entries[playlist_track.album.id].track_ids.clear()
+                album_entries[playlist_track.album.id].complete = False
                 playlist_track = next(playlist_tracks_iter)
 
     # If a stop iteration is received, that means the playlist's tracks have been

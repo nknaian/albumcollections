@@ -24,7 +24,7 @@
             {% for album in collection.albums %}
                 <!-- col-5 -->
                 <div class="col col-auto col-md-auto album_item
-                    '{% if album.track_ids|length %}'
+                    '{% if album.complete %}'
                         complete_album
                     '{% else %}'
                         incomplete_album
