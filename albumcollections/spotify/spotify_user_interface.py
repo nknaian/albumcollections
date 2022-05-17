@@ -249,7 +249,7 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
         for album in collection_albums:
             # Record start track uri
             if start_track_uri is None and \
-                    (start_album_id is None or album.id == start_album_id):
+                    ((start_album_id is None and len(album.track_ids)) or album.id == start_album_id):
                 start_track_uri = _track_uri_from_id(album.track_ids[0])
 
             # Add tracks from album to list

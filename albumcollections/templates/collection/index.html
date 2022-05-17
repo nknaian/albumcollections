@@ -23,7 +23,13 @@
         <div id="collection_list" class="row justify-content-center justify-content-md-start" oncontextmenu="return false;">
             {% for album in collection.albums %}
                 <!-- col-5 -->
-                <div class="col col-auto col-md-auto album_item"
+                <div class="col col-auto col-md-auto album_item
+                    '{% if album.track_ids|length %}'
+                        complete_album
+                    '{% else %}'
+                        incomplete_album
+                    '{% endif %}'
+                    "
                     id="{{album.id}}"
                     data-album_id="{{album.id}}"
                     data-album_name="{{album.name}}"
