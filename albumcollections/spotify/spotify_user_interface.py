@@ -257,7 +257,7 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
                 playback_track_ids.extend(album.track_ids)
 
         # Add the tracks to the playlist
-        self._add_tracks_to_playlist(playback_playlist.id, playback_track_ids)
+        self._add_items_to_playlist(playback_playlist.id, playback_track_ids)
 
         # Begin playback of the playlist from the start track
         self.sp_user.start_playback(
@@ -282,31 +282,31 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
         for album in incomplete_albums.values():
             album.track_ids = self.get_album_track_ids(album.id)
 
-        # Build a list of track ids to replace the current playlist.
+        # Build a list of items to replace the current playlist.
         # Iterate through the current playlist. When the first track from an
-        # incomplete albums is encountered, add it's newfound full track list
+        # incomplete albums is encountered, add it's newfound full track id list
         # in-place to the playlist. When a track that is from a complete album
         # or is not included in the collection at all (ex: podcase episodes) is
-        # encountered, simply add it the the list to retain its presence in
+        # encountered, simply add it's uri to the list to retain its presence in
         # the playlist.
-        new_playlist_track_ids = []
+        new_playlist_items = []
         for playlist_track in self.get_playlist_tracks(spotify_collection.id):
             if playlist_track.album.id in incomplete_albums:
                 incomplete_album = incomplete_albums[playlist_track.album.id]
                 if not incomplete_album.complete:
-                    new_playlist_track_ids.extend(incomplete_album.track_ids)
+                    new_playlist_items.extend(incomplete_album.track_ids)
                     incomplete_album.complete = True
                 else:
                     # Ignore subsequent tracks from this incomplete album
                     pass
             else:
-                new_playlist_track_ids.append(playlist_track.id)
+                new_playlist_items.append(playlist_track.uri)
 
         # Clear the playlist of it's current track list
         self.sp_user.user_playlist_replace_tracks(self.user_id, spotify_collection.id, [])
 
-        # Add the new list of tracks
-        self._add_tracks_to_playlist(spotify_collection.id, new_playlist_track_ids)
+        # Add the new list of items to the playlist
+        self._add_items_to_playlist(spotify_collection.id, new_playlist_items)
 
     '''SPOTIPY WRAPPER FUNCTIONS'''
 
@@ -326,24 +326,28 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
 
     """PRIVATE FUNCTIONS"""
 
-    def _add_tracks_to_playlist(self, playlist_id: str, track_ids: List[str]):
-        # Add tracks in chunks to the playlist
+    def _add_items_to_playlist(self, playlist_id: str, items: List[str]):
+        """ Add items in chunks to the playlist until all items have been added
+
+        "items" is a list that can contain a combination of track ids and/or
+        track/episode uris. Passing an episode id will result in a
+        "Payload contains a non-existing ID" error from the API
+        """
         MAX_CHUNK_SIZE = 100  # 100 is the max number of tracks that can be added at one time via spotify api request
-        while len(track_ids):
-            if len(track_ids) >= MAX_CHUNK_SIZE:
+        while len(items):
+            if len(items) >= MAX_CHUNK_SIZE:
                 chunk_size = MAX_CHUNK_SIZE
             else:
-                chunk_size = len(track_ids)
+                chunk_size = len(items)
 
             # Add next chunk of tracks to playlist
-            self.sp_user.user_playlist_add_tracks(
-                self.user_id,
+            self.sp_user.playlist_add_items(
                 playlist_id,
-                track_ids[:chunk_size]
+                items[:chunk_size]
             )
 
             # Chop off used chunk
-            track_ids = track_ids[chunk_size:]
+            items = items[chunk_size:]
 
 
 """HELPER FUNCTIONS"""
