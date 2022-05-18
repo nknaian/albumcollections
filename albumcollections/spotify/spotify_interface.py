@@ -16,7 +16,7 @@ from albumcollections.spotify.item.spotify_collection import SpotifyCollection
 from albumcollections.spotify import collection_albums
 from albumcollections.spotify.item.spotify_playlist import SpotifyPlaylist
 
-from .item.spotify_music import SpotifyAlbum, SpotifyTrack
+from .item.spotify_music import SpotifyTrack
 
 
 class SpotifyInterface:
