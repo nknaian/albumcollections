@@ -1,4 +1,4 @@
-from flask import render_template, request, url_for, jsonify, current_app
+from flask import render_template, request, url_for, jsonify, current_app, redirect
 import json
 
 # Importing like this is necessary for unittest framework to patch
@@ -41,6 +41,29 @@ def index(playlist_id):
         raise albumcollectionsError(f"Failed to load collection {playlist_id}: {e}", url_for('main.index'))
 
     return render_template('collection/index.html', collection=collection)
+
+
+@bp.route('/collection/<string:playlist_id>/fill_missing_tracks', methods=['POST'])
+def fill_missing_tracks(playlist_id):
+    # Get a spotify user interface to use based on whether user is logged in
+    try:
+        sp_interface = spotify_user_iface.SpotifyUserInterface()
+    except Exception as e:
+        raise albumcollectionsError(f"Failed to create spotify interface: {e}", url_for('main.index'))
+
+    # Get collection based on the playlist id
+    try:
+        collection = sp_interface.get_collection(playlist_id)
+    except Exception as e:
+        raise albumcollectionsError(f"Failed to load collection {playlist_id}: {e}", url_for('main.index'))
+
+    # Call function to fill in the missing tracks in the collection
+    try:
+        sp_interface.fill_collection_missing_tracks(collection)
+        return redirect(url_for('collection.index', playlist_id=playlist_id))
+    except Exception as e:
+        raise albumcollectionsError(
+            f"Failed to fill missing tracks for collection {playlist_id}: {e}", url_for('main.index'))
 
 
 @bp.route('/collection/remove_album', methods=['POST'])
