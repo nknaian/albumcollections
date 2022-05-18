@@ -84,11 +84,7 @@ class SpotifyInterface:
         # available
         if spotify_collection.albums is None:
             # Make iterator of tracks in playlist
-            playlist_tracks_iter = iter([
-                track for track in self.get_playlist_tracks(spotify_collection.id)
-                if track.type == "track"
-            ])
-
+            playlist_tracks_iter = iter(self.get_playlist_tracks(spotify_collection.id))
             # Set the list of albums in the collection based on the playlist tracks
             spotify_collection.albums = collection_albums.get(playlist_tracks_iter)
 
