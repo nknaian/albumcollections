@@ -8,7 +8,6 @@
         onload="init('{{collection.id}}', false)"
     {% endif %}
     >
-        <!-- TODO: Probably should update this guidance or remove it -->
         {% if collection.albums|length == 0 %}
             <div class="main_text">
                 <p>
@@ -21,11 +20,6 @@
         {% endif %}
 
         <!-- Collection Albums -->
-        <form
-            method="post"
-            action="{{ url_for('collection.fill_missing_tracks', playlist_id=collection.id)}}";>
-            <input class="btn btn-danger btn_main" type="submit" value="Fill in missing tracks">
-        </form>
         <div id="collection_list" class="row justify-content-center justify-content-md-start" oncontextmenu="return false;">
             {% for album in collection.albums %}
                 <!-- col-5 -->
