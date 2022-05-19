@@ -1,11 +1,13 @@
 from flask_wtf import FlaskForm
-from wtforms import SubmitField
+from wtforms import SubmitField, SelectField, BooleanField
 from wtforms.fields.choices import SelectMultipleField
 
 
-class AddCollectionsForm(FlaskForm):
-    playlists = SelectMultipleField('Available Playlists', choices=[])
-    submit_new_collections = SubmitField('Add')
+class AddCollectionForm(FlaskForm):
+    playlist = SelectField('Available Playlists', choices=[])
+    create_copy = BooleanField('Create an owned copy of this playlist to store as a collection')
+    fill_missing_tracks = BooleanField('Fill in missing album tracks while adding as a collection')
+    submit_new_collection = SubmitField('Add')
 
 
 class RemoveCollectionsForm(FlaskForm):

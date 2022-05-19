@@ -152,6 +152,29 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
 
         return {device["name"]: device["id"] for device in devices}
 
+    def add_items_to_playlist(self, playlist_id: str, items: List[str]):
+        """ Add items in chunks to the playlist until all items have been added
+
+        "items" is a list that can contain a combination of track ids and/or
+        track/episode uris. Passing an episode id will result in a
+        "Payload contains a non-existing ID" error from the API
+        """
+        MAX_CHUNK_SIZE = 100  # 100 is the max number of tracks that can be added at one time via spotify api request
+        while len(items):
+            if len(items) >= MAX_CHUNK_SIZE:
+                chunk_size = MAX_CHUNK_SIZE
+            else:
+                chunk_size = len(items)
+
+            # Add next chunk of tracks to playlist
+            self.sp_user.playlist_add_items(
+                playlist_id,
+                items[:chunk_size]
+            )
+
+            # Chop off used chunk
+            items = items[chunk_size:]
+
     def remove_album_from_playlist(self, playlist_id, album_id):
         # Get list of track ids for tracks in the album
         album_track_ids = self.get_album_track_ids(album_id)
@@ -257,7 +280,7 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
                 playback_track_ids.extend(album.track_ids)
 
         # Add the tracks to the playlist
-        self._add_items_to_playlist(playback_playlist.id, playback_track_ids)
+        self.add_items_to_playlist(playback_playlist.id, playback_track_ids)
 
         # Begin playback of the playlist from the start track
         self.sp_user.start_playback(
@@ -266,16 +289,15 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
             offset={"uri": start_track_uri}
         )
 
-    def fill_collection_missing_tracks(self, spotify_collection: SpotifyCollection):
-        """Replace the current spotify collection playlist with a new one
-        that includes the full list of tracks for every album in the collection. The
-        previously incomplete album tracks are inserted where the first track was
-        encountered for that album in the old playlist
+    def fill_collection_missing_tracks(self, source_collection: SpotifyCollection, destination_playlist_id: str):
+        """Replace the destination playlist with tracks that include the full list of tracks for
+        every album in the source collection. The previously incomplete album tracks are inserted
+        where the first track was encountered for that album in the source collection.
 
         TODO: This is a good candidate for trying out with unit testing first - maybe
         """
         # Create a dictionary of album id to album for the incomplete albums in the collection
-        incomplete_albums = {album.id: album for album in spotify_collection.albums if not album.complete}
+        incomplete_albums = {album.id: album for album in source_collection.albums if not album.complete}
 
         # Make API requests to record the full list of track ids for each
         # of the currently incomplete albums
@@ -290,7 +312,7 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
         # encountered, simply add it's uri to the list to retain its presence in
         # the playlist.
         new_playlist_items = []
-        for playlist_track in self.get_playlist_tracks(spotify_collection.id):
+        for playlist_track in self.get_playlist_tracks(source_collection.id):
             if playlist_track.album.id in incomplete_albums:
                 incomplete_album = incomplete_albums[playlist_track.album.id]
                 if not incomplete_album.complete:
@@ -303,10 +325,10 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
                 new_playlist_items.append(playlist_track.uri)
 
         # Clear the playlist of it's current track list
-        self.sp_user.user_playlist_replace_tracks(self.user_id, spotify_collection.id, [])
+        self.sp_user.user_playlist_replace_tracks(self.user_id, destination_playlist_id, [])
 
         # Add the new list of items to the playlist
-        self._add_items_to_playlist(spotify_collection.id, new_playlist_items)
+        self.add_items_to_playlist(destination_playlist_id, new_playlist_items)
 
     '''SPOTIPY WRAPPER FUNCTIONS'''
 
@@ -323,31 +345,6 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
         This overrides the parent method
         """
         return self.sp_user.playlist_tracks(playlist_id, limit=track_limit, offset=track_offset)
-
-    """PRIVATE FUNCTIONS"""
-
-    def _add_items_to_playlist(self, playlist_id: str, items: List[str]):
-        """ Add items in chunks to the playlist until all items have been added
-
-        "items" is a list that can contain a combination of track ids and/or
-        track/episode uris. Passing an episode id will result in a
-        "Payload contains a non-existing ID" error from the API
-        """
-        MAX_CHUNK_SIZE = 100  # 100 is the max number of tracks that can be added at one time via spotify api request
-        while len(items):
-            if len(items) >= MAX_CHUNK_SIZE:
-                chunk_size = MAX_CHUNK_SIZE
-            else:
-                chunk_size = len(items)
-
-            # Add next chunk of tracks to playlist
-            self.sp_user.playlist_add_items(
-                playlist_id,
-                items[:chunk_size]
-            )
-
-            # Chop off used chunk
-            items = items[chunk_size:]
 
 
 """HELPER FUNCTIONS"""

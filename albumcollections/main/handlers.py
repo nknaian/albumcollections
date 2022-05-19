@@ -7,7 +7,7 @@ from albumcollections.user import is_user_logged_in
 from albumcollections.main import collections
 
 from . import bp
-from .forms import AddCollectionsForm, RemoveCollectionsForm
+from .forms import AddCollectionForm, RemoveCollectionsForm
 
 
 """HANDLER FUNCTIONS"""
@@ -25,7 +25,7 @@ def index():
     This route is the destination of many errors
     """
     user_collections = None
-    add_collections_form = None
+    add_collection_form = None
     remove_collections_form = None
 
     if is_user_logged_in():
@@ -38,7 +38,7 @@ def index():
             flash("Failed to create Spotify user interface", "danger")
 
         # Initialize the forms
-        add_collections_form = AddCollectionsForm()
+        add_collection_form = AddCollectionForm()
         remove_collections_form = RemoveCollectionsForm()
 
         # Process the user's collections, reloading the page if collections changed
@@ -46,7 +46,7 @@ def index():
         # failure will occur on every retry and create an infinite loop
         try:
             collections_changed, user_collections = collections.process(
-                spotify_user, add_collections_form, remove_collections_form
+                spotify_user, add_collection_form, remove_collections_form
             )
         except collections.RoutineProcessingError as e:
             current_app.logger.critical(f"Failed to process collections for user {spotify_user.display_name}: {e}")
@@ -59,7 +59,7 @@ def index():
     return render_template(
         'main/index.html',
         user_collections=user_collections,
-        add_collections_form=add_collections_form,
+        add_collection_form=add_collection_form,
         remove_collections_form=remove_collections_form,
     )
 
