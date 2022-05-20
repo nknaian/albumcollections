@@ -295,18 +295,12 @@ document.getElementById('reorder-active').addEventListener("change", function() 
 
         var elements = document.getElementsByClassName('album_img')
         for(var i = 0; i < elements.length; i++) {
-            element = elements[i]
-            if (element.closest('.album_item').classList.contains('complete_album')) {
-                element.style.opacity = 0.5
-            }
+            elements[i].style.opacity = 0.5
         }
 
         var elements = document.getElementsByClassName('album-item-move-container')
         for(var i = 0; i < elements.length; i++) {
-            element = elements[i]
-            if (element.closest('.album_item').classList.contains('complete_album')) {
-                element.classList.add('card-img-overlay')
-            }
+            elements[i].classList.add('card-img-overlay')
         }
 
         var elements = document.getElementsByClassName('album-item-move')
@@ -314,6 +308,15 @@ document.getElementById('reorder-active').addEventListener("change", function() 
             element = elements[i]
             if (element.closest('.album_item').classList.contains('complete_album')) {
                 $(element).show()
+            }
+        }
+
+        var elements = document.getElementsByClassName('album_card')
+        for(var i = 0; i < elements.length; i++) {
+            element = elements[i]
+            if (element.closest('.album_item').classList.contains('incomplete_album')) {
+                element.classList.remove('bg-light')
+                element.classList.add('bg-danger')
             }
         }
     }
@@ -338,6 +341,15 @@ document.getElementById('reorder-active').addEventListener("change", function() 
         var elements = document.getElementsByClassName('album-item-move')
         for(var i = 0; i < elements.length; i++) {
             $(elements[i]).hide()
+        }
+
+        var elements = document.getElementsByClassName('album_card')
+        for(var i = 0; i < elements.length; i++) {
+            element = elements[i]
+            if (element.closest('.album_item').classList.contains('incomplete_album')) {
+                element.classList.add('bg-light')
+                element.classList.remove('bg-danger')
+            }
         }
     }
 })
