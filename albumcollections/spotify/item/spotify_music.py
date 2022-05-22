@@ -76,6 +76,9 @@ class SpotifyAlbum(SpotifyMusic):
         # Init track list to empty
         self.track_ids = []
 
+        # Init album as 'incomplete'
+        self.complete = False
+
 
 class SpotifyTrack(SpotifyMusic):
     """Class to hold selected information about a spotify track."""
@@ -100,3 +103,6 @@ class SpotifyTrack(SpotifyMusic):
 
         # Get track number (in disc)
         self.track_number = spotify_track["track_number"]
+
+        # Get the track type
+        self.type = spotify_track["type"]

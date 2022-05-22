@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% from 'bootstrap5/form.html' import render_field %}
+{% from 'bootstrap5/form.html' import render_form, render_field %}
 
 {% block content %}
     <div id="index_content">
@@ -66,14 +66,12 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h4 class="modal-title" id="addCollectionsLabel">Add Collections</h4>
+                            <h4 class="modal-title" id="addCollectionsLabel">Add Collection</h4>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <form method="post" onsubmit="show_loading_add_collections()">
-                                {{ add_collections_form.hidden_tag() }}
-                                {{ render_field(add_collections_form.playlists, size=choices_display_len(add_collections_form.playlists.choices|length)) }}
-                                {{ render_field(add_collections_form.submit_new_collections) }}
+                                {{ render_form(add_collection_form) }}
                             </form>
                         </div>
                     </div>

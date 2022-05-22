@@ -16,7 +16,7 @@ from albumcollections.spotify.item.spotify_collection import SpotifyCollection
 from albumcollections.spotify import collection_albums
 from albumcollections.spotify.item.spotify_playlist import SpotifyPlaylist
 
-from .item.spotify_music import SpotifyAlbum, SpotifyTrack
+from .item.spotify_music import SpotifyTrack
 
 
 class SpotifyInterface:
@@ -50,13 +50,9 @@ class SpotifyInterface:
         """Gets the spotify playlist object from the id."""
         return SpotifyPlaylist(self._playlist(id))
 
-    def get_album_track_ids(self, spotify_album: SpotifyAlbum) -> List[str]:
+    def get_album_track_ids(self, album_id) -> List[str]:
         """Get the list of track ids that comprise the given spotify album"""
-        track_items = self.sp.album(spotify_album.id)["tracks"]["items"]
-        if len(track_items):
-            return [track_item["id"] for track_item in track_items]
-        else:
-            return []
+        return [spotify_track["id"] for spotify_track in self.sp.album_tracks(album_id)["items"]]
 
     def get_playlist_tracks(self, id) -> List[SpotifyTrack]:
         """Get all tracks in the given playlist, retaining track order"""
@@ -75,7 +71,7 @@ class SpotifyInterface:
 
         return tracks
 
-    def get_collection(self, playlist_id):
+    def get_collection(self, playlist_id) -> SpotifyCollection:
         """Get `SpotifyCollection` item based on a database collection entry
 
         The `SpotifyCollection` class makes use of caching
@@ -89,7 +85,6 @@ class SpotifyInterface:
         if spotify_collection.albums is None:
             # Make iterator of tracks in playlist
             playlist_tracks_iter = iter(self.get_playlist_tracks(spotify_collection.id))
-
             # Set the list of albums in the collection based on the playlist tracks
             spotify_collection.albums = collection_albums.get(playlist_tracks_iter)
 
@@ -122,5 +117,4 @@ class SpotifyInterface:
         return [
             SpotifyTrack(track_item["track"])
             for track_item in self._playlist_tracks(playlist_id, track_offset, track_limit)["items"]
-            if track_item["track"] is not None
         ]

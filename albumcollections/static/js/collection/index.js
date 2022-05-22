@@ -5,6 +5,7 @@ let device_select = document.getElementById("device_select")
 let devices = {};
 let start_album_id = null
 let shuffle_albums = false
+let user_logged_in = false
 
 /* Sortable collection list */
 // NOTE: I'm leaving this here just so I remember that I tested this out with a simple
@@ -28,6 +29,7 @@ var sortable_collection = new Sortable(collection_list, {
     delay: 10,
     delayOnTouchOnly: true,
     forceFallback: true,  // This is necessary for mobile (although can't find any documentation saying so). Without this set, there's some other draggable animation that happens that interferes with sortablejs
+    filter: '.incomplete_album',
     // handle: ".album-drag-handle",  // NOTE: This actually does work...maybe I'll want to use a design with this...
     onChoose: function (evt) {
         // Color the album card to indicate movement is active
@@ -82,15 +84,15 @@ var sortable_collection = new Sortable(collection_list, {
 
 /* Functions */
 
-function init(play_id, user_logged_in) {
+function init(play_id, logged_in) {
     playlist_id = play_id
+    user_logged_in = logged_in
 
     /* Hide buttons that are only usable if logged in */
-    if (!user_logged_in) {
+    if (!logged_in) {
         $('#play_collection').hide()
         $('#shuffle_play_collection').hide()
         $('#reorder_collection').hide()
-        $('#play_collection_from_album').hide()
         $('#album_control_modal_remove').hide()
     }
 }
@@ -182,6 +184,14 @@ document.querySelectorAll('.album_card').forEach(item => {
         if (!document.getElementById('reorder-active').checked) {
             // Get the album item that was clicked
             album_item = this.closest('.album_item')
+
+            // Show or hide the play button in the album modal. Only show if the user
+            // is logged in and also the album is complete (album object contains tracks)
+            if (user_logged_in && album_item.classList.contains("complete_album")) {
+                $('#play_collection_from_album').show()
+            } else {
+                $('#play_collection_from_album').hide()
+            }
 
             // Set the album contorl modal's target album item id
             document.getElementById("album_control_modal").setAttribute("data-target_album_item_id", album_item.id)
@@ -278,14 +288,14 @@ document.getElementById('reorder-active').addEventListener("change", function() 
     if (this.checked) {
         sortable_collection.option("disabled", false)
 
-        var elements = document.getElementsByClassName('album_item')
+        var elements = document.getElementsByClassName('complete_album')
         for(var i = 0; i < elements.length; i++) {
             elements[i].style.cursor = "grab"
         }
 
         var elements = document.getElementsByClassName('album_img')
         for(var i = 0; i < elements.length; i++) {
-            elements[i].style.opacity = 0.5;
+            elements[i].style.opacity = 0.5
         }
 
         var elements = document.getElementsByClassName('album-item-move-container')
@@ -295,7 +305,19 @@ document.getElementById('reorder-active').addEventListener("change", function() 
 
         var elements = document.getElementsByClassName('album-item-move')
         for(var i = 0; i < elements.length; i++) {
-            $(elements[i]).show()
+            element = elements[i]
+            if (element.closest('.album_item').classList.contains('complete_album')) {
+                $(element).show()
+            }
+        }
+
+        var elements = document.getElementsByClassName('album_card')
+        for(var i = 0; i < elements.length; i++) {
+            element = elements[i]
+            if (element.closest('.album_item').classList.contains('incomplete_album')) {
+                element.classList.remove('bg-light')
+                element.classList.add('bg-danger')
+            }
         }
     }
     else {
@@ -319,6 +341,15 @@ document.getElementById('reorder-active').addEventListener("change", function() 
         var elements = document.getElementsByClassName('album-item-move')
         for(var i = 0; i < elements.length; i++) {
             $(elements[i]).hide()
+        }
+
+        var elements = document.getElementsByClassName('album_card')
+        for(var i = 0; i < elements.length; i++) {
+            element = elements[i]
+            if (element.closest('.album_item').classList.contains('incomplete_album')) {
+                element.classList.add('bg-light')
+                element.classList.remove('bg-danger')
+            }
         }
     }
 })

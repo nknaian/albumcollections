@@ -12,8 +12,8 @@ from albumcollections import db
 
 
 class MainIndexTestCase(MainTestCase):
-    """Test GET on main index route."""
     def test_get_index_logged_out(self):
+        """Test GET on main index route."""
         response = self.client.get(url_for("main.index"))
         self.assert_200(response)
 
@@ -35,24 +35,28 @@ class MainIndexTestCase(MainTestCase):
         new_callable=SpotifyUserInterfaceMock
     )
     def test_add_collections(self, _mock):
+        """Test the add collections post
+
+        NOTE: This does not test out the 'copy' and 'fill missing tracks' options
+        being set to true
+        """
         # Auth dummy user and add them to database
         self.auth_dummy_user()
         db.session.add(AcUser(spotify_user_id=SpotifyUserInterfaceMock.user_id))
         db.session.commit()
 
-        # Make post with `AddCollectionsForm` data
+        # Make post with `AddCollectionForm` data
         response = self.client.post(url_for("main.index"), data=dict(
-            playlists=["dummyplaylistid1", "dummyplaylistid2"],
-            submit_new_collections="Submit",
+            playlist="dummyplaylistid1",
+            submit_new_collection="Submit",
         ), follow_redirects=True)
 
         self.assert_200(response)
 
-        # Make sure that both playlists got added
+        # Make sure that the playlist got added
         collections = Collection.query.all()
-        self.assertEqual(len(collections), 2)
+        self.assertEqual(len(collections), 1)
         self.assertEqual(collections[0].playlist_id, "dummyplaylistid1")
-        self.assertEqual(collections[1].playlist_id, "dummyplaylistid2")
 
     @patch(
         'albumcollections.spotify.spotify_user_interface.SpotifyUserInterface',

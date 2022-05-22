@@ -22,10 +22,21 @@ def get(playlist_tracks_iter) -> List[SpotifyAlbum]:
 
         # Act on the current playlist track in the iterator
         while True:
+            # This track isn't a track (ex: maybe it's a podcast episode)
+            # Just skip over it
+            if playlist_track.type != "track":
+                playlist_track = next(playlist_tracks_iter)
+            # The current playlist track's album has been seen before. This means that
+            # the track is either a duplicate, or separated from the first track in
+            # the album by tracks from other albums. In any case, it means that the
+            # complete album isn't present in the playlist
+            elif playlist_track.album.id in album_entries:
+                album_entries[playlist_track.album.id].complete = False
+                playlist_track = next(playlist_tracks_iter)
             # The current playlist track's album hasn't been seen before.
             # Make an entry for the album and iterate through the subsequent
             # playlist tracks
-            if playlist_track.album.id not in album_entries:
+            else:
                 # Record the album of this first-encountered track
                 album = playlist_track.album
 
@@ -65,27 +76,20 @@ def get(playlist_tracks_iter) -> List[SpotifyAlbum]:
                     # Add this track id to the album
                     album.track_ids.append(playlist_track.id)
 
-                    # Move to the next track in the playlist
-                    playlist_track = next(playlist_tracks_iter)
-
-            # The current playlist track's album has been seen before. This means that
-            # the track is either a duplicate, or separated from the first track in
-            # the album by tracks from other albums. In any case, it invalidates the
-            # album entry. Set the album entry to invalid, and move on to the next
-            # track in the playlist.
-            elif playlist_track.album.id in album_entries:
-                album_entries[playlist_track.album.id] = None
-                playlist_track = next(playlist_tracks_iter)
-
-            # Otherwise the album type is not an 'album'...just move to the next track
-            else:
-                playlist_track = next(playlist_tracks_iter)
-
+                    # If all tracks were seen, then mark the album as
+                    # complete, move to the next track and break out of the loop
+                    if len(album.track_ids) == album.total_tracks:
+                        album.complete = True
+                        playlist_track = next(playlist_tracks_iter)
+                        break
+                    # Otherwise the album isn't complete yet so stay in the loop
+                    # and iterate to the next track in the playlist
+                    else:
+                        playlist_track = next(playlist_tracks_iter)
     # If a stop iteration is received, that means the playlist's tracks have been
     # exhausted - pencils down.
     except StopIteration:
         pass
 
     # Return albums from valid entries
-    return [album for album in album_entries.values()
-            if album is not None and len(album.track_ids) == album.total_tracks]
+    return list(album_entries.values())

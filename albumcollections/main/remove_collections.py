@@ -30,7 +30,7 @@ def do(
             _remove_choices_from_db(spotify_user, remove_collections_form.collections.data)
         except Exception as e:
             raise albumcollectionsError(
-                f"{spotify_user.display_name} failed to remove collections: {e}", url_for('main.index')
+                f"Failed to remove collections: {e}", url_for('main.index')
             )
         return True
     elif remove_collections_form.errors:

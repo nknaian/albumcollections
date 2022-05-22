@@ -5,13 +5,13 @@ from flask import flash, current_app
 import albumcollections.spotify.spotify_user_interface as spotify_user_iface
 
 from albumcollections.spotify.item.spotify_playlist import SpotifyPlaylist
-from albumcollections.main import add_collections, remove_collections
+from albumcollections.main import add_collection, remove_collections
 from albumcollections.models import Collection
 from albumcollections.user import get_user_id, get_user_playback_playlist_id
 
 from albumcollections import db
 
-from .forms import AddCollectionsForm, RemoveCollectionsForm
+from .forms import AddCollectionForm, RemoveCollectionsForm
 
 
 class RoutineProcessingError(Exception):
@@ -23,7 +23,7 @@ class RoutineProcessingError(Exception):
 
 def process(
     spotify_user: spotify_user_iface.SpotifyUserInterface,
-    add_collections_form: AddCollectionsForm,
+    add_collection_form: AddCollectionForm,
     remove_collections_form: RemoveCollectionsForm,
 ) -> Tuple[bool, List[SpotifyPlaylist]]:
     """Get the list of collections that the user has chosen out of their
@@ -61,11 +61,11 @@ def process(
     except Exception as e:
         raise RoutineProcessingError(f"Falied to filter available playlists: {e}")
 
-    # Process the `add_collections_form`
-    add_collections_form.playlists.choices.extend(available_playlists)
-    if add_collections.do(
+    # Process the `add_collection_form`
+    add_collection_form.playlist.choices.extend(available_playlists)
+    if add_collection.do(
         spotify_user,
-        add_collections_form
+        add_collection_form
     ):
         collections_changed = True
 
