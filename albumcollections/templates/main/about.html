@@ -34,17 +34,22 @@
                         The <i>Mixtape</i> has had a fantastic modern representation for a long time. This app introduces the concept 
                         of <b>playlists for your albums</b>, bringing album collection into the music subscription age.
                     </p>
-                    <h2 class="about_section" id="guide" class="about_section">Guide</h2>
+                    <h2 class="about_section" class="about_section">What is a collection?</h2>
                     <p>
                         Any playlist in your Spotify account can be represented in this app as a <i>collection</i>.
                         Here's an <a href="{{url_for('collection.index', playlist_id='4ucljWzVJnEB0cdWErJTsT')}}">example</a> of one. Within a 
                         collection, you can view the contents and link to the corresponding Spotify playlist and contained Spotify albums.
-                        You also have the ability to perform playlist-like actions, such as playing the albums in sequence (if you're logged in) and
-                        reordering and removing albums (if you own the playlist).
+                        If you are logged in and have a premium Spotify account, then you can play and shuffle play albums whose full track lists
+                        are present in the playlist). If you are logged in and own the playlist (free or premium account), then you can reorder
+                        (as long the full track list is present) and remove albums from the playlist.
                     </p>
+                    <h2 class="about_section" id="guide" class="about_section">Guide</h2>
                     <p>
-                        The sections in this guide go into detail on specific capabilities of the app. They are labeled with icons based on which application --
-                        <i>Album Collections</i> and/or Spotify -- will be involved in the task.
+                        Each section goes into detail on specific capabilities of the app. They are labeled with icons based on which application --
+                        <i>Album Collections</i> and/or Spotify -- will be involved in the task. Note that as a prerequisite you will need
+                        to have some playlists in your Spotify account with music (either full albums or individual tracks) that you want
+                        to add as collections. You could also create some new empty playlists to start, and then add music after you've
+                        added them as collections.
                     </p>
                     <h3 class="about_section">Install <img src="/static/favicon.ico" class="about_header_icon ps-1"/></h3>
                     <p> <i>Album Collections</i> is a 
@@ -56,7 +61,7 @@
                     <p> Press the <i>Login</i> button on the navbar or main page to authenticate with your Spotify account. 
                         This will allow you to view your Spotify playlists as <i>collections</i> and also enable collection playing and modifying.
                     </p>
-                    <h3 class="about_section">Add a Collection <img src="/static/images/spotify/Spotify_Icon_RGB_Green.png" class="about_header_icon ps-1"/></h3>
+                    <h3 class="about_section">Add a Collection <img src="/static/favicon.ico" class="about_header_icon ps-1"/></h3>
                     <p>
                         Any playlists that you have added in your spotify account can be added as a collection via the form on the
                         <a href="{{url_for('main.index')}}">main page</a> (once logged in). The end result of the addition
@@ -76,13 +81,14 @@
                             </li>
                         </ol>
                     </p>
-                    <h3 class="about_section">Remove Collections</h3>
+                    <h3 class="about_section">Remove Collections <img src="/static/favicon.ico" class="about_header_icon ps-1"/> <img src="/static/images/spotify/Spotify_Icon_RGB_Green.png" class="about_header_icon ps-1"/></h3>
                     <p>
                         The collections that you have added via the above step can be removed as well, also from the
                         <a href="{{url_for('main.index')}}">main page</a> (when logged in). This will only remove the collection
                         from view in <i>Albums Collections</i>, it won't have any affect on the backing Spotify playlists.
-
-                        Collections are also removed from view when the underlying playlists are deleted.
+                    </p>
+                    <p>
+                        Collections can also be removed from view by deleting the underlying playlist in Spotify.
                     </p>
                     <h3 class="about_section">Add album/s to a Collection <img src="/static/images/spotify/Spotify_Icon_RGB_Green.png" class="about_header_icon ps-1"/></h3>
                     <p>
@@ -94,9 +100,13 @@
                     <h3 class="about_section">View your Collections <img src="/static/favicon.ico" class="about_header_icon ps-1"/></h3>
                     <p>
                         The main page on <i>Album Collections</i> displays the collections that you have added.
-                        Click on a collection to open it. The collection page shows the cover art for all albums in the collections that can
-                        be interacted with, and has a <i>collection control bar</i> at the bottom that shows the name of
+                        Click on a collection to open it. The collection page contains interactable cover art for the
+                        contained albums, and has a <i>collection control bar</i> at the bottom that shows the name of
                         collection, along with several buttons to modify, play, or access it.
+                    </p>
+                    <p>
+                        You can also view any playlist in Spotify as a collection by manually inputting it's playlist id in the address
+                        bar.<br>Ex: <code>{{url_for('collection.index', playlist_id='4ucljWzVJnEB0cdWErJTsT')}}</code>
                     </p>
                     <h3 class="about_section">Play from a Collection <img src="/static/favicon.ico" class="about_header_icon ps-1"/> <img src="/static/images/spotify/Spotify_Icon_RGB_Green.png" class="about_header_icon ps-1"/></h3>
                     <p>There are several ways to play music from a collection.</p>
