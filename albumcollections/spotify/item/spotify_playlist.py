@@ -13,3 +13,5 @@ class SpotifyPlaylist(SpotifyItem):
         super().__init__(spotify_playlist)
 
         self._set_image_url(spotify_playlist["images"])
+
+        self.owner = spotify_playlist['owner']['display_name']

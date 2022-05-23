@@ -114,7 +114,7 @@ def _get_available_playlists(
     unavaliable_ids.append(get_user_playback_playlist_id())
 
     return [
-        (user_playlist.id, user_playlist.name)
+        (user_playlist.id, f"{user_playlist.name} by {user_playlist.owner}")
         for user_playlist in user_playlists
         if user_playlist.id not in unavaliable_ids
     ]

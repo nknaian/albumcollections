@@ -77,18 +77,21 @@ class SpotifyUserInterfaceMock(SpotifyInterfaceMock):
         playlist1_mock.link = "dummyplaylistlink1"
         playlist1_mock.name = "dummyplaylist1"
         playlist1_mock.img_url = None
+        playlist1_mock.owner = "snoozin"
 
         playlist2_mock = Mock(spec=SpotifyPlaylist)
         playlist2_mock.id = "dummyplaylistid2"
         playlist2_mock.link = "dummyplaylistlink2"
         playlist2_mock.name = "dummyplaylist2"
         playlist2_mock.img_url = None
+        playlist2_mock.owner = "snoozin"
 
         playlist3_mock = Mock(spec=SpotifyPlaylist)
         playlist3_mock.id = "dummyplaylistid3"
         playlist3_mock.link = "dummyplaylistlink3"
         playlist3_mock.name = "dummyplaylist3"
         playlist3_mock.img_url = None
+        playlist3_mock.owner = "snoozin"
 
         return ([playlist1_mock, playlist2_mock, playlist3_mock], [])
 
