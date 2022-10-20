@@ -231,6 +231,53 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
             range_length=moved_album_num_tracks
         )
 
+    # This was extremely slow. Makes sense, makes so many spotify requests
+    # def shuffle_collection(
+    #     self,
+    #     spotify_collection: SpotifyCollection
+    # ):
+    #     """Shuffles the spotify playlist underlying the given collection
+    #     by rearranging its albums.
+
+    #     Assumes that there are at least two items in the playlist (with one it's pointless
+    #     obviously but also the random.choices() function would fail)
+    #     """
+    #     collection_items = [album.id for album in spotify_collection.albums]
+
+    #     # Add None to the list to give the possibility of putting an album in the last spot
+    #     collection_items.append(None)
+
+    #     # Reorder two random elemts in the collection n times, where n is the
+    #     # number of albums in the collection
+    #     for _ in range(len(collection_items) - 1):
+    #         rand_id1, rand_id2 = random.choices(collection_items, k=2)
+
+    #         self.reorder_collection(spotify_collection.id, rand_id1, rand_id2)
+
+    def shuffle_collection(
+        self,
+        spotify_collection: SpotifyCollection
+    ):
+        """Shuffles the spotify playlist underlying the given collection
+        by rearranging its albums.
+
+        Assumes that there are at least two items in the playlist (with one it's pointless
+        obviously but also the random.choices() function would fail)
+        """
+        # Create a list of tracks that will comprise the shuffled collection
+        shuffled_collection_tracks = []
+
+        # Shuffle the albums in the collection (local copy, this doesn't change the spotify playlist)
+        random.shuffle(spotify_collection.albums)
+
+        for album in spotify_collection.albums:
+            shuffled_collection_tracks.extend(album.track_ids)
+
+        # Replace the previous playlist with the new order
+        # NOTE: This means that any non-track items in the playlist (ex: podcasts) will be removed
+        self.sp_user.user_playlist_replace_tracks(self.user_id, spotify_collection.id, [])
+        self.add_items_to_playlist(spotify_collection.id, shuffled_collection_tracks)
+
     def play_collection(
         self,
         spotify_collection: SpotifyCollection,

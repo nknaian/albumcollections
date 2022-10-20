@@ -1,4 +1,4 @@
-from flask import render_template, request, url_for, jsonify, current_app
+from flask import render_template, request, url_for, jsonify, current_app, redirect
 import json
 
 # Importing like this is necessary for unittest framework to patch
@@ -41,6 +41,27 @@ def index(playlist_id):
         raise albumcollectionsError(f"Failed to load collection {playlist_id}: {e}", url_for('main.index'))
 
     return render_template('collection/index.html', collection=collection)
+
+
+@bp.route('/collection/shuffle_collection/<string:playlist_id>', methods=['GET', 'POST'])
+def shuffle_collection(playlist_id):
+    """Shuffle the underlying playlist"""
+
+    try:
+        # Get spotify user
+        spotify_user = spotify_user_iface.SpotifyUserInterface()
+
+        # Get the collection
+        collection = spotify_user.get_collection(playlist_id)
+
+        # Play the collection useing the playback playlist
+        if len(collection.albums) > 1:
+            spotify_user.shuffle_collection(collection)
+
+    except Exception as e:
+        current_app.logger.error(f"Failed to shuffle collection {playlist_id}: {e}")
+
+    return redirect(url_for('collection.index', playlist_id=collection.id))
 
 
 @bp.route('/collection/remove_album', methods=['POST'])
