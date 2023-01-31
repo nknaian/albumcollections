@@ -1,5 +1,5 @@
 # albumcollections
-Organize, visualize and play your Spotify albums.
+Organize and visualize your Spotify albums.
 
 Visit the website deployed at https://albumcollections.herokuapp.com/
 

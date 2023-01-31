@@ -21,6 +21,8 @@ class SpotifyCollection(SpotifyItem):
 
         self._set_image_url(spotify_playlist["images"])
 
+        self.owner_id = spotify_playlist["owner"]["id"]
+
         # Get current snapshot id
         self.snapshot_id = spotify_playlist["snapshot_id"]
 

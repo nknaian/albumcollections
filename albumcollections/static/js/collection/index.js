@@ -1,11 +1,6 @@
 /* Module Variables */
 
 let playlist_id;
-let device_select = document.getElementById("device_select")
-let devices = {};
-let start_album_id = null
-let shuffle_albums = false
-let user_logged_in = false
 
 /* Sortable collection list */
 // NOTE: I'm leaving this here just so I remember that I tested this out with a simple
@@ -84,96 +79,22 @@ var sortable_collection = new Sortable(collection_list, {
 
 /* Functions */
 
-function init(play_id, logged_in) {
+function init(play_id, play_owner_id, user_id) {
     playlist_id = play_id
-    user_logged_in = logged_in
 
-    /* Hide buttons that are only usable if logged in */
-    if (!logged_in) {
-        $('#play_collection').hide()
-        $('#shuffle_play_collection').hide()
+    console.log(play_owner_id)
+    console.log(user_id)
+
+    /* Hide buttons that are only usable if the user owns the collection */
+    if (play_owner_id === user_id) {
+        $('#shuffle_collection').show()
+        $('#reorder_collection').show()
+        $('#album_control_modal_remove').show()
+    } else {
+        $('#shuffle_collection').hide()
         $('#reorder_collection').hide()
         $('#album_control_modal_remove').hide()
     }
-}
-
-function device_play_select() {
-    /* Get spotify devices that can be played from, then
-    close the control window and open the device select
-    window.
-
-    If there's no avaiable devices then raise an alert.
-    */
-   // Hide the loading screen upon opening up the device play modal
-   $(".device_play_load_item").hide()
-
-    $.post('/collection/get_devices', {
-        data: JSON.stringify({}),
-        contentType: 'application/json'
-    }).done(function (response) {
-        if (response["exception"]) {
-            alert(`Sorry, failed to play collection.\n\n${response["exception"]}`)
-        }
-        else if (response["devices"]) {
-            // Clear device select options
-            device_select.options.length = 0
-
-            // Update devices from server
-            devices = response["devices"]
-
-            // Update device select options from server
-            for(var device in devices) {
-                device_select.options[device_select.options.length] = new Option(device)
-            }
-
-            if (device_select.options.length) {
-                // Show the device select modal
-                $('#select_device_modal').modal('show')
-
-                // Hide the album control modal
-                $('#album_control_modal').modal('hide')
-            }
-            else {
-                // Alert that no devices are avaiable
-                alert('No devices available to play from. Please open spotify on a device and try again.')
-            }
-        }
-    }).fail(function() {
-        alert("Sorry, a server failure occured.")
-    });
-}
-
-function play_collection(device_id) {
-    /* Play the collection using start album
-    from the given device
-    */
-   // Show the loading screen, as play request is about to start
-    $(".device_play_load_item").show()
-
-    // Make the request to play the collection
-    $.post('/collection/play_collection', {
-        data: JSON.stringify({
-            playlist_id: playlist_id,
-            device_id: device_id,
-            start_album_id: start_album_id,
-            shuffle_albums: shuffle_albums 
-        }),
-        contentType: 'application/json'
-    }).done(function (response) {
-        // Hide the loading screen, as we're now done making the play request
-        $('.device_play_load_item').hide()
-
-        // Alert w/ error
-        if (response["exception"]) {
-            alert(`Sorry, failed to play collection.\n\n${response["exception"]}`)
-        }
-    }).fail(function() {
-        // Hide the loading screen, as we're now done making the play request
-        $('.device_play_load_item').hide()
-
-        // Alert that server failure occurred (this shouldn't happen!)
-        alert("Sorry, a server failure occured.")
-    });
 }
 
 /* Event Listeners */
@@ -184,14 +105,6 @@ document.querySelectorAll('.album_card').forEach(item => {
         if (!document.getElementById('reorder-active').checked) {
             // Get the album item that was clicked
             album_item = this.closest('.album_item')
-
-            // Show or hide the play button in the album modal. Only show if the user
-            // is logged in and also the album is complete (album object contains tracks)
-            if (user_logged_in && album_item.classList.contains("complete_album")) {
-                $('#play_collection_from_album').show()
-            } else {
-                $('#play_collection_from_album').hide()
-            }
 
             // Set the album contorl modal's target album item id
             document.getElementById("album_control_modal").setAttribute("data-target_album_item_id", album_item.id)
@@ -222,32 +135,6 @@ document.querySelectorAll('.album_card').forEach(item => {
         }
     });
 })
-
-document.getElementById("play_collection").addEventListener("click", function() {
-    start_album_id = null
-    shuffle_albums = false
-    device_play_select()
-});
-
-document.getElementById("shuffle_play_collection").addEventListener("click", function() {
-    start_album_id = null
-    shuffle_albums = true
-    device_play_select()
-});
-
-document.getElementById("play_collection_from_album").addEventListener("click", function() {
-    album_item = document.getElementById(
-        document.getElementById("album_control_modal").getAttribute("data-target_album_item_id")
-    )
-    start_album_id = album_item.getAttribute("data-album_id")
-    shuffle_albums = false
-    device_play_select()
-});
-
-document.getElementById("play_on_selected_device").addEventListener("click", function() {
-    var selected_device = device_select.options[device_select.selectedIndex].text
-    play_collection(devices[selected_device])
-});
 
 document.getElementById("album_control_modal_remove").addEventListener("click", function() {
     album_item = document.getElementById(

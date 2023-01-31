@@ -1,13 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <body
-    {% if is_user_logged_in() %}
-        onload="init('{{collection.id}}', true)"
-    {% else %}
-        onload="init('{{collection.id}}', false)"
-    {% endif %}
-    >
+    <body onload="init('{{collection.id}}', '{{collection.owner_id}}', '{{user_id}}')">
         {% if collection.albums|length == 0 %}
             <div class="main_text">
                 <p>
@@ -63,13 +57,15 @@
         <div class="bg-light py-2 d-flex fixed-bottom">
             <div class="scroll-to-fit-title me-auto mx-2 text-blue-theme"><span class="fs-4">{{collection.name}}</span></div>
 
-            <button id="play_collection" class="btn btn-outline-success mx-2">
-                <img src="/static/images/bootstrap/play.svg"/>
-            </button>
-
-            <button id="shuffle_play_collection" class="btn btn-outline-success mx-2">
-                <img src="/static/images/bootstrap/shuffle.svg"/><img src="/static/images/bootstrap/play.svg"/>
-            </button>
+            <div id="shuffle_collection">
+                <a
+                    class="btn btn-outline-success mx-2"
+                    role="button"
+                    href="{{url_for('main.load_redirect')}}?redirect_location={{url_for('collection.shuffle_collection', playlist_id=collection.id)}}&load_message=Mixing it up.."
+                >
+                    <img src="/static/images/bootstrap/shuffle.svg"/>
+                </a>
+            </div>
 
             <div id="reorder_collection">
                 <input type="checkbox" class="btn-check" id="reorder-active" autocomplete="off">
@@ -82,29 +78,6 @@
                 <img src="/static/images/spotify/Spotify_Icon_RGB_Black.png" class="spotify_icon_small_img"/>
             </a>
         </div>
-
-    <!-- Select device popup window-->
-    <div id="select_device_modal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Select device to play collection</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <select id="device_select" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
-                    </select>
-                    <div id="device_play_loader" class="d-flex flex-column align-items-center">
-                        <div class="device_play_load_item loader py-2" style="display: none;"></div>
-                        <div class="device_play_load_item py-2" style="display: none;"><p>Dropping the needle...</p></div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button id="play_on_selected_device" class="btn btn-primary"><img src="/static/images/bootstrap/play.svg"/></button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Album control popup window-->
     <div id="album_control_modal" class="modal fade" role="dialog" data-target_album_item_id="">
@@ -125,7 +98,6 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button id="play_collection_from_album" class="album_control_bar btn btn-outline-success mx-2"><img src="/static/images/bootstrap/play.svg"/></button>
                     <a class="album_control_bar btn btn-outline-secondary" role="button" id="album_control_modal_spotify_link">
                         <img src="/static/images/spotify/Spotify_Icon_RGB_Black.png" class="spotify_icon_small_img"/>
                     </a>
@@ -133,8 +105,8 @@
                 </div>
                 <div class="d-flex flex-column align-items-center">
                     <div class="remove_album_load_item loader py-2" style="display: none;"></div>
-                    <div class="remove_album_load_item py-2" style="display: none;"><p>Returning this record to the store...</p></div>
-                <div id="device_play_loader" class="d-flex flex-column align-items-center">
+                    <div class="remove_album_load_item py-2" style="display: none;"><p>Returning this record to the store...</p>
+                </div>
             </div>
         </div>
     </div>

@@ -8,7 +8,6 @@ provides API functionality.
 
 from typing import Dict, List, Tuple
 import random
-import copy
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
@@ -146,12 +145,6 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
 
         return (playlists, errors)
 
-    def get_devices(self) -> Dict[str, str]:
-        """Get dictionary of available spotify devices"""
-        devices = self.sp_user.devices()['devices']
-
-        return {device["name"]: device["id"] for device in devices}
-
     def add_items_to_playlist(self, playlist_id: str, items: List[str]):
         """ Add items in chunks to the playlist until all items have been added
 
@@ -231,63 +224,29 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
             range_length=moved_album_num_tracks
         )
 
-    def play_collection(
+    def shuffle_collection(
         self,
-        spotify_collection: SpotifyCollection,
-        start_album_id: str,
-        shuffle_albums: bool,
-        playback_playlist: SpotifyPlaylist,
-        device_id=None
+        spotify_collection: SpotifyCollection
     ):
-        """This function attempts to mimic the ability to play songs
-        within the context of a playlist.
+        """Shuffles the spotify playlist underlying the given collection
+        by rearranging its albums.
 
-        The user's playback playlist is used to play the collection
-
-        Playback will start from the first track of thte "start album"
-
-        If shuffle_albums is set to true then the list order will be randomized.
-
-        NOTE: start_album_id must be in the collection or undefined behavior will occur
+        Assumes that there are at least two items in the playlist (with one it's pointless
+        obviously but also the random.choices() function would fail)
         """
-        # Turn off user's shuffle (so the albums are actually in order!)
-        # NOTE: On some devices this may fail (ex: New web player tab before it has played music)
-        # As seen thusfar, when this command fails, the playback would have failed anyways, except silently.
-        # So this at least gives some indication that something went wrong (although it would be nice
-        # if there was a more clear explanation for the user...I'm just not really the underlying reasoning
-        # so I can't accurately add an error message at this time.)
-        self.sp_user.shuffle(False, device_id)
+        # Create a list of tracks that will comprise the shuffled collection
+        shuffled_collection_tracks = []
 
-        # Make a copy of the collection albums
-        collection_albums = copy.deepcopy(spotify_collection.albums)
+        # Shuffle the albums in the collection (local copy, this doesn't change the spotify playlist)
+        random.shuffle(spotify_collection.albums)
 
-        # Shuffle the albums if specified
-        if shuffle_albums:
-            random.shuffle(collection_albums)
+        for album in spotify_collection.albums:
+            shuffled_collection_tracks.extend(album.track_ids)
 
-        # Get list of tracks from list of complete albums and get the uri of the
-        # track that should be played first (the first track of the start album)
-        playback_track_ids = []
-        start_track_uri = None
-        for album in collection_albums:
-            if album.complete:
-                # Record start track uri
-                if start_track_uri is None and \
-                        (start_album_id is None or album.id == start_album_id):
-                    start_track_uri = _track_uri_from_id(album.track_ids[0])
-
-                # Add tracks from album to list
-                playback_track_ids.extend(album.track_ids)
-
-        # Add the tracks to the playlist
-        self.add_items_to_playlist(playback_playlist.id, playback_track_ids)
-
-        # Begin playback of the playlist from the start track
-        self.sp_user.start_playback(
-            device_id=device_id,
-            context_uri=playback_playlist.uri,
-            offset={"uri": start_track_uri}
-        )
+        # Replace the previous playlist with the new order
+        # NOTE: This means that any non-track items in the playlist (ex: podcasts) will be removed
+        self.sp_user.user_playlist_replace_tracks(self.user_id, spotify_collection.id, [])
+        self.add_items_to_playlist(spotify_collection.id, shuffled_collection_tracks)
 
     def fill_collection_missing_tracks(self, source_collection: SpotifyCollection, destination_playlist_id: str):
         """Replace the destination playlist with tracks that include the full list of tracks for
