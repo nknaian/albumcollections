@@ -139,11 +139,6 @@ scroll-to-fit-title:not(:hover) {
     color: black;
 }
 
-/* Id styles */
-#shuffle_play_collection {
-    white-space: nowrap;  /* Need to have this because the button contains two images */
-}
-
 /* TOC nav styling */
 nav[data-toggle="toc"] {
     top: 64px;  /* Displays sticky TOC below fixed top navbar */
