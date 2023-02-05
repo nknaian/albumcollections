@@ -4,10 +4,9 @@ from flask import redirect, render_template, url_for, flash, request, current_ap
 import albumcollections.spotify.spotify_user_interface as spotify_user_iface
 
 from albumcollections.user import is_user_logged_in
-from albumcollections.main import collections
+from albumcollections import collection_playlists
 
-from . import bp
-from .forms import AddCollectionForm, RemoveCollectionsForm
+from . import bp, forms
 
 
 """HANDLER FUNCTIONS"""
@@ -24,7 +23,7 @@ def index():
 
     This route is the destination of many errors
     """
-    user_collections = None
+    user_collection_playlists = None
     add_collection_form = None
     remove_collections_form = None
 
@@ -37,28 +36,25 @@ def index():
             spotify_user_iface.unauth_user()
             flash("Failed to create Spotify user interface", "danger")
 
-        # Initialize the forms
-        add_collection_form = AddCollectionForm()
-        remove_collections_form = RemoveCollectionsForm()
-
-        # Process the user's collections, reloading the page if collections changed
-        # If a processing error occurs then unauthenticate the user, as it's likely
+        # Load the user's playlists
+        # If an error occurs then unauthenticate the user, as it's likely
         # failure will occur on every retry and create an infinite loop
         try:
-            collections_changed, user_collections = collections.process(
-                spotify_user, add_collection_form, remove_collections_form
-            )
-        except collections.RoutineProcessingError as e:
-            current_app.logger.critical(f"Failed to process collections for user {spotify_user.display_name}: {e}")
+            user_collection_playlists, user_playlists = collection_playlists.load(spotify_user)
+        except Exception as e:
+            current_app.logger.critical(f"Failed to load collections for {spotify_user.display_name}: {e}")
             spotify_user_iface.unauth_user()
-            flash("Failed to process collections", "danger")
-        else:
-            if collections_changed:
-                return redirect(url_for('main.index'))
+            flash("Failed to load collections", "danger")
+
+        # Process the collection forms, reloading if collections changed
+        collection_changed, add_collection_form, remove_collections_form = forms.process(
+            spotify_user, user_playlists, user_collection_playlists)
+        if collection_changed:
+            return redirect(url_for('main.index'))
 
     return render_template(
         'main/index.html',
-        user_collections=user_collections,
+        user_collection_playlists=user_collection_playlists,
         add_collection_form=add_collection_form,
         remove_collections_form=remove_collections_form,
     )

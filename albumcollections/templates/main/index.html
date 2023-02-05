@@ -25,13 +25,13 @@
                 <div class="col p-2 me-2 btn btn-dark d-flex flex-column justify-content-center" data-bs-toggle="modal" data-bs-target="#addCollections">
                     <div class="fs-1 text-success">+</div>
                 </div>
-                {% if user_collections|length > 0 %}
+                {% if user_collection_playlists|length > 0 %}
                 <div class="col p-2 btn btn-dark d-flex flex-column justify-content-center" data-bs-toggle="modal" data-bs-target="#removeCollections">
                     <div class="fs-1 text-danger">-</div>
                 </div>
                 {% endif %}
             </div>
-            {% for collection in user_collections %}
+            {% for collection in user_collection_playlists %}
                 <a class="btn btn-dark p-2 m-2 d-flex collection_item"
                 role="button"
                 href="{{url_for('main.load_redirect')}}?redirect_location={{url_for('collection.index', playlist_id=collection.id)}}&load_message=Dusting off those records..."
@@ -49,7 +49,7 @@
                 </a>
             {% endfor %}
 
-            {% if user_collections|length == 0 %}
+            {% if user_collection_playlists|length == 0 %}
                 <div class="main_text">
                     <p>
                         You don't have any collections yet! Use the + button above to add some.
