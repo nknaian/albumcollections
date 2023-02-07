@@ -168,6 +168,34 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
             # Chop off used chunk
             items = items[chunk_size:]
 
+    def add_album_to_collection(self, collection_id, album_id):
+        """Add an album to the collection with the given collection id
+
+        Do this so that after the operation is done, there is exactly one
+        complete version of the album in the collection, retaining order
+        if an incomplete version was there previously.
+        """
+        # Get the collection for the playlist
+        collection = self.get_collection(collection_id)
+
+        # Get list of track ids for tracks in the album
+        album_track_ids = self.get_album_track_ids(album_id)
+
+        # If album is already in the collection and is complete, do nothing
+        # If album is already in the collection and incomplete, then remove occurences
+        # of the incomplete album and then add the full album at the index of the
+        # incomplete album in the playlist (index of first track)
+        for album in collection.albums:
+            if album.id == album_id:
+                if not album.complete:
+                    self.sp_user.playlist_remove_all_occurrences_of_items(collection_id, album_track_ids)
+                    # NOTE: If an album has over 100 tracks, this will return an error
+                    self.sp_user.playlist_add_items(collection_id, album_track_ids, album.playlist_index)
+                return
+
+        # Add tracks of new album to the playllst
+        self.add_items_to_playlist(collection_id, album_track_ids)
+
     def remove_album_from_playlist(self, playlist_id, album_id):
         # Get list of track ids for tracks in the album
         album_track_ids = self.get_album_track_ids(album_id)
