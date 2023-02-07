@@ -44,14 +44,17 @@ def index(playlist_id):
         except Exception as e:
             raise albumcollectionsError(
                 f"Failed to load collections for user {sp_interface.display_name}: {e}", url_for('main.index'))
+
+        # Filter to only include collection playlist that the user owns
+        owned_collection_playlists = [playlist for playlist in user_collection_playlists if playlist.owner_id == sp_interface.user_id]
     else:
-        user_collection_playlists = None
+        owned_collection_playlists = None
 
     return render_template(
         'collection/index.html',
         collection=collection,
         user_id=sp_user_id,
-        user_collection_playlists=user_collection_playlists
+        owned_collection_playlists=owned_collection_playlists
     )
 
 

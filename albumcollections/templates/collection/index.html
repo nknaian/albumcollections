@@ -93,8 +93,8 @@
                         <div class="mb-3">
                             <label class="form-select-label" for="collectionMoveSelect">Destination Collection</label>
                             <select id="collectionMoveSelect" class="form-select" aria-label="collection select">
-                                {% if user_collection_playlists %}
-                                    {% for playlist in user_collection_playlists %}
+                                {% if owned_collection_playlists %}
+                                    {% for playlist in owned_collection_playlists %}
                                         <option value="{{playlist.id}}">{{playlist.name}}</option>
                                     {% endfor %}
                                 {% endif %}
