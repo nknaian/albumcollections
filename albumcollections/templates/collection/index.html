@@ -82,14 +82,16 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title" id="moveAlbumLabel">
-                            <div class="scroll-to-fit-title mt-2 mb-3">
-                                <span id="album_move_modal_title"></span>
-                            </div>
-                        </h4>
+                        <h4 class="modal-title" id="moveAlbumLabel">Add to Collection</h4>
                         <button id="add_album_modal_close_btn" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label" for="album_move_modal_title">Album</label>
+                            <div class="scroll-to-fit-title">
+                                <span id="album_move_modal_title"></span>
+                            </div>
+                        </div>
                         <div class="mb-3">
                             <label class="form-select-label" for="collectionMoveSelect">Destination Collection</label>
                             <select id="collectionMoveSelect" class="form-select" aria-label="collection select">
