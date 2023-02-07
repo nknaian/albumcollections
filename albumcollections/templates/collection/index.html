@@ -18,9 +18,7 @@
             {% for album in collection.albums %}
                 <!-- col-5 -->
                 <div class="col col-auto col-md-auto album_item
-                    '{% if album.complete %}'
-                        complete_album
-                    '{% else %}'
+                    '{% if not album.complete %}'
                         incomplete_album
                     '{% endif %}'
                     "
@@ -59,7 +57,7 @@
 
             <div id="shuffle_collection">
                 <a
-                    class="btn btn-outline-success mx-2"
+                    class="btn btn-outline-warning mx-2"
                     role="button"
                     href="{{url_for('main.load_redirect')}}?redirect_location={{url_for('collection.shuffle_collection', playlist_id=collection.id)}}&load_message=Mixing it up.."
                 >
@@ -77,6 +75,35 @@
             <a class="btn btn-outline-secondary mx-2" role="button" href="{{collection.link}}">
                 <img src="/static/images/spotify/Spotify_Icon_RGB_Black.png" class="spotify_icon_small_img"/>
             </a>
+        </div>
+
+        <!-- Add/complete album popup window-->
+        <div class="modal fade" id="add_album_modal" tabindex="-1" aria-labelledby="moveAlbumLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="moveAlbumLabel">
+                            <div class="scroll-to-fit-title mt-2 mb-3">
+                                <span id="album_move_modal_title"></span>
+                            </div>
+                        </h4>
+                        <button id="add_album_modal_close_btn" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-select-label" for="collectionMoveSelect">Destination Collection</label>
+                            <select id="collectionMoveSelect" class="form-select" aria-label="collection select">
+                                {% if owned_collection_playlists %}
+                                    {% for playlist in owned_collection_playlists %}
+                                        <option value="{{playlist.id}}">{{playlist.name}}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                        <button id="add_album_submit" class="btn btn-success">Add</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
     <!-- Album control popup window-->
@@ -101,6 +128,7 @@
                     <a class="album_control_bar btn btn-outline-secondary" role="button" id="album_control_modal_spotify_link">
                         <img src="/static/images/spotify/Spotify_Icon_RGB_Black.png" class="spotify_icon_small_img"/>
                     </a>
+                    <div role="button" id="add_album" class="btn btn-outline-success mx-2" data-bs-toggle="modal" data-bs-target="#add_album_modal"><img src="/static/images/bootstrap/plus.svg"/></div>
                     <button id="album_control_modal_remove" type="button" class="album_control_bar btn btn-danger ms-auto"><img src="/static/images/bootstrap/trash.svg"/></button>
                 </div>
                 <div class="d-flex flex-column align-items-center">

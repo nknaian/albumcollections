@@ -82,8 +82,13 @@ var sortable_collection = new Sortable(collection_list, {
 function init(play_id, play_owner_id, user_id) {
     playlist_id = play_id
 
-    console.log(play_owner_id)
+    /* Hide buttons that are only usable if user is logged in */
     console.log(user_id)
+    if (user_id === "None") {
+        $('#add_album').hide()
+    } else {
+        $('#add_album').show()
+    }
 
     /* Hide buttons that are only usable if the user owns the collection */
     if (play_owner_id === user_id) {
@@ -126,13 +131,60 @@ document.querySelectorAll('.album_card').forEach(item => {
             album_control_modal_sp_link = document.getElementById("album_control_modal_spotify_link")
             album_control_modal_sp_link.href = album_item.getAttribute("data-album_link")
 
-            // Set the album title in modal
+            // Set the album title in album control modal and album move modal
             album_control_modal_title = document.getElementById("album_control_modal_title")
             album_control_modal_title.innerHTML = `<b>${album_item.getAttribute("data-album_name")}</b> by ${album_item.getAttribute("data-album_artists")}`
+            album_move_modal_title = document.getElementById("album_move_modal_title")
+            album_move_modal_title.innerHTML = `<b>${album_item.getAttribute("data-album_name")}</b> by ${album_item.getAttribute("data-album_artists")}`
 
             // Open the modal
             $('#album_control_modal').modal('show')
         }
+    });
+})
+
+document.getElementById("add_album").addEventListener("click", function() {
+    // Hide the album control modal so that the move album modal shows
+    $('#album_control_modal').modal('hide')
+})
+
+document.getElementById("add_album_modal_close_btn").addEventListener("click", function() {
+    // Bring back the album control modal
+    $('#album_control_modal').modal('show')
+})
+
+document.getElementById("add_album_submit").addEventListener("click", function() {
+    // Get selected destination collection
+    dest_collection_id = $("#collectionMoveSelect option:selected").val()
+
+    // Get album item
+    album_item = document.getElementById(
+        document.getElementById("album_control_modal").getAttribute("data-target_album_item_id")
+    )
+
+    // Get album id
+    album_id = album_item.getAttribute("data-album_id")
+
+    // Bring back album control modal into focus
+    $('#add_album_modal').modal('hide')
+    $('#album_control_modal').modal('show')
+
+    // Make server post to do the add
+    $.post('/collection/add_album', {
+        dest_collection_id: dest_collection_id,
+        album_id: album_id
+    }).done(function (response) {
+        if (response["success"]) {
+            // If the album was added to this collection and album was incomplete, remove the "incomplete_album" class
+            console.log("removing incomplete_album tag")
+            if (dest_collection_id === playlist_id) {
+                album_item.classList.remove("incomplete_album")
+            }
+        } else {
+            alert(`Sorry, failed to add album.\n\n${response["exception"]}`)
+        }
+    }).fail(function() {
+        alert("Sorry, a server failure occured.")
     });
 })
 
@@ -175,9 +227,13 @@ document.getElementById('reorder-active').addEventListener("change", function() 
     if (this.checked) {
         sortable_collection.option("disabled", false)
 
-        var elements = document.getElementsByClassName('complete_album')
+        var elements = document.getElementsByClassName('album_item')
         for(var i = 0; i < elements.length; i++) {
-            elements[i].style.cursor = "grab"
+            elements[i].style.cursor = "grab";
+        }
+        var elements = document.getElementsByClassName('incomplete_album')
+        for(var i = 0; i < elements.length; i++) {
+            elements[i].style.cursor = "default"
         }
 
         var elements = document.getElementsByClassName('album_img')
@@ -193,7 +249,7 @@ document.getElementById('reorder-active').addEventListener("change", function() 
         var elements = document.getElementsByClassName('album-item-move')
         for(var i = 0; i < elements.length; i++) {
             element = elements[i]
-            if (element.closest('.album_item').classList.contains('complete_album')) {
+            if (!element.closest('.album_item').classList.contains('incomplete_album')) {
                 $(element).show()
             }
         }

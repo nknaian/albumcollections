@@ -57,24 +57,4 @@ def get_user_id() -> int:
     return get_user().id
 
 
-def get_user_playback_playlist_id() -> Union[str, None]:
-    """Get the user's playback playlist id
-
-    This function must be called within a try block to catch
-    exceptions
-    """
-    return get_user().playback_playlist_id
-
-
-def set_user_playback_playlist_id(id: str):
-    """Set the user's playback playlist id in their db entry
-
-    This function must be called within a try block to catch
-    exceptions
-    """
-    user = get_user()
-    user.playback_playlist_id = id
-    db.session.commit()
-
-
 from albumcollections.user import handlers

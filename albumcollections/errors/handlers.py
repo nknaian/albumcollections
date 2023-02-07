@@ -1,4 +1,4 @@
-from flask import flash, redirect, current_app
+from flask import flash, redirect, current_app, url_for
 from flask.globals import request
 
 from . import bp
@@ -33,4 +33,8 @@ def handle_user_errors(e):
 def handle_base_exception(e):
     current_app.logger.critical(f"Base exception encountered: {e}")
     flash("Unexpected failure occurred", "danger")
-    return redirect(request.referrer)
+
+    if request.referrer is None:
+        return redirect(url_for('main.index'))
+    else:
+        return redirect(request.referrer)

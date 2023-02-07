@@ -13,8 +13,8 @@ def get(playlist_tracks_iter) -> List[SpotifyAlbum]:
     as python version is 3.7+ because dictionaries retain insertion
     order
     """
-    # Create dictionary to hold albums
     album_entries = {}
+    track_index = 0
 
     try:
         # Get the first track in playlist
@@ -25,14 +25,14 @@ def get(playlist_tracks_iter) -> List[SpotifyAlbum]:
             # This track isn't a track (ex: maybe it's a podcast episode)
             # Just skip over it
             if playlist_track.type != "track":
-                playlist_track = next(playlist_tracks_iter)
+                playlist_track, track_index = _iter_index(playlist_tracks_iter, track_index)
             # The current playlist track's album has been seen before. This means that
             # the track is either a duplicate, or separated from the first track in
             # the album by tracks from other albums. In any case, it means that the
             # complete album isn't present in the playlist
             elif playlist_track.album.id in album_entries:
                 album_entries[playlist_track.album.id].complete = False
-                playlist_track = next(playlist_tracks_iter)
+                playlist_track, track_index = _iter_index(playlist_tracks_iter, track_index)
             # The current playlist track's album hasn't been seen before.
             # Make an entry for the album and iterate through the subsequent
             # playlist tracks
@@ -42,6 +42,9 @@ def get(playlist_tracks_iter) -> List[SpotifyAlbum]:
 
                 # Make an entry for this album
                 album_entries[album.id] = album
+
+                # Set the album's playlist index
+                album.playlist_index = track_index
 
                 # Walk through subsequent tracks with the same album id, using disc and track
                 # numbers to confirm that the full album is present in the correct order
@@ -80,12 +83,12 @@ def get(playlist_tracks_iter) -> List[SpotifyAlbum]:
                     # complete, move to the next track and break out of the loop
                     if len(album.track_ids) == album.total_tracks:
                         album.complete = True
-                        playlist_track = next(playlist_tracks_iter)
+                        playlist_track, track_index = _iter_index(playlist_tracks_iter, track_index)
                         break
                     # Otherwise the album isn't complete yet so stay in the loop
                     # and iterate to the next track in the playlist
                     else:
-                        playlist_track = next(playlist_tracks_iter)
+                        playlist_track, track_index = _iter_index(playlist_tracks_iter, track_index)
     # If a stop iteration is received, that means the playlist's tracks have been
     # exhausted - pencils down.
     except StopIteration:
@@ -93,3 +96,10 @@ def get(playlist_tracks_iter) -> List[SpotifyAlbum]:
 
     # Return albums from valid entries
     return list(album_entries.values())
+
+
+'''PRIVATE FUNCTIONS'''
+
+
+def _iter_index(iter, index):
+    return next(iter), index + 1

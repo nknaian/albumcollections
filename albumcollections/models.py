@@ -8,7 +8,7 @@ MAX_SPOTIFY_USER_ID_LENGTH = 50
 class AcUser(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     spotify_user_id = db.Column(db.String(MAX_SPOTIFY_USER_ID_LENGTH), unique=True, nullable=False)
-    playback_playlist_id = db.Column(db.String(MAX_SPOTIFY_PLAYLIST_ID_LENGTH))
+    playback_playlist_id = db.Column(db.String(MAX_SPOTIFY_PLAYLIST_ID_LENGTH))  # depreciated
 
     collections = db.relationship('Collection', backref=db.backref('ac_user', lazy=True))
 
