@@ -179,49 +179,33 @@ class SpotifyUserInterface(spotify_iface.SpotifyInterface):
         """
         Move all tracks in the "moved album" to the position that the
         "next album"'s first track is currently in.
-
-        NOTE: This relies on the collection being constructed as in
-        the rules in `collection_albums.get`
-
-        TODO: Try to utilize cached collection Spotify album tracks to
-        reduce spotify api requests. To do this, I think the indices of
-        of the albums in the playlist would have to be cached as well, so
-        as to account for non-album tracks.
         """
-        # Get the playlist tracks
-        playlist_tracks = self.get_playlist_tracks(playlist_id)
+        # Get the collection for the playlist
+        collection = self.get_collection(playlist_id)
 
-        # Iterate through playlist to find current and destination indices for the
-        # moving album and num tracks in the album
-        moved_album_curr_index = None
-        moved_album_dest_index = len(playlist_tracks) if next_album_id is None else None
-        moved_album_num_tracks = None
-        for index, track in enumerate(playlist_tracks):
-            # Look for the first track of the album to be moved
-            if moved_album_id == track.album.id and moved_album_curr_index is None:
-                # Set the index of the tracks to be moved
-                moved_album_curr_index = index
+        # Set indices and album length information, based on saved collection album info
+        curr_index = None
+        dest_index = collection.total_tracks if next_album_id is None else None
+        num_tracks = None
+        for album in collection.albums:
+            if album.id == moved_album_id:
+                assert album.complete
+                curr_index = album.playlist_index
+                num_tracks = album.total_tracks
 
-                # Set the number of tracks in the album to be moved
-                moved_album_num_tracks = track.album.total_tracks
-
-            # Look for current index of the album that will now be directly after
-            # the moved album
-            if next_album_id is not None and \
-                    next_album_id == track.album.id and \
-                    moved_album_dest_index is None:
-                moved_album_dest_index = index
+            if album.id == next_album_id:
+                dest_index = album.playlist_index
 
             # Break out of the loop once we have both indices
-            if moved_album_curr_index is not None and moved_album_dest_index is not None:
+            if curr_index is not None and dest_index is not None:
                 break
 
         # Execute the reorder command
         self.sp_user.playlist_reorder_items(
             playlist_id,
-            moved_album_curr_index,
-            moved_album_dest_index,
-            range_length=moved_album_num_tracks
+            curr_index,
+            dest_index,
+            range_length=num_tracks
         )
 
     def shuffle_collection(

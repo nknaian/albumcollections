@@ -79,6 +79,9 @@ class SpotifyAlbum(SpotifyMusic):
         # Init album as 'incomplete'
         self.complete = False
 
+        # Init playlist_index to None
+        self.playlist_index = None
+
 
 class SpotifyTrack(SpotifyMusic):
     """Class to hold selected information about a spotify track."""

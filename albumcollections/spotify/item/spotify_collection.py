@@ -9,6 +9,8 @@ class SpotifyCollection(SpotifyItem):
     """Class to hold selected information about a spotify collection.
 
     Uses database entries associated with playlist id to reduce loading time.
+
+    TODO: Make this class inherit from SpotifyPlaylist...pretty sure it exclusively adds to it
     """
 
     IMG_DIMEN = 300
@@ -22,6 +24,9 @@ class SpotifyCollection(SpotifyItem):
         self._set_image_url(spotify_playlist["images"])
 
         self.owner_id = spotify_playlist["owner"]["id"]
+
+        # Total number of tracks
+        self.total_tracks = spotify_playlist["tracks"]["total"]
 
         # Get current snapshot id
         self.snapshot_id = spotify_playlist["snapshot_id"]
