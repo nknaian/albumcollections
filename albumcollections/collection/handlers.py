@@ -46,7 +46,10 @@ def index(playlist_id):
                 f"Failed to load collections for user {sp_interface.display_name}: {e}", url_for('main.index'))
 
         # Filter to only include collection playlist that the user owns
-        owned_collection_playlists = [playlist for playlist in user_collection_playlists if playlist.owner_id == sp_interface.user_id]
+        owned_collection_playlists = [
+            playlist for playlist in user_collection_playlists
+            if playlist.owner_id == sp_interface.user_id
+        ]
     else:
         owned_collection_playlists = None
 
