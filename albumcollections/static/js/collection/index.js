@@ -143,6 +143,11 @@ document.querySelectorAll('.album_card').forEach(item => {
     });
 })
 
+document.getElementById("text_repr_copy_btn").addEventListener("click", function() {
+    document.getElementById("text_repr_area").select();
+    document.execCommand('copy');
+})
+
 document.getElementById("add_album").addEventListener("click", function() {
     // Hide the album control modal so that the move album modal shows
     $('#album_control_modal').modal('hide')

@@ -38,8 +38,7 @@
                         Any playlist in your Spotify account can be represented in this app as a <i>collection</i>.
                         Here's an <a href="{{url_for('collection.index', playlist_id='4ucljWzVJnEB0cdWErJTsT')}}">example</a> of one. Within a 
                         collection, you can view the contents and link to the corresponding Spotify playlist and contained Spotify albums.
-                        If you are logged in and own the playlist (free or premium account), then you can reorder (as long the full track list is
-                        present) and remove albums from the playlist.
+                        If you are logged in/own the playlist there are additional convenience features that you can learn about below.
                     </p>
                     <h2 class="about_section" id="guide" class="about_section">Guide</h2>
                     <p>
@@ -108,7 +107,7 @@
                         The main page on <i>Album Collections</i> displays the collections that you have added.
                         Click on a collection to open it. The collection page contains interactable cover art for the
                         contained albums, and has a <i>collection control bar</i> at the bottom that shows the name of
-                        collection, along with several buttons to shufle, reorder, or access it in Spotify.
+                        collection, along with several buttons to shufle, reorder, view/copy a text representation, or access it in Spotify.
                     </p>
                     <p>
                         You can also view any playlist in Spotify as a collection by manually inputting it's playlist id in the address
@@ -127,6 +126,12 @@
                         collection. Note that because of this shuffling strategy, items that aren't music tracks (ex: podcast episodes) will
                         be removed from the playlist. If you'd like to retain an original source playlist containing podcast episodes then please
                         create a copy of the playlist when adding the collection.
+                    </p>
+                    <h3 class="about_section">See/Copy Text Representation of a Collection<img src="/static/favicon.ico" class="about_header_icon ps-1"/></h3>
+                    <p>
+                        Press on the <img class="ps-1" src="/static/images/bootstrap/file-text.svg"/> button to view a text representation of
+                        the collection's albums. Then, press the <img class="ps-1" src="/static/images/bootstrap/clipboard.svg"/> button to copy
+                        it to your clipboard. This can be useful if you want to maintain a text list somewhere of your collections, for safe-keeping.
                     </p>
                     <h3 class="about_section">Remove an Album from a Collection <img src="/static/favicon.ico" class="about_header_icon ps-1"/></h3>
                     <p>

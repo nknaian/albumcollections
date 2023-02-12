@@ -31,6 +31,9 @@ class SpotifyCollection(SpotifyItem):
         # Get current snapshot id
         self.snapshot_id = spotify_playlist["snapshot_id"]
 
+    def get_albums_text_list(self):
+        return "\n".join(f"{album.name} by {album.get_artists_comma_separated()}" for album in self.albums)
+
     @property
     def albums(self) -> List[SpotifyAlbum]:
         """Get albums.

@@ -72,9 +72,29 @@
                 </label>
             </div>
 
+            <div role="button" id="text_repr_btn" class="btn btn-outline-secondary mx-2" data-bs-toggle="modal" data-bs-target="#text_repr_modal"><img src="/static/images/bootstrap/file-text.svg"/></div>
+
             <a class="btn btn-outline-secondary mx-2" role="button" href="{{collection.link}}">
                 <img src="/static/images/spotify/Spotify_Icon_RGB_Black.png" class="spotify_icon_small_img"/>
             </a>
+        </div>
+
+        <!-- Text representation modal -->
+        <div class="modal fade" id="text_repr_modal" tabindex="-1" aria-labelledby="textReprLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="textReprLabel">Albums Text List</h4>
+                        <button id="text_repr_modal_close_btn" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <textarea readonly id="text_repr_area" rows="10" style="width: 100%;">{{collection.get_albums_text_list()}}</textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="text_repr_copy_btn" type="button" class="btn btn-primary"><img src="/static/images/bootstrap/clipboard.svg"/></button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Add/complete album popup window-->
@@ -108,38 +128,38 @@
             </div>
         </div>
 
-    <!-- Album control popup window-->
-    <div id="album_control_modal" class="modal fade" role="dialog" data-target_album_item_id="">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="d-flex justify-content-center">
-                        <img
-                            class="img-fluid"
-                            id="album_control_modal_img"
-                        >
+        <!-- Album control popup window-->
+        <div id="album_control_modal" class="modal fade" role="dialog" data-target_album_item_id="">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="scroll-to-fit-title mt-2">
-                        <span id="album_control_modal_title"></span>
+                    <div class="modal-body">
+                        <div class="d-flex justify-content-center">
+                            <img
+                                class="img-fluid"
+                                id="album_control_modal_img"
+                            >
+                        </div>
+                        <div class="scroll-to-fit-title mt-2">
+                            <span id="album_control_modal_title"></span>
+                        </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <a class="album_control_bar btn btn-outline-secondary" role="button" id="album_control_modal_spotify_link">
-                        <img src="/static/images/spotify/Spotify_Icon_RGB_Black.png" class="spotify_icon_small_img"/>
-                    </a>
-                    <div role="button" id="add_album" class="btn btn-outline-success mx-2" data-bs-toggle="modal" data-bs-target="#add_album_modal"><img src="/static/images/bootstrap/plus.svg"/></div>
-                    <button id="album_control_modal_remove" type="button" class="album_control_bar btn btn-danger ms-auto"><img src="/static/images/bootstrap/trash.svg"/></button>
-                </div>
-                <div class="d-flex flex-column align-items-center">
-                    <div class="remove_album_load_item loader py-2" style="display: none;"></div>
-                    <div class="remove_album_load_item py-2" style="display: none;"><p>Returning this record to the store...</p>
+                    <div class="modal-footer">
+                        <a class="album_control_bar btn btn-outline-secondary" role="button" id="album_control_modal_spotify_link">
+                            <img src="/static/images/spotify/Spotify_Icon_RGB_Black.png" class="spotify_icon_small_img"/>
+                        </a>
+                        <div role="button" id="add_album" class="btn btn-outline-success mx-2" data-bs-toggle="modal" data-bs-target="#add_album_modal"><img src="/static/images/bootstrap/plus.svg"/></div>
+                        <button id="album_control_modal_remove" type="button" class="album_control_bar btn btn-danger ms-auto"><img src="/static/images/bootstrap/trash.svg"/></button>
+                    </div>
+                    <div class="d-flex flex-column align-items-center">
+                        <div class="remove_album_load_item loader py-2" style="display: none;"></div>
+                        <div class="remove_album_load_item py-2" style="display: none;"><p>Returning this record to the store...</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
     </body>
 
