@@ -1,10 +1,10 @@
 # albumcollections
 Organize and visualize your Spotify albums.
 
-Visit the website deployed at https://albumcollections.herokuapp.com/
+This is the web app that was previously deployed at https://albumcollections.herokuapp.com/
 
 # Running locally
-Instructions below show how to run the website locally for development purposes. This guide is geared towards linux but as far
+Instructions below show how to run the website locally. This guide is geared towards linux but as far
 as I'm aware, it should be possible to do everything on Mac or Windows as well.
 
 ## Requirements
